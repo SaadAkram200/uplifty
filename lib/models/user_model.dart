@@ -5,7 +5,7 @@ class UserModel{
 //late String id;
   late String username, email, id, phone; 
    String? country, address,image;
-  // double? latitude,longitude;
+  
   UserModel({
     required this.username,
     required this.email,

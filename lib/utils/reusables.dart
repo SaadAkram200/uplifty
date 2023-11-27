@@ -1,6 +1,9 @@
 // ignore_for_file: must_be_immutable, prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:uplifty/utils/colors.dart';
 
 // sign button
@@ -55,15 +58,15 @@ class UpliftyTextfields extends StatelessWidget {
   final bool obscureText, readOnly;
   final int maxLines;
   final IconButton? iconButton;
-  const UpliftyTextfields(
-      {super.key,
-      required this.controller,
-      required this.fieldName,
-      this.obscureText = false,
-      this.readOnly = false,
-      this.maxLines = 1,
-      this.iconButton,
-      });
+  const UpliftyTextfields({
+    super.key,
+    required this.controller,
+    required this.fieldName,
+    this.obscureText = false,
+    this.readOnly = false,
+    this.maxLines = 1,
+    this.iconButton,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -117,7 +120,13 @@ class UpliftyTextfields extends StatelessWidget {
 
 // Profile avatar
 class ProfileAvatar extends StatelessWidget {
-  const ProfileAvatar({super.key});
+  void Function()? onTap;
+  XFile? selectedImage;
+  ProfileAvatar({
+    super.key,
+    required this.onTap,
+    required this.selectedImage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -127,12 +136,14 @@ class ProfileAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: 80,
         backgroundColor: Colors.white,
-        backgroundImage: AssetImage("assets/images/dummyuser.jpg"),
+        backgroundImage: selectedImage == null
+            ? AssetImage("assets/images/dummyuser.jpg")
+            : FileImage(File(selectedImage!.path)) as ImageProvider,
         child: Stack(children: [
           Align(
             alignment: Alignment.bottomRight,
             child: InkWell(
-              onTap: () {},
+              onTap: onTap,
               child: CircleAvatar(
                 radius: 15,
                 backgroundColor: CColors.background,

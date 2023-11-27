@@ -1,26 +1,42 @@
+
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:uplifty/models/user_model.dart';
-import 'package:uplifty/screens/home_screen.dart';
-import 'package:uplifty/screens/signup_screen2.dart';
-
+import 'package:uplifty/screens/create_profile.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebasestorage;
+import 'package:uplifty/utils/check_user.dart';
+import 'package:uplifty/utils/loading_widget.dart';
 import 'colors.dart';
 
 class Functions {
-
-
   //firebase work
-  final CollectionReference<Map<String, dynamic>> users =
+  static final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');
 
+  static var uid = FirebaseAuth.instance.currentUser?.uid;
+  static var userEmail = FirebaseAuth.instance.currentUser!.email;
+  static var doc = users.doc(uid);
+  
+  static Future userExists() async {
+    var userData = await doc.get();
+    if (userData.exists) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   //Create user
-  Future<void> createNewUser(UserModel user) {
-    var uid = FirebaseAuth.instance.currentUser!.uid;
-    var doc = users.doc(uid);
-    user.id = uid;
+  static Future<void> createNewUser(UserModel user) {
+    user.id = uid!;
     return doc.set(user.toMap());
   }
 
@@ -36,9 +52,31 @@ class Functions {
     );
   }
 
+  static showLoading(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return WillPopScope(
+          onWillPop: () {
+            return Future.value(kDebugMode);
+          },
+          child: const AlertDialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            content: LoadingWidget(),
+          ),
+        );
+      },
+      barrierDismissible: false,
+    );
+  }
+
   // login function
   static Future logIn(context, TextEditingController emailController,
       TextEditingController passwordController) async {
+    
+    
+    
     // checking if Textfields are empty
     if (emailController.text == "" || passwordController.text == "") {
       emailController.text == ""
@@ -49,8 +87,8 @@ class Functions {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
 
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        CheckUser.isCreatedProfile(context);
+
       } catch (e) {
         Functions.showToast("Incorrect Email or password");
       }
@@ -77,7 +115,7 @@ class Functions {
             email: emailController.text, password: passwordController.text);
         Functions.showToast("Ready to Inspire your world? ");
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => SignUpScreen2()));
+            context, MaterialPageRoute(builder: (context) => CreateProfile()));
       } catch (error) {
         var e = error as FirebaseAuthException;
         Functions.showToast(e.message!);
@@ -85,6 +123,7 @@ class Functions {
     }
   }
 
+  //country picker - used in create profile
   static countryPicker(context, Function(Country) onSelect) {
     showCountryPicker(
         context: context,
@@ -122,5 +161,35 @@ class Functions {
         onSelect: (Country country) {
           onSelect(country);
         });
+  }
+
+  //image picker
+  static Future<XFile?> imagePicker() async {
+    ImagePicker imagePicker = ImagePicker();
+    XFile? file = await imagePicker.pickImage(source: ImageSource.gallery);
+    return file;
+  }
+
+  //upload image
+  static Future<String> uploadFile(XFile file) async {
+    try {
+      final mimeType = lookupMimeType(file.path);
+      String path = "images/${DateTime.now().millisecondsSinceEpoch}";
+      final firebasestorage.FirebaseStorage storage =
+          firebasestorage.FirebaseStorage.instance;
+      var reference = storage.ref().child(path);
+      var r = await reference.putData(
+          await file.readAsBytes(), SettableMetadata(contentType: mimeType));
+
+      if (r.state == firebasestorage.TaskState.success) {
+        String imageUrl = await reference.getDownloadURL();
+
+        return imageUrl;
+      } else {
+        throw PlatformException(code: "404", message: "no download link found");
+      }
+    } catch (e) {
+      rethrow;
+    }
   }
 }

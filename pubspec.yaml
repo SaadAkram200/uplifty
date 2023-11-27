@@ -18,6 +18,8 @@ dependencies:
   country_picker: ^2.0.17
   iconly: ^1.0.1
   image_picker: ^1.0.4
+  mime: ^1.0.4
+  loading_animation_widget:
 
 dev_dependencies:
   flutter_test:

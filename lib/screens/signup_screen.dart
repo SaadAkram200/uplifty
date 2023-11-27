@@ -66,6 +66,7 @@ class SignUpScreen extends StatelessWidget {
                   child: SignButton(
                       buttonName: "Sign Up",
                       onPressed: () {
+                        Functions.showLoading(context);
                         Functions.signUp(context, emailController,
                             passwordController, confirmPassController);
                       }),
