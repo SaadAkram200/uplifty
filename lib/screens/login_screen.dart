@@ -30,7 +30,7 @@ class LoginScreen extends StatelessWidget {
                   "assets/images/logo.png",
                   scale: 1.5,
                 ),
-      
+
                 //page name
                 Padding(
                   padding: const EdgeInsets.only(bottom: 50),
@@ -44,15 +44,18 @@ class LoginScreen extends StatelessWidget {
                 ),
                 //email textfield
                 UpliftyTextfields(
-                    controller: emailController, fieldName: "Email"),
-      
+                  controller: emailController,
+                  fieldName: "Email",
+                  keyboardType: TextInputType.emailAddress,
+                ),
+
                 //password textfield
                 UpliftyTextfields(
                   controller: passwordController,
                   fieldName: "password",
                   obscureText: true,
                 ),
-      
+
                 //forget password
                 Align(
                     alignment: Alignment.centerRight,
@@ -62,17 +65,18 @@ class LoginScreen extends StatelessWidget {
                           "Forgot Password?",
                           style: TextStyle(color: CColors.primary),
                         ))),
-      
+
                 //login button
                 Padding(
                   padding: const EdgeInsets.only(top: 80, bottom: 20),
                   child: SignButton(
                       buttonName: "Login",
                       onPressed: () {
-                      Functions.logIn(context,emailController, passwordController);
+                        Functions.logIn(
+                            context, emailController, passwordController);
                       }),
                 ),
-      
+
                 //sign up text button
                 RichText(
                     text: TextSpan(

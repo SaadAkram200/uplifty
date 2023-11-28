@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplifty/models/user_model.dart';
-import 'package:uplifty/screens/home_screen.dart';
+import 'package:uplifty/screens/bottom_appbar.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
@@ -22,81 +22,11 @@ class _CreateProfileState extends State<CreateProfile> {
   String? imageUrl = '';
   XFile? selectedImage;
 
-  profileCreation() async {
-     imageUrl = await Functions.uploadFile(selectedImage!);
-      setState(() {});
-    if (usernameController.text == "" ||
-        phoneController.text == "" ||
-        countryController.text == "" ||
-        addressController.text == "") {
-      Functions.showToast("Please fill all the fields");
-    } else if (imageUrl == '') {
-      Functions.showToast("Please select the profile picture");
-     
-    } else {
-      Functions.showLoading(context);
-
-      imageUrl = await Functions.uploadFile(selectedImage!);
-      setState(() {});
-      final user = UserModel(
-          username: usernameController.text,
-          email: Functions.userEmail as String,
-          phone: phoneController.text,
-          country: countryController.text,
-          address: addressController.text,
-          image: imageUrl);
-
-      Functions.createNewUser(user).then((value) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
-      });
-    }
-  }
-
   //textfield controllers
   TextEditingController usernameController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController countryController = TextEditingController();
-
-  countryPicker(context) {
-    showCountryPicker(
-        context: context,
-        countryListTheme: CountryListThemeData(
-          flagSize: 25,
-          backgroundColor: CColors.background,
-          textStyle: TextStyle(fontSize: 16, color: CColors.secondarydark),
-          bottomSheetHeight: 500, // Optional. Country list modal height
-          //Optional. Sets the border radius for the bottomsheet.
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30.0),
-            topRight: Radius.circular(30.0),
-          ),
-          //Optional. Styles the search field.
-          inputDecoration: InputDecoration(
-              contentPadding: const EdgeInsets.only(
-                left: 20,
-                top: 20,
-              ),
-              filled: true,
-              fillColor: Colors.white,
-              focusColor: CColors.secondary,
-              hintText: "Start typing to search",
-              hintStyle: TextStyle(color: CColors.secondary),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: CColors.secondary)),
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide(color: CColors.secondary)),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 2, color: CColors.secondary),
-                  borderRadius: const BorderRadius.all(Radius.circular(30)))),
-        ),
-        onSelect: (Country country) {
-          countryController.text = country.displayNameNoCountryCode;
-        });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -124,9 +54,6 @@ class _CreateProfileState extends State<CreateProfile> {
               ProfileAvatar(
                 selectedImage: selectedImage,
                 onTap: () async {
-                  //Functions.uploadImage();
-                  //imageUrl = Functions.uploadImage().toString();
-
                   selectedImage = await Functions.imagePicker();
                   setState(() {});
                 },
@@ -136,7 +63,10 @@ class _CreateProfileState extends State<CreateProfile> {
               Padding(
                 padding: const EdgeInsets.only(top: 80.0),
                 child: UpliftyTextfields(
-                    controller: usernameController, fieldName: "User Name"),
+                  controller: usernameController,
+                  fieldName: "User Name",
+                  keyboardType: TextInputType.name,
+                ),
               ),
 
               //country textfield
@@ -163,6 +93,7 @@ class _CreateProfileState extends State<CreateProfile> {
               UpliftyTextfields(
                 controller: phoneController,
                 fieldName: "Phone Number",
+                keyboardType: TextInputType.phone,
               ),
 
               //Address
@@ -170,6 +101,7 @@ class _CreateProfileState extends State<CreateProfile> {
                 controller: addressController,
                 fieldName: "Address",
                 maxLines: 3,
+                keyboardType: TextInputType.streetAddress,
               ),
 
               //get started
@@ -178,7 +110,13 @@ class _CreateProfileState extends State<CreateProfile> {
                 child: SignButton(
                     buttonName: "Get Started",
                     onPressed: () {
-                      profileCreation();
+                      Functions.profileCreation(
+                          context,
+                          selectedImage,
+                          usernameController,
+                          phoneController,
+                          countryController,
+                          addressController);
                     }),
               ),
             ],

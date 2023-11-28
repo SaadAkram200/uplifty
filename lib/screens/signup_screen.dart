@@ -44,7 +44,10 @@ class SignUpScreen extends StatelessWidget {
                 ),
                 //email textfield
                 UpliftyTextfields(
-                    controller: emailController, fieldName: "Email"),
+                  controller: emailController,
+                  fieldName: "Email",
+                  keyboardType: TextInputType.emailAddress,
+                ),
 
                 //password textfield
                 UpliftyTextfields(
@@ -55,9 +58,9 @@ class SignUpScreen extends StatelessWidget {
 
                 //confirm password
                 UpliftyTextfields(
-                    controller: confirmPassController,
-                    fieldName: "Confirm Password",
-                    obscureText: true,
+                  controller: confirmPassController,
+                  fieldName: "Confirm Password",
+                  obscureText: true,
                 ),
 
                 //Sign Up button

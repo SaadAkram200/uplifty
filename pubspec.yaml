@@ -19,6 +19,7 @@ dependencies:
   iconly: ^1.0.1
   image_picker: ^1.0.4
   mime: ^1.0.4
+  provider: ^6.0.5
   loading_animation_widget:
 
 dev_dependencies:

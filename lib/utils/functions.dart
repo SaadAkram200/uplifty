@@ -1,3 +1,4 @@
+import 'dart:async';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,6 +13,8 @@ import 'package:mime/mime.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/screens/create_profile.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebasestorage;
+import 'package:uplifty/screens/bottom_appbar.dart';
+import 'package:uplifty/screens/login_screen.dart';
 import 'package:uplifty/utils/check_user.dart';
 import 'package:uplifty/utils/loading_widget.dart';
 import 'colors.dart';
@@ -24,14 +27,26 @@ class Functions {
   static var uid = FirebaseAuth.instance.currentUser?.uid;
   static var userEmail = FirebaseAuth.instance.currentUser!.email;
   static var doc = users.doc(uid);
+  // variable to store userdata coming from Firestore
+  static UserModel? userData;
+  static late StreamSubscription streamSubscription;
   
-  static Future userExists() async {
-    var userData = await doc.get();
-    if (userData.exists) {
-      return true;
-    } else {
-      return false;
-    }
+  //stream to get current userdata
+  static  getCurrentUserData(){
+    streamSubscription = users.doc(uid).snapshots().listen((snapshot) { 
+      if (snapshot.exists) {
+        userData = UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
+        print("DATA from functions :  " + userData!.email);
+        
+        } else { 
+          Functions.showToast("no data");
+        }
+    });
+  }
+
+  // cancel stream
+  static cancelStream(){
+    streamSubscription.cancel();
   }
 
   //Create user
@@ -52,6 +67,7 @@ class Functions {
     );
   }
 
+  //shows loading
   static showLoading(BuildContext context) {
     showDialog(
       context: context,
@@ -74,9 +90,6 @@ class Functions {
   // login function
   static Future logIn(context, TextEditingController emailController,
       TextEditingController passwordController) async {
-    
-    
-    
     // checking if Textfields are empty
     if (emailController.text == "" || passwordController.text == "") {
       emailController.text == ""
@@ -88,7 +101,6 @@ class Functions {
             email: emailController.text, password: passwordController.text);
 
         CheckUser.isCreatedProfile(context);
-
       } catch (e) {
         Functions.showToast("Incorrect Email or password");
       }
@@ -191,5 +203,47 @@ class Functions {
     } catch (e) {
       rethrow;
     }
+  }
+
+// create new profile
+  static Future profileCreation(context, selectedImage, usernameController,
+      phoneController, countryController, addressController) async {
+    String? imageUrl = '';
+    if (usernameController.text == "" ||
+        phoneController.text == "" ||
+        countryController.text == "" ||
+        addressController.text == "") {
+      Functions.showToast("Please fill all the fields");
+    } else if (selectedImage == null) {
+      Functions.showToast("Please select the profile picture");
+    } else {
+      try {
+        Functions.showLoading(context);
+        imageUrl = await Functions.uploadFile(selectedImage!);
+        final user = UserModel(
+            username: usernameController.text,
+            email: Functions.userEmail as String,
+            phone: phoneController.text,
+            country: countryController.text,
+            address: addressController.text,
+            image: imageUrl);
+
+        Functions.createNewUser(user).then((value) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (context) => BottomAppBarClass()));
+        });
+      } catch (e) {
+        Functions.showToast("An error occors, please try again");
+        context.pop;
+      }
+    }
+  }
+
+  //signout method
+  static Future signOut(context) async {
+    Functions.showLoading(context);
+    await FirebaseAuth.instance.signOut();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 }

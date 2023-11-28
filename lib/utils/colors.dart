@@ -5,6 +5,8 @@ static  Color primary = const Color(0xff46934C);
 static Color secondary = const Color(0xff5EB56A);
 static Color secondarydark = const Color(0xff1C5B2A);
 static  Color background = const Color(0xffCCFDD2);
+static  Color bottomAppBarcolor = const Color(0xffa3e6a5);
+
 
 static Color grad1 = const Color(0xff8B7831);
 static Color grad2 = const Color(0xffC0A343);

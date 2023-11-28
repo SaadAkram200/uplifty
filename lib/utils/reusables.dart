@@ -58,6 +58,7 @@ class UpliftyTextfields extends StatelessWidget {
   final bool obscureText, readOnly;
   final int maxLines;
   final IconButton? iconButton;
+  final TextInputType keyboardType;
   const UpliftyTextfields({
     super.key,
     required this.controller,
@@ -66,6 +67,7 @@ class UpliftyTextfields extends StatelessWidget {
     this.readOnly = false,
     this.maxLines = 1,
     this.iconButton,
+    this.keyboardType = TextInputType.text
   });
 
   @override
@@ -85,7 +87,7 @@ class UpliftyTextfields extends StatelessWidget {
         child: TextField(
           maxLines: maxLines,
           minLines: maxLines,
-          keyboardType: TextInputType.multiline,
+          keyboardType: keyboardType,
           readOnly: readOnly,
           obscureText: obscureText,
           controller: controller,
