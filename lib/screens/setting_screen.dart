@@ -1,66 +1,113 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:flutter/material.dart';
-import 'package:uplifty/models/user_model.dart';
+import 'package:iconly/iconly.dart';
+import 'package:uplifty/providers/data_provider.dart';
+import 'package:uplifty/screens/create_profile.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:provider/provider.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
-class SettingScreen extends StatefulWidget {
-  SettingScreen({super.key});
+class SettingScreen extends StatelessWidget {
+  const SettingScreen({super.key});
 
-  @override
-  State<SettingScreen> createState() => _SettingScreenState();
-}
-
-class _SettingScreenState extends State<SettingScreen> {
-  
-  @override
-  void initState() {
-   userData =  Functions.getCurrentUserData();
-   setState(() {
-    // print("DATA from settings :  " + userData!.email);
-       });
-    super.initState();
-  }
-  var selectedImage;
-  UserModel? userData;
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: CColors.background,
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                 const SizedBox(width: double.infinity,),
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: ProfileAvatar(onTap: () {}, selectedImage: selectedImage)),
-                  Text(
-                    userData != null
-                    ? userData!.username
-                    : 'loading',
-                    style: TextStyle(color: CColors.secondary, fontSize: 16),
-                  ),
-                  Text("saad3@gmail.com"),
-                  Text("03048830737"),
-                  TextButton(
-                      onPressed: () {},
-                      child: Text(
-                        "Edit Profile",
-                        style:
-                            TextStyle(color: CColors.primary, fontSize: 18),
-                      )),
-                
-                ],
-              ),
-            ),
-          ),
+          child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Consumer<DataProvider>(builder: (context, value, child) {
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    const Spacer(),
+                    CircleAvatar(
+                      radius: 72,
+                      backgroundColor: CColors.secondary,
+                      child: CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.white,
+                        backgroundImage: value.userData != null
+                            ? NetworkImage(value.userData!.image!)
+                                as ImageProvider
+                            : const AssetImage('assets/images/dummyuser.jpg'),
+                        child: null,
+                      ),
+                    ),
+                    Text(
+                      value.userData != null
+                          ? value.userData!.username
+                          : 'loading',
+                      style: TextStyle(
+                          color: CColors.secondary,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      value.userData != null
+                          ? value.userData!.email
+                          : 'loading',
+                      style: TextStyle(color: CColors.secondary, fontSize: 16),
+                    ),
+                    Text(
+                      value.userData != null
+                          ? value.userData!.phone
+                          : 'loading',
+                      style: TextStyle(color: CColors.secondary, fontSize: 16),
+                    ),
+
+                    //edit profile button
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CreateProfile(),
+                              ),
+                              (route) => true);
+                        },
+                        child: Text(
+                          "Edit Profile",
+                          style:
+                              TextStyle(color: CColors.primary, fontSize: 18),
+                        )),
+
+                    const Spacer(),
+                    //buttons
+                    SettingsButton(
+                      icon: IconlyLight.user,
+                      buttonName: "My Friends",
+                      onTap: () {},
+                    ),
+                    SettingsButton(
+                      icon: IconlyLight.add_user,
+                      buttonName: "Friend Request",
+                      onTap: () {},
+                    ),
+                    SettingsButton(
+                      icon: IconlyLight.password,
+                      buttonName: "Reset Password",
+                      onTap: () {},
+                    ),
+                    SettingsButton(
+                      icon: IconlyLight.delete,
+                      buttonName: "Delete Account",
+                      onTap: () {},
+                    ),
+                    SettingsButton(
+                      icon: IconlyLight.logout,
+                      buttonName: "Log Out",
+                      onTap: () {
+                        Functions.signOut(context);
+                      },
+                    ),
+                  ],
+                );
+              })),
         ));
   }
 }

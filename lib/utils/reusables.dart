@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplifty/utils/colors.dart';
 
@@ -59,16 +60,15 @@ class UpliftyTextfields extends StatelessWidget {
   final int maxLines;
   final IconButton? iconButton;
   final TextInputType keyboardType;
-  const UpliftyTextfields({
-    super.key,
-    required this.controller,
-    required this.fieldName,
-    this.obscureText = false,
-    this.readOnly = false,
-    this.maxLines = 1,
-    this.iconButton,
-    this.keyboardType = TextInputType.text
-  });
+  const UpliftyTextfields(
+      {super.key,
+      required this.controller,
+      required this.fieldName,
+      this.obscureText = false,
+      this.readOnly = false,
+      this.maxLines = 1,
+      this.iconButton,
+      this.keyboardType = TextInputType.text});
 
   @override
   Widget build(BuildContext context) {
@@ -158,6 +158,55 @@ class ProfileAvatar extends StatelessWidget {
           ),
         ]),
       ),
+    );
+  }
+}
+
+//for settings
+class SettingsButton extends StatelessWidget {
+  void Function()? onTap;
+  final String buttonName;
+  final IconData icon;
+  SettingsButton({
+    super.key,
+    required this.onTap, 
+    required this.buttonName,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Divider(color: CColors.primary),
+        InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 7),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  icon,
+                  color: CColors.secondary,
+                ),
+                const SizedBox(
+                  width: 25,
+                ),
+                Expanded(
+                    child: Text(
+                  buttonName,
+                  style: TextStyle(color: CColors.secondary, fontSize: 18),
+                )),
+                Icon(
+                  IconlyLight.arrow_right_2,
+                  color: CColors.secondary,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

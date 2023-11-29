@@ -3,15 +3,15 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:uplifty/models/user_model.dart';
-import 'package:uplifty/screens/bottom_appbar.dart';
+import 'package:provider/provider.dart';
+import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 import 'package:country_picker/country_picker.dart';
 
 class CreateProfile extends StatefulWidget {
-  CreateProfile({super.key});
+  const CreateProfile({super.key});
 
   @override
   State<CreateProfile> createState() => _CreateProfileState();
@@ -30,7 +30,8 @@ class _CreateProfileState extends State<CreateProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Consumer<DataProvider>(builder: (context, value, child) {
+      return Scaffold(
       backgroundColor: CColors.background,
       body: SafeArea(
           child: SingleChildScrollView(
@@ -42,7 +43,7 @@ class _CreateProfileState extends State<CreateProfile> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 50),
                 child: Text(
-                  "Create Profile",
+                  value.userData != null? "Edit Profile": "Create Profile",
                   style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -124,5 +125,7 @@ class _CreateProfileState extends State<CreateProfile> {
         ),
       )),
     );
+    },);
+    
   }
 }

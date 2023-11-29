@@ -26,28 +26,7 @@ class Functions {
 
   static var uid = FirebaseAuth.instance.currentUser?.uid;
   static var userEmail = FirebaseAuth.instance.currentUser!.email;
-  static var doc = users.doc(uid);
-  // variable to store userdata coming from Firestore
-  static UserModel? userData;
-  static late StreamSubscription streamSubscription;
-  
-  //stream to get current userdata
-  static  getCurrentUserData(){
-    streamSubscription = users.doc(uid).snapshots().listen((snapshot) { 
-      if (snapshot.exists) {
-        userData = UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
-        print("DATA from functions :  " + userData!.email);
-        
-        } else { 
-          Functions.showToast("no data");
-        }
-    });
-  }
-
-  // cancel stream
-  static cancelStream(){
-    streamSubscription.cancel();
-  }
+  static var doc = users.doc(uid); 
 
   //Create user
   static Future<void> createNewUser(UserModel user) {
