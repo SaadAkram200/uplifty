@@ -58,17 +58,19 @@ class UpliftyTextfields extends StatelessWidget {
   final String fieldName;
   final bool obscureText, readOnly;
   final int maxLines;
-  final IconButton? iconButton;
+  final IconData? icon;
+  void Function()? onTap;
   final TextInputType keyboardType;
-  const UpliftyTextfields(
+  UpliftyTextfields(
       {super.key,
       required this.controller,
       required this.fieldName,
       this.obscureText = false,
       this.readOnly = false,
       this.maxLines = 1,
-      this.iconButton,
-      this.keyboardType = TextInputType.text});
+      this.icon,
+      this.keyboardType = TextInputType.text,
+      this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +87,7 @@ class UpliftyTextfields extends StatelessWidget {
               ),
             ]),
         child: TextField(
+          onTap: onTap,
           maxLines: maxLines,
           minLines: maxLines,
           keyboardType: keyboardType,
@@ -100,7 +103,7 @@ class UpliftyTextfields extends StatelessWidget {
                 left: 20,
                 top: 20,
               ),
-              suffixIcon: iconButton,
+              suffixIcon: Icon(icon, color: CColors.secondary,),
               filled: true,
               fillColor: Colors.white,
               hintText: fieldName,
@@ -124,10 +127,12 @@ class UpliftyTextfields extends StatelessWidget {
 class ProfileAvatar extends StatelessWidget {
   void Function()? onTap;
   XFile? selectedImage;
+  String? imageUrl;
   ProfileAvatar({
     super.key,
     required this.onTap,
-    required this.selectedImage,
+    this.selectedImage,
+    this.imageUrl,
   });
 
   @override
@@ -138,9 +143,11 @@ class ProfileAvatar extends StatelessWidget {
       child: CircleAvatar(
         radius: 80,
         backgroundColor: Colors.white,
-        backgroundImage: selectedImage == null
-            ? AssetImage("assets/images/dummyuser.jpg")
-            : FileImage(File(selectedImage!.path)) as ImageProvider,
+        backgroundImage: (imageUrl == null || selectedImage != null)
+            ? (selectedImage == null
+                ? AssetImage("assets/images/dummyuser.jpg")
+                : FileImage(File(selectedImage!.path)) as ImageProvider)
+            : NetworkImage(imageUrl!),
         child: Stack(children: [
           Align(
             alignment: Alignment.bottomRight,
@@ -169,7 +176,7 @@ class SettingsButton extends StatelessWidget {
   final IconData icon;
   SettingsButton({
     super.key,
-    required this.onTap, 
+    required this.onTap,
     required this.buttonName,
     required this.icon,
   });

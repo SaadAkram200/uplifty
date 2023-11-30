@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_picker/country_picker.dart';
@@ -26,12 +25,18 @@ class Functions {
 
   static var uid = FirebaseAuth.instance.currentUser?.uid;
   static var userEmail = FirebaseAuth.instance.currentUser!.email;
-  static var doc = users.doc(uid); 
+  static var doc = users.doc(uid);
 
   //Create user
   static Future<void> createNewUser(UserModel user) {
     user.id = uid!;
     return doc.set(user.toMap());
+  }
+
+// update user
+  static Future<void> updateUser(UserModel updateUser) {
+    updateUser.id = uid!;
+    return doc.update(updateUser.toMap());
   }
 
 //toast function
@@ -184,21 +189,36 @@ class Functions {
     }
   }
 
-// create new profile
-  static Future profileCreation(context, selectedImage, usernameController,
-      phoneController, countryController, addressController) async {
-    String? imageUrl = '';
+// create new profile and editing existing profile
+  static Future profileCreation(
+      context,
+      selectedImage,
+      String? uploadedimageUrl,
+      TextEditingController usernameController,
+      TextEditingController phoneController,
+      TextEditingController countryController,
+      TextEditingController addressController,
+      bool isEditing) async {
+
+    String? imageUrl = "";
     if (usernameController.text == "" ||
         phoneController.text == "" ||
         countryController.text == "" ||
         addressController.text == "") {
       Functions.showToast("Please fill all the fields");
-    } else if (selectedImage == null) {
+     
+      //checking from where the user is coming? from sign up or from edit profile
+    } else if (selectedImage == null && uploadedimageUrl == null) {
       Functions.showToast("Please select the profile picture");
     } else {
       try {
         Functions.showLoading(context);
-        imageUrl = await Functions.uploadFile(selectedImage!);
+        if(uploadedimageUrl == null || selectedImage!=null){
+          imageUrl = await Functions.uploadFile(selectedImage!);
+        }else{
+          imageUrl = uploadedimageUrl;
+        }
+
         final user = UserModel(
             username: usernameController.text,
             email: Functions.userEmail as String,
@@ -207,16 +227,31 @@ class Functions {
             address: addressController.text,
             image: imageUrl);
 
-        Functions.createNewUser(user).then((value) {
+        if (isEditing) {
+          Functions.updateUser(user).then(
+              (value) {
+                Functions.showToast("Profile Edited sucessfully");
+                Navigator.pop(context);
+
+              } );
+              
+        } else {
+          Functions.createNewUser(user).then((value) {
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => BottomAppBarClass()));
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const BottomAppBarClass()));
+
         });
+        }
+        
       } catch (e) {
         Functions.showToast("An error occors, please try again");
-        context.pop;
+        Navigator.pop(context);
       }
     }
   }
+
 
   //signout method
   static Future signOut(context) async {

@@ -66,7 +66,7 @@ class SettingScreen extends StatelessWidget {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CreateProfile(),
+                                builder: (context) => CreateProfile(userData: value.userData, isEditing: true),
                               ),
                               (route) => true);
                         },
@@ -96,7 +96,12 @@ class SettingScreen extends StatelessWidget {
                     SettingsButton(
                       icon: IconlyLight.delete,
                       buttonName: "Delete Account",
-                      onTap: () {},
+                      onTap: () {
+                        for (var i = 0; i < value.allUsers.length; i++) {
+                          print(value.allUsers[i].username);
+                        }
+                        
+                      },
                     ),
                     SettingsButton(
                       icon: IconlyLight.logout,
