@@ -3,21 +3,36 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
-import 'package:uplifty/providers/data_provider.dart';
+import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 import 'package:country_picker/country_picker.dart';
 
 class CreateProfile extends StatefulWidget {
-  const CreateProfile({super.key});
+  UserModel? userData;
+  bool isEditing;
+  CreateProfile({
+    super.key,
+    this.userData,
+    this.isEditing = false,
+  });
 
   @override
   State<CreateProfile> createState() => _CreateProfileState();
 }
 
 class _CreateProfileState extends State<CreateProfile> {
+  @override
+  void initState() {
+    if (widget.userData != null) {
+      displayData(widget.userData);
+    } else {
+      widget.userData = null;
+    }
+    super.initState();
+  }
+
   //for image
   String? imageUrl = '';
   XFile? selectedImage;
@@ -28,10 +43,17 @@ class _CreateProfileState extends State<CreateProfile> {
   TextEditingController addressController = TextEditingController();
   TextEditingController countryController = TextEditingController();
 
+  //display userdata in textfields
+  displayData(UserModel? userData) {
+    usernameController.text = userData!.username;
+    countryController.text = userData.country!;
+    phoneController.text = userData.phone;
+    addressController.text = userData.address!;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<DataProvider>(builder: (context, value, child) {
-      return Scaffold(
+    return Scaffold(
       backgroundColor: CColors.background,
       body: SafeArea(
           child: SingleChildScrollView(
@@ -43,7 +65,7 @@ class _CreateProfileState extends State<CreateProfile> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 50),
                 child: Text(
-                  value.userData != null? "Edit Profile": "Create Profile",
+                  widget.isEditing ? "Edit Profile" : "Create Profile",
                   style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -53,6 +75,7 @@ class _CreateProfileState extends State<CreateProfile> {
 
               // Profile avatar
               ProfileAvatar(
+                imageUrl: widget.userData?.image!,
                 selectedImage: selectedImage,
                 onTap: () async {
                   selectedImage = await Functions.imagePicker();
@@ -75,19 +98,12 @@ class _CreateProfileState extends State<CreateProfile> {
                 controller: countryController,
                 fieldName: "Country",
                 readOnly: true,
-                iconButton: IconButton(
-                  onPressed: () {
-                    Functions.countryPicker(context, (Country country) {
-                      countryController.text = country.displayNameNoCountryCode;
-                    });
-
-                    // countryPicker(context);
-                  },
-                  icon: Icon(
-                    IconlyLight.arrow_down_2,
-                    color: CColors.secondary,
-                  ),
-                ),
+                onTap: () {
+                  Functions.countryPicker(context, (Country country) {
+                    countryController.text = country.displayNameNoCountryCode;
+                  });
+                },
+                icon: IconlyLight.arrow_down_2,
               ),
 
               //phone textfield
@@ -109,15 +125,19 @@ class _CreateProfileState extends State<CreateProfile> {
               Padding(
                 padding: const EdgeInsets.only(top: 80),
                 child: SignButton(
-                    buttonName: "Get Started",
+                    buttonName:
+                        widget.isEditing ? "Edit Profile" : "Get Started",
                     onPressed: () {
+                      // displayData(value.userData!);
                       Functions.profileCreation(
                           context,
                           selectedImage,
+                          widget.userData?.image!,
                           usernameController,
                           phoneController,
                           countryController,
-                          addressController);
+                          addressController,
+                          widget.isEditing);
                     }),
               ),
             ],
@@ -125,7 +145,5 @@ class _CreateProfileState extends State<CreateProfile> {
         ),
       )),
     );
-    },);
-    
   }
 }

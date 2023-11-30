@@ -37,7 +37,7 @@ class CheckUser {
     if (userData.exists) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => BottomAppBarClass()),
+        MaterialPageRoute(builder: (context) => const BottomAppBarClass()),
       );
     } else {
       Navigator.pushReplacement(
