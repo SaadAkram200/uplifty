@@ -19,8 +19,8 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
   final pageOptions = [
     const HomeScreen(),
     const ChatScrreen(),
-    const SearchScreen(),
-    SettingScreen(),
+     SearchScreen(),
+   const SettingScreen(),
   ];
 
   @override
@@ -28,6 +28,7 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
     return Consumer<FunctionsProvider>(builder: (context, value, child) {
       return Scaffold(
         backgroundColor: CColors.background,
+        resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {},

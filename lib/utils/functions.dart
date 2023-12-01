@@ -110,8 +110,12 @@ class Functions {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
         Functions.showToast("Ready to Inspire your world? ");
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => CreateProfile()));
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateProfile(),
+          ),
+          (route) => false);
       } catch (error) {
         var e = error as FirebaseAuthException;
         Functions.showToast(e.message!);
@@ -237,10 +241,12 @@ class Functions {
               
         } else {
           Functions.createNewUser(user).then((value) {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const BottomAppBarClass()));
+          Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BottomAppBarClass(),
+          ),
+          (route) => false);
 
         });
         }
@@ -255,9 +261,13 @@ class Functions {
 
   //signout method
   static Future signOut(context) async {
-    Functions.showLoading(context);
+   // Functions.showLoading(context);
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) => LoginScreen()));
+    Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginScreen(),
+          ),
+          (route) => false);
   }
 }
