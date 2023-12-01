@@ -35,15 +35,20 @@ class CheckUser {
     var userData = await doc.get();
 
     if (userData.exists) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const BottomAppBarClass()),
-      );
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BottomAppBarClass(),
+          ),
+          (route) => false);
+      
     } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => CreateProfile()),
-      );
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CreateProfile(),
+          ),
+          (route) => false);
     }
   }
 }

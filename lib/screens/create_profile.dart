@@ -1,5 +1,4 @@
 // ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,6 +22,7 @@ class CreateProfile extends StatefulWidget {
 }
 
 class _CreateProfileState extends State<CreateProfile> {
+  //to check if user is coming from sign up screen or from edit profile
   @override
   void initState() {
     if (widget.userData != null) {
@@ -61,16 +61,49 @@ class _CreateProfileState extends State<CreateProfile> {
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
             children: [
-              //page name
-              Padding(
-                padding: const EdgeInsets.only(bottom: 50),
-                child: Text(
-                  widget.isEditing ? "Edit Profile" : "Create Profile",
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: CColors.primary),
-                ),
+              //pagename and back button
+              Row(
+                children: [
+                  //back button
+                  if (widget.isEditing) //runs only when user is coming to edit profile
+                    IconButton(
+                        onPressed: () => (Navigator.pop(context)),
+                        icon: Icon(
+                          IconlyLight.arrow_left_2,
+                          color: CColors.secondary,
+                          size: 30,
+                        )),
+                  if(!widget.isEditing)
+                  Opacity(
+                    opacity: 0,
+                    child: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          IconlyLight.arrow_left_2,
+                          size: 30,
+                        )),
+                  ),
+                  //page name
+                  Expanded(
+                    child: Text(
+                      widget.isEditing ? "Edit Profile" : "Create Profile",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: CColors.primary),
+                    ),
+                  ),
+                  Opacity(
+                    opacity: 0,
+                    child: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          IconlyLight.arrow_left_2,
+                          size: 30,
+                        )),
+                  ),
+                ],
               ),
 
               // Profile avatar
