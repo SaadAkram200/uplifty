@@ -46,6 +46,7 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                //Homescreen
                 IconButton(
                   iconSize: 30.0,
                   padding: const EdgeInsets.only(left: 28.0),
@@ -57,6 +58,8 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
                     value.onTabTapped(0);
                   },
                 ),
+                
+                //chat screen
                 IconButton(
                   iconSize: 30.0,
                   padding: const EdgeInsets.only(right: 28.0),
@@ -68,6 +71,8 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
                     value.onTabTapped(1);
                   },
                 ),
+                
+                //search screen
                 IconButton(
                   iconSize: 30.0,
                   padding: const EdgeInsets.only(left: 28.0),
@@ -79,6 +84,8 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
                     value.onTabTapped(2);
                   },
                 ),
+                
+                //setting screen
                 IconButton(
                   iconSize: 30.0,
                   padding: const EdgeInsets.only(right: 28.0),

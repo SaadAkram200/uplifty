@@ -20,12 +20,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void splashTimer() {
     Timer(const Duration(seconds: 3), () {
       CheckUser.isLoggedin(context);
-      // Navigator.pushReplacement(
-      //     context,
-      //     MaterialPageRoute(
-      //         builder: (context) => FirebaseAuth.instance.currentUser == null
-      //             ? LoginScreen()
-      //             : HomeScreen()));
     });
   }
 

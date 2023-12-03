@@ -122,6 +122,7 @@ class _CreateProfileState extends State<CreateProfile> {
                 child: UpliftyTextfields(
                   controller: usernameController,
                   fieldName: "User Name",
+                  prefixIcon: IconlyLight.profile,
                   keyboardType: TextInputType.name,
                 ),
               ),
@@ -130,19 +131,21 @@ class _CreateProfileState extends State<CreateProfile> {
               UpliftyTextfields(
                 controller: countryController,
                 fieldName: "Country",
+                prefixIcon: IconlyLight.location,
                 readOnly: true,
                 onTap: () {
                   Functions.countryPicker(context, (Country country) {
                     countryController.text = country.displayNameNoCountryCode;
                   });
                 },
-                icon: IconlyLight.arrow_down_2,
+                suffixIcon: IconlyLight.arrow_down_2,
               ),
 
               //phone textfield
               UpliftyTextfields(
                 controller: phoneController,
                 fieldName: "Phone Number",
+                prefixIcon: IconlyLight.call,
                 keyboardType: TextInputType.phone,
               ),
 
@@ -151,6 +154,7 @@ class _CreateProfileState extends State<CreateProfile> {
                 controller: addressController,
                 fieldName: "Address",
                 maxLines: 3,
+                //prefixIcon: IconlyLight.home,
                 keyboardType: TextInputType.streetAddress,
               ),
 

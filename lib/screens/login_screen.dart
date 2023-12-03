@@ -2,6 +2,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 import 'package:uplifty/screens/signup_screen.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
@@ -42,10 +43,12 @@ class LoginScreen extends StatelessWidget {
                         color: CColors.primary),
                   ),
                 ),
+               
                 //email textfield
                 UpliftyTextfields(
                   controller: emailController,
                   fieldName: "Email",
+                  prefixIcon: IconlyLight.message,
                   keyboardType: TextInputType.emailAddress,
                 ),
 
@@ -53,6 +56,7 @@ class LoginScreen extends StatelessWidget {
                 UpliftyTextfields(
                   controller: passwordController,
                   fieldName: "password",
+                  prefixIcon: IconlyLight.password,
                   obscureText: true,
                 ),
 

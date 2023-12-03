@@ -58,9 +58,12 @@ class UpliftyTextfields extends StatelessWidget {
   final String fieldName;
   final bool obscureText, readOnly;
   final int maxLines;
-  final IconData? icon;
-  void Function()? onTap;
+  final IconData? suffixIcon;
+  final IconData? prefixIcon;
   final TextInputType keyboardType;
+  void Function()? onTap;
+  void Function(String)? onChanged;
+  
   UpliftyTextfields(
       {super.key,
       required this.controller,
@@ -68,9 +71,12 @@ class UpliftyTextfields extends StatelessWidget {
       this.obscureText = false,
       this.readOnly = false,
       this.maxLines = 1,
-      this.icon,
+      this.suffixIcon,
+      this.prefixIcon,
       this.keyboardType = TextInputType.text,
-      this.onTap});
+      this.onTap,
+      this.onChanged,
+      });
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +94,7 @@ class UpliftyTextfields extends StatelessWidget {
             ]),
         child: TextField(
           onTap: onTap,
+          onChanged: onChanged,
           maxLines: maxLines,
           minLines: maxLines,
           keyboardType: keyboardType,
@@ -103,7 +110,8 @@ class UpliftyTextfields extends StatelessWidget {
                 left: 20,
                 top: 20,
               ),
-              suffixIcon: Icon(icon, color: CColors.secondary,),
+              prefixIcon: Icon(prefixIcon, color: CColors.secondary,),
+              suffixIcon: Icon(suffixIcon, color: CColors.secondary,),
               filled: true,
               fillColor: Colors.white,
               hintText: fieldName,
@@ -157,7 +165,7 @@ class ProfileAvatar extends StatelessWidget {
                 radius: 15,
                 backgroundColor: CColors.background,
                 child: Icon(
-                  Icons.camera_alt_outlined,
+                  IconlyLight.camera,
                   color: CColors.secondary,
                 ),
               ),

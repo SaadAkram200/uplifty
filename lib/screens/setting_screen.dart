@@ -24,7 +24,17 @@ class SettingScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    //page name
+                    Text(
+                      "Settings",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: CColors.primary),
+                    ),
                     const Spacer(),
+                   
+                   //profile details
                     CircleAvatar(
                       radius: 72,
                       backgroundColor: CColors.secondary,
@@ -75,8 +85,8 @@ class SettingScreen extends StatelessWidget {
                           style:
                               TextStyle(color: CColors.primary, fontSize: 18),
                         )),
-
                     const Spacer(),
+                    
                     //buttons
                     SettingsButton(
                       icon: IconlyLight.user,

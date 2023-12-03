@@ -2,6 +2,7 @@
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:iconly/iconly.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
@@ -46,6 +47,7 @@ class SignUpScreen extends StatelessWidget {
                 UpliftyTextfields(
                   controller: emailController,
                   fieldName: "Email",
+                  prefixIcon: IconlyLight.message,
                   keyboardType: TextInputType.emailAddress,
                 ),
 
@@ -53,6 +55,7 @@ class SignUpScreen extends StatelessWidget {
                 UpliftyTextfields(
                   controller: passwordController,
                   fieldName: "password",
+                  prefixIcon: IconlyLight.password,
                   obscureText: true,
                 ),
 
@@ -60,6 +63,7 @@ class SignUpScreen extends StatelessWidget {
                 UpliftyTextfields(
                   controller: confirmPassController,
                   fieldName: "Confirm Password",
+                  prefixIcon: IconlyLight.password,
                   obscureText: true,
                 ),
 
