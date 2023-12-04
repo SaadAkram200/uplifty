@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
 class SearchScreen extends StatelessWidget {
@@ -86,7 +87,14 @@ class SearchScreen extends StatelessWidget {
                                             style: TextStyle(
                                                 color: CColors.secondarydark)),
                                         trailing: IconButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              //adds the friend ID in CrntUser's sentrequest
+                                              Functions.sentRequest(
+                                                  value2.foundUsers[index]!.id);
+                                              //sends curnt user id to friends F.Request
+                                              Functions.friendRequest(
+                                                  value2.foundUsers[index]!.id);
+                                            },
                                             icon: Icon(
                                               IconlyLight.add_user,
                                               color: CColors.secondary,

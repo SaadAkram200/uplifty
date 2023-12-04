@@ -101,7 +101,9 @@ class SettingScreen extends StatelessWidget {
                     SettingsButton(
                       icon: IconlyLight.password,
                       buttonName: "Reset Password",
-                      onTap: () {},
+                      onTap: () {
+                        //Functions.sentRequest();
+                      },
                     ),
                     SettingsButton(
                       icon: IconlyLight.delete,

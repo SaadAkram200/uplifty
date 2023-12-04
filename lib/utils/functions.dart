@@ -39,6 +39,21 @@ class Functions {
     return doc.update(updateUser.toMap());
   }
 
+//saves frindID in current user's sent request
+static Future<void> sentRequest(friendID){
+  List sentrequest = [ friendID ];
+  return users.doc(uid).update({
+    "sentrequest": FieldValue.arrayUnion(sentrequest),
+  });
+}
+
+//adds current UserID into friend's freind request
+static Future<void> friendRequest(friendID){
+  List friendrequest = [ uid ];
+  return users.doc(friendID).update({
+    "friendrequest": FieldValue.arrayUnion(friendrequest),
+  });
+}
 //toast function
   static showToast(String message) {
     Fluttertoast.showToast(
@@ -261,7 +276,7 @@ class Functions {
 
   //signout method
   static Future signOut(context) async {
-   // Functions.showLoading(context);
+ 
     await FirebaseAuth.instance.signOut();
     Navigator.pushAndRemoveUntil(
           context,
