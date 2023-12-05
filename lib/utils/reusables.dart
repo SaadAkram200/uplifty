@@ -63,20 +63,20 @@ class UpliftyTextfields extends StatelessWidget {
   final TextInputType keyboardType;
   void Function()? onTap;
   void Function(String)? onChanged;
-  
-  UpliftyTextfields(
-      {super.key,
-      required this.controller,
-      required this.fieldName,
-      this.obscureText = false,
-      this.readOnly = false,
-      this.maxLines = 1,
-      this.suffixIcon,
-      this.prefixIcon,
-      this.keyboardType = TextInputType.text,
-      this.onTap,
-      this.onChanged,
-      });
+
+  UpliftyTextfields({
+    super.key,
+    required this.controller,
+    required this.fieldName,
+    this.obscureText = false,
+    this.readOnly = false,
+    this.maxLines = 1,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.keyboardType = TextInputType.text,
+    this.onTap,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -110,8 +110,14 @@ class UpliftyTextfields extends StatelessWidget {
                 left: 20,
                 top: 20,
               ),
-              prefixIcon: Icon(prefixIcon, color: CColors.secondary,),
-              suffixIcon: Icon(suffixIcon, color: CColors.secondary,),
+              prefixIcon: Icon(
+                prefixIcon,
+                color: CColors.secondary,
+              ),
+              suffixIcon: Icon(
+                suffixIcon,
+                color: CColors.secondary,
+              ),
               filled: true,
               fillColor: Colors.white,
               hintText: fieldName,
@@ -220,6 +226,50 @@ class SettingsButton extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ],
+    );
+  }
+}
+
+//page name and back button
+class PageName extends StatelessWidget {
+  void Function()? onPressed;
+  final String pageName;
+  PageName({super.key, required this.pageName, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        //backbutton
+        IconButton(
+            onPressed: onPressed,
+            icon: Icon(
+              IconlyLight.arrow_left_2,
+              color: CColors.secondary,
+              size: 30,
+            )),
+
+        //page name
+        Expanded(
+          child: Text(
+            pageName,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: CColors.primary),
+          ),
+        ),
+        Opacity(
+          opacity: 0,
+          child: IconButton(
+              onPressed: () {},
+              icon: const Icon(
+                IconlyLight.arrow_left_2,
+                size: 30,
+              )),
         ),
       ],
     );

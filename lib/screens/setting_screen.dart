@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/screens/create_profile.dart';
+import 'package:uplifty/screens/friends/friend_request.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/utils/functions.dart';
@@ -33,8 +34,8 @@ class SettingScreen extends StatelessWidget {
                           color: CColors.primary),
                     ),
                     const Spacer(),
-                   
-                   //profile details
+
+                    //profile details
                     CircleAvatar(
                       radius: 72,
                       backgroundColor: CColors.secondary,
@@ -76,7 +77,8 @@ class SettingScreen extends StatelessWidget {
                           Navigator.pushAndRemoveUntil(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => CreateProfile(userData: value.userData, isEditing: true),
+                                builder: (context) => CreateProfile(
+                                    userData: value.userData, isEditing: true),
                               ),
                               (route) => true);
                         },
@@ -86,7 +88,7 @@ class SettingScreen extends StatelessWidget {
                               TextStyle(color: CColors.primary, fontSize: 18),
                         )),
                     const Spacer(),
-                    
+
                     //buttons
                     SettingsButton(
                       icon: IconlyLight.user,
@@ -95,14 +97,21 @@ class SettingScreen extends StatelessWidget {
                     ),
                     SettingsButton(
                       icon: IconlyLight.add_user,
-                      buttonName: "Friend Request",
-                      onTap: () {},
+                      buttonName: "Friend Requests",
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FriendRequest(),
+                            ),
+                            (route) => true);
+                      },
                     ),
                     SettingsButton(
                       icon: IconlyLight.password,
                       buttonName: "Reset Password",
                       onTap: () {
-                        //Functions.sentRequest();
+                        Functions.getuserID();
                       },
                     ),
                     SettingsButton(
@@ -112,7 +121,6 @@ class SettingScreen extends StatelessWidget {
                         for (var i = 0; i < value.allUsers.length; i++) {
                           print(value.allUsers[i].username);
                         }
-                        
                       },
                     ),
                     SettingsButton(

@@ -5,6 +5,8 @@ class UserModel{
 //late String id;
   late String username, email, id, phone; 
    String? country, address,image;
+   List<dynamic>? sentrequest,friendrequest,myfriends;
+   
   
   UserModel({
     required this.username,
@@ -13,6 +15,9 @@ class UserModel{
     required this.country,
     required this.address,
     required this.image,
+    this.sentrequest,
+    this.friendrequest,
+    this.myfriends,
   });
 
   UserModel.fromMap(Map<String, dynamic>data)
@@ -24,6 +29,9 @@ class UserModel{
     country = data['country'];
     address = data['address'];
     image = data['image'];
+    sentrequest = data['sentrequest'];
+    friendrequest = data['friendrequest'];
+    myfriends = data['myfriends'];
     
 
   }
@@ -37,6 +45,9 @@ class UserModel{
       'country': country,
       'address': address,
       'image': image,
+      'sentrequest': sentrequest,  
+      'friendrequest': friendrequest,  
+      'myfriends': myfriends,  
       'timestamp': Timestamp.now(),
       
     };
