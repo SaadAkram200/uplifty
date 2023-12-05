@@ -7,6 +7,7 @@ import 'package:uplifty/screens/home_screen.dart';
 import 'package:uplifty/screens/search_screen.dart';
 import 'package:uplifty/screens/setting_screen.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/functions.dart';
 
 class BottomAppBarClass extends StatefulWidget {
   const BottomAppBarClass({super.key});
@@ -23,6 +24,14 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
    const SettingScreen(),
   ];
 
+// for initializing the Functions constructor 
+// changinf the uid
+late Functions functions;
+@override
+  void initState() {
+   functions = Functions();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Consumer<FunctionsProvider>(builder: (context, value, child) {

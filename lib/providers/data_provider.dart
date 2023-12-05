@@ -18,14 +18,14 @@ class DataProvider with ChangeNotifier {
       if (user == null) {
         cancelSubscriptions();
       } else {
-        uid= FirebaseAuth.instance.currentUser!.uid; 
+        uid = FirebaseAuth.instance.currentUser!.uid;
         callFunctions();
       }
     });
   }
 
   //to call the functions
-  callFunctions() { 
+  callFunctions() {
     getUserProfile();
     getUsersData();
   }
@@ -39,7 +39,6 @@ class DataProvider with ChangeNotifier {
   final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');
 
-  
   // to get current user data
   UserModel? userData;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? userStream;
@@ -56,19 +55,37 @@ class DataProvider with ChangeNotifier {
   }
 
 //to get all the users from firestore
-    List<UserModel> allUsers = [];
-    StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? usersStream;
-    getUsersData(){
-      usersStream = users.snapshots().listen((snapshot) { 
-        allUsers.clear();
-       for (var element in snapshot.docs) {
-        if (element.id != uid) {
-          allUsers.add(UserModel.fromMap(element.data()) );
-        }
-         notifyListeners();
-       }
-      });
+  List<UserModel> allUsers = [];
 
-    }
-  
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? usersStream;
+  getUsersData() {
+    usersStream = users.snapshots().listen((snapshot) {
+      allUsers.clear();
+      friendRequestList.clear();
+      for (var element in snapshot.docs) {
+        if (element.id != uid) {
+          allUsers.add(UserModel.fromMap(element.data()));
+        }
+        notifyListeners();
+
+        // if (userData!.friendrequest!.contains(element.id)) {
+        //   friendRequestList.add(UserModel.fromMap(element.data()));
+        // }
+        // notifyListeners();
+      }
+    });
+  }
+
+//stores all the users of user's friendrequest in list
+  List<UserModel> friendRequestList = [];
+  getFriendRequests() {
+    friendRequestList.clear();
+    friendRequestList = allUsers
+        .where((user) =>
+            userData!.friendrequest != null &&
+            userData!.friendrequest!.contains(user.id))
+        .map((user) => user)
+        .toList();
+    return friendRequestList;
+  }
 }

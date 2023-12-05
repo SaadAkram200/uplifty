@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'dart:async';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,14 +21,32 @@ import 'package:uplifty/utils/loading_widget.dart';
 import 'colors.dart';
 
 class Functions {
+
+  //constructor
+  Functions(){
+    FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        // User is signed out
+        uid = null;
+      } else {
+        // User is signed in
+        uid = user.uid;
+        userEmail = user.email;
+        doc = users.doc(uid);
+      }
+    });
+  }
   //firebase work
   static final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');
 
-  static var uid = FirebaseAuth.instance.currentUser?.uid;
-  static var userEmail = FirebaseAuth.instance.currentUser!.email;
-  static var doc = users.doc(uid);
+  static var uid;
+  static var userEmail;
+  static var doc;
 
+  static getuserID(){
+    print("curent user id:  "+uid.toString());
+  }
   //Create user
   static Future<void> createNewUser(UserModel user) {
     user.id = uid!;
@@ -37,6 +57,7 @@ class Functions {
   static Future<void> updateUser(UserModel updateUser) {
     updateUser.id = uid!;
     return doc.update(updateUser.toMap());
+    
   }
 
 //saves frindID in current user's sent request

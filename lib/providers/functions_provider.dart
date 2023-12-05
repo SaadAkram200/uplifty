@@ -32,4 +32,21 @@ class FunctionsProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+
+  List<UserModel> friendRequestList = [];
+  getFriendRequests(UserModel? userData, List<UserModel?> allUsers){
+    friendRequestList = allUsers
+      .where((user) =>
+          user != null &&
+          userData!.friendrequest != null &&
+          userData.friendrequest!.contains(user.id))
+      .map((user) => user as UserModel)
+      .toList();
+
+      print("coming from GetFriendrequests: ");
+      print(friendRequestList[0].id);
+      notifyListeners();
+    }
+
 }
