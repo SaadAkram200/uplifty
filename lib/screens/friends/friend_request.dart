@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
 // ignore: must_be_immutable
@@ -72,13 +73,18 @@ late List<UserModel>? listFriendRequests ;
                               spacing: -10,
                               children: [
                                 IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      Functions.acceptFriendRequest(listFriendRequests![index].id);
+                                    },
                                     icon: Icon(
                                       Icons.person_add_alt_1_outlined,
                                       color: CColors.secondary,
                                     )),
                                 IconButton(
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      //reject request
+                                      Functions.rejectFriendRequest(listFriendRequests![index].id);
+                                    },
                                     icon: Icon(
                                       Icons.person_remove_alt_1_outlined,
                                       color: CColors.secondary,

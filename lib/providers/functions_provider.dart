@@ -11,16 +11,19 @@ class FunctionsProvider with ChangeNotifier {
 
   //for search friends
   List<UserModel?> foundUsers = [];
-  filterSearchResults(String query, List<UserModel?> allUsers) {
-    foundUsers = allUsers
-        .where((user) =>
-            user!.username.toLowerCase().contains(query.toLowerCase()))
-        .toList();
-    notifyListeners();
-    if (query == "") {
-      foundUsers.clear();
-    }
+  void filterSearchResults(String query, UserModel currentUser, List<UserModel?> allUsers) {
+  foundUsers = allUsers
+      .where((user) =>
+          user != null &&
+          user.username.toLowerCase().contains(query.toLowerCase()) &&
+          !currentUser.myfriends!.contains(user.id))
+      .toList();
+  notifyListeners();
+  if (query == "") {
+    foundUsers.clear();
   }
+}
+
 
   //for search list - used in search screen
   bool isempty = true;
@@ -43,9 +46,6 @@ class FunctionsProvider with ChangeNotifier {
           userData.friendrequest!.contains(user.id))
       .map((user) => user as UserModel)
       .toList();
-
-      print("coming from GetFriendrequests: ");
-      print(friendRequestList[0].id);
       notifyListeners();
     }
 

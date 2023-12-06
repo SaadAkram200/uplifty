@@ -21,9 +21,8 @@ import 'package:uplifty/utils/loading_widget.dart';
 import 'colors.dart';
 
 class Functions {
-
   //constructor
-  Functions(){
+  Functions() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
         // User is signed out
@@ -44,9 +43,8 @@ class Functions {
   static var userEmail;
   static var doc;
 
-  static getuserID(){
-    print("curent user id:  "+uid.toString());
-  }
+  
+
   //Create user
   static Future<void> createNewUser(UserModel user) {
     user.id = uid!;
@@ -57,24 +55,60 @@ class Functions {
   static Future<void> updateUser(UserModel updateUser) {
     updateUser.id = uid!;
     return doc.update(updateUser.toMap());
-    
+  }
+  
+//sends friend request
+  static Future<void> sendFriendRequest(String friendID) async {
+    //saves frindID in current user's sent request
+    List<String> sentRequest = [friendID];
+    await users.doc(uid).update({
+      "sentrequest": FieldValue.arrayUnion(sentRequest),
+    });
+
+    //adds current UserID into friend's freind request
+    List<String> friendRequest = [uid];
+    await users.doc(friendID).update({
+      "friendrequest": FieldValue.arrayUnion(friendRequest),
+    });
+    Functions.showToast("Frined request sent!");
   }
 
-//saves frindID in current user's sent request
-static Future<void> sentRequest(friendID){
-  List sentrequest = [ friendID ];
-  return users.doc(uid).update({
-    "sentrequest": FieldValue.arrayUnion(sentrequest),
-  });
-}
+  //to reomve ids from both users requests
+  static Future<void> rejectFriendRequest(String friendID) async {
+    //saves frindID in current user's sent request
+    List<String> sentRequest = [uid];
+    await users.doc(friendID).update({
+      "sentrequest": FieldValue.arrayRemove(sentRequest),
+    });
 
-//adds current UserID into friend's freind request
-static Future<void> friendRequest(friendID){
-  List friendrequest = [ uid ];
-  return users.doc(friendID).update({
-    "friendrequest": FieldValue.arrayUnion(friendrequest),
-  });
-}
+    //adds current UserID into friend's freind request
+    List<String> friendRequest = [friendID];
+    await users.doc(uid).update({
+      "friendrequest": FieldValue.arrayRemove(friendRequest),
+    });
+   // Functions.showToast("Frined request rejected!");
+  }
+
+  //accept friend request
+  static Future<void> acceptFriendRequest(friendID)async{
+    //adds friend id in user's myfriends
+    List<String> myFrineds = [friendID];
+    await users.doc(uid).update({
+      "myfriends": FieldValue.arrayUnion(myFrineds)
+    });
+
+    //adds userid in frined's myfriends
+    List<String> friendsMyFrineds = [uid];
+    await users.doc(friendID).update({
+      "myfriends": FieldValue.arrayUnion(friendsMyFrineds)
+    });
+
+    //to remove ids from friendrequests and sent requests
+    Functions.rejectFriendRequest(friendID);
+    Functions.showToast("Say Hi to new friend");
+
+  }
+
 //toast function
   static showToast(String message) {
     Fluttertoast.showToast(
@@ -147,11 +181,11 @@ static Future<void> friendRequest(friendID){
             email: emailController.text, password: passwordController.text);
         Functions.showToast("Ready to Inspire your world? ");
         Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => CreateProfile(),
-          ),
-          (route) => false);
+            context,
+            MaterialPageRoute(
+              builder: (context) => CreateProfile(),
+            ),
+            (route) => false);
       } catch (error) {
         var e = error as FirebaseAuthException;
         Functions.showToast(e.message!);
@@ -239,23 +273,22 @@ static Future<void> friendRequest(friendID){
       TextEditingController countryController,
       TextEditingController addressController,
       bool isEditing) async {
-
     String? imageUrl = "";
     if (usernameController.text == "" ||
         phoneController.text == "" ||
         countryController.text == "" ||
         addressController.text == "") {
       Functions.showToast("Please fill all the fields");
-     
+
       //checking from where the user is coming? from sign up or from edit profile
     } else if (selectedImage == null && uploadedimageUrl == null) {
       Functions.showToast("Please select the profile picture");
     } else {
       try {
         Functions.showLoading(context);
-        if(uploadedimageUrl == null || selectedImage!=null){
+        if (uploadedimageUrl == null || selectedImage != null) {
           imageUrl = await Functions.uploadFile(selectedImage!);
-        }else{
+        } else {
           imageUrl = uploadedimageUrl;
         }
 
@@ -265,45 +298,41 @@ static Future<void> friendRequest(friendID){
             phone: phoneController.text,
             country: countryController.text,
             address: addressController.text,
-            image: imageUrl);
+            image: imageUrl,
+            friendrequest: [],
+            myfriends: [],
+            sentrequest: []);
 
         if (isEditing) {
-          Functions.updateUser(user).then(
-              (value) {
-                Functions.showToast("Profile Edited sucessfully");
-                Navigator.pop(context);
-
-              } );
-              
+          await Functions.updateUser(user);
+          Functions.showToast("Profile Edited sucessfully");
+          Navigator.pop(context);
         } else {
-          Functions.createNewUser(user).then((value) {
+          await Functions.createNewUser(user);
           Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const BottomAppBarClass(),
-          ),
-          (route) => false);
-
-        });
+              context,
+              MaterialPageRoute(
+                builder: (context) => const BottomAppBarClass(),
+              ),
+              (route) => false);
         }
-        
-      } catch (e) {
+      } catch (error) {
+        // var e = error as  ;
+        // Functions.showToast(e.message!);
         Functions.showToast("An error occors, please try again");
         Navigator.pop(context);
       }
     }
   }
 
-
   //signout method
   static Future signOut(context) async {
- 
     await FirebaseAuth.instance.signOut();
     Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (context) => LoginScreen(),
-          ),
-          (route) => false);
+        context,
+        MaterialPageRoute(
+          builder: (context) => LoginScreen(),
+        ),
+        (route) => false);
   }
 }

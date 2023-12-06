@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
+import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
@@ -45,8 +46,9 @@ class SearchScreen extends StatelessWidget {
                           fieldName: "Seach",
                           prefixIcon: IconlyLight.search,
                           onChanged: (text) {
-                            value2.filterSearchResults(text, value.allUsers);
+                            value2.filterSearchResults(text, value.userData as UserModel, value.allUsers);
                             value2.checking(searchController);
+                            
                           },
                         ),
                       ),
@@ -88,11 +90,8 @@ class SearchScreen extends StatelessWidget {
                                                 color: CColors.secondarydark)),
                                         trailing: IconButton(
                                             onPressed: () {
-                                              //adds the friend ID in CrntUser's sentrequest
-                                              Functions.sentRequest(
-                                                  value2.foundUsers[index]!.id);
-                                              //sends curnt user id to friends F.Request
-                                              Functions.friendRequest(
+                                              //sends friend request
+                                              Functions.sendFriendRequest(
                                                   value2.foundUsers[index]!.id);
                                             },
                                             icon: Icon(

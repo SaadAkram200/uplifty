@@ -67,11 +67,6 @@ class DataProvider with ChangeNotifier {
           allUsers.add(UserModel.fromMap(element.data()));
         }
         notifyListeners();
-
-        // if (userData!.friendrequest!.contains(element.id)) {
-        //   friendRequestList.add(UserModel.fromMap(element.data()));
-        // }
-        // notifyListeners();
       }
     });
   }
@@ -87,5 +82,18 @@ class DataProvider with ChangeNotifier {
         .map((user) => user)
         .toList();
     return friendRequestList;
+  }
+
+  //stores all the users of user's myfriend in list
+  List<UserModel> myFrinedsList = [];
+  getMyFriends() {
+    myFrinedsList.clear();
+    myFrinedsList = allUsers
+        .where((user) =>
+            userData!.myfriends != null &&
+            userData!.myfriends!.contains(user.id))
+        .map((user) => user)
+        .toList();
+    return myFrinedsList;
   }
 }

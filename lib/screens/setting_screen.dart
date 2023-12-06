@@ -5,6 +5,7 @@ import 'package:iconly/iconly.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/screens/create_profile.dart';
 import 'package:uplifty/screens/friends/friend_request.dart';
+import 'package:uplifty/screens/friends/myfriends_screen.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/utils/functions.dart';
@@ -93,7 +94,14 @@ class SettingScreen extends StatelessWidget {
                     SettingsButton(
                       icon: IconlyLight.user,
                       buttonName: "My Friends",
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => MyFriends(),
+                            ),
+                            (route) => true);
+                      },
                     ),
                     SettingsButton(
                       icon: IconlyLight.add_user,
@@ -110,18 +118,12 @@ class SettingScreen extends StatelessWidget {
                     SettingsButton(
                       icon: IconlyLight.password,
                       buttonName: "Reset Password",
-                      onTap: () {
-                        Functions.getuserID();
-                      },
+                      onTap: () {},
                     ),
                     SettingsButton(
                       icon: IconlyLight.delete,
                       buttonName: "Delete Account",
-                      onTap: () {
-                        for (var i = 0; i < value.allUsers.length; i++) {
-                          print(value.allUsers[i].username);
-                        }
-                      },
+                      onTap: () {},
                     ),
                     SettingsButton(
                       icon: IconlyLight.logout,
