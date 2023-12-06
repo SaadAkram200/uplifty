@@ -25,7 +25,7 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
   ];
 
 // for initializing the Functions constructor 
-// changinf the uid
+// changing the uid
 late Functions functions;
 @override
   void initState() {
