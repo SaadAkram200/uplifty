@@ -15,7 +15,7 @@ class HomeScreen extends StatelessWidget {
             backgroundColor: CColors.background,
             body: SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.only(left: 10, right: 10, top: 10),
                 child: Column(
                   children: [
                     //logo with user profile avatar
@@ -48,18 +48,20 @@ class HomeScreen extends StatelessWidget {
                             ))
                       ],
                     ),
-                    Divider(color: CColors.primary),
+                    Divider(color: CColors.primary ,),
 
                     Expanded(
                       child: GridView.builder(
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 1),
+                                crossAxisCount: 1, childAspectRatio: 1/1.5),
                         itemCount: 5,
                         itemBuilder: (context, index) {
                           return Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 10),
                             child: Container(
+                              //main container for post
                               decoration: BoxDecoration(
                                   color: CColors.bottomAppBarcolor,
                                   borderRadius: BorderRadius.circular(15),
@@ -71,6 +73,7 @@ class HomeScreen extends StatelessWidget {
                                     )
                                   ]),
                               child: Column(
+                                  //main column of post container
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     // for poster avatar, name and more button
@@ -80,7 +83,8 @@ class HomeScreen extends StatelessWidget {
                                         children: [
                                           CircleAvatar(
                                             radius: 22,
-                                            backgroundColor: CColors.secondary,
+                                            backgroundColor:
+                                                CColors.secondarydark,
                                             child: CircleAvatar(
                                               radius: 20,
                                               backgroundColor: Colors.white,
@@ -102,7 +106,7 @@ class HomeScreen extends StatelessWidget {
                                                   ? value.userData!.username
                                                   : 'loading',
                                               style: TextStyle(
-                                                  color: CColors.secondary,
+                                                  color: CColors.secondarydark,
                                                   fontSize: 16),
                                             ),
                                           ),
@@ -116,6 +120,17 @@ class HomeScreen extends StatelessWidget {
                                       ),
                                     ),
 
+                                    //for post caption
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,vertical: 5),
+                                      child: Text(
+                                        "post caption here",
+                                        style: TextStyle(
+                                            color: CColors.secondary),
+                                      ),
+                                    ),
+
                                     //for post image
                                     Padding(
                                       padding: const EdgeInsets.symmetric(
@@ -123,8 +138,16 @@ class HomeScreen extends StatelessWidget {
                                       child: ClipRRect(
                                         borderRadius:
                                             BorderRadius.circular(15.0),
-                                        child: Image.asset(
-                                            "assets/images/picture.png"),
+                                        child: Container(
+                                          constraints: const BoxConstraints(
+                                            maxHeight: 400,
+                                            maxWidth: 350,
+                                            minHeight: 400,
+                                            minWidth: 350,
+                                          ),
+                                          child: Image.asset(
+                                              "assets/images/DSC00575.jpg",),
+                                        ),
                                       ),
                                     ),
                                     //for like comment and share
