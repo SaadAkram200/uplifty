@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uplifty/models/post_model.dart';
 import 'package:uplifty/models/user_model.dart';
 
 class DataProvider with ChangeNotifier {
@@ -28,16 +29,21 @@ class DataProvider with ChangeNotifier {
   callFunctions() {
     getUserProfile();
     getUsersData();
+    getPosts();
   }
 
   //to dispose all the streams
   cancelSubscriptions() {
     userStream?.cancel();
     usersStream?.cancel();
+    postsStream?.cancel();
   }
 
   final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');
+
+  final CollectionReference<Map<String, dynamic>> posts =
+      FirebaseFirestore.instance.collection('posts');
 
   // to get current user data
   UserModel? userData;
@@ -70,6 +76,18 @@ class DataProvider with ChangeNotifier {
       }
     });
   }
+//to get all the posts
+List<PostModel> allPosts = [];
+StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? postsStream;
+getPosts(){
+  postsStream = posts.snapshots().listen((snapshot) {
+    allPosts.clear();
+    for (var element in snapshot.docs) {
+      allPosts.add(PostModel.fromMap(element.data()));
+      notifyListeners();
+    }
+   });
+}
 
 //stores all the users of user's friendrequest in list
   List<UserModel> friendRequestList = [];

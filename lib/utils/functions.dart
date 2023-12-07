@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:uplifty/models/post_model.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/screens/create_profile.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebasestorage;
@@ -35,15 +36,41 @@ class Functions {
       }
     });
   }
-  //firebase work
+  //firebase work for posts
+  static final CollectionReference<Map<String, dynamic>> posts =
+      FirebaseFirestore.instance.collection("posts");
+
+  //create new post
+  static Future<void> createNewPost(PostModel post) {
+    return posts.add(post.toMap());
+  }
+
+  static Future postCreation(context, XFile? selectedImage,
+      TextEditingController captionController) async {
+    if (selectedImage == null) {
+      showToast("Select image to post");
+    } else {
+      try {
+        showLoading(context);
+        String imageUrl = await uploadFile(selectedImage);
+        final newPost = PostModel(
+            id: uid, image: imageUrl, caption: captionController.text);
+        await createNewPost(newPost);
+        showToast("Posted Sucessfully!");
+        Navigator.pop(context);
+      } catch (e) {
+        showToast("An error ocours, please try again");
+      }
+    }
+  }
+
+  //firebase work for users
   static final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');
 
   static var uid;
   static var userEmail;
   static var doc;
-
-  
 
   //Create user
   static Future<void> createNewUser(UserModel user) {
@@ -56,7 +83,7 @@ class Functions {
     updateUser.id = uid!;
     return doc.update(updateUser.toMap());
   }
-  
+
 //sends friend request
   static Future<void> sendFriendRequest(String friendID) async {
     //saves frindID in current user's sent request
@@ -86,27 +113,26 @@ class Functions {
     await users.doc(uid).update({
       "friendrequest": FieldValue.arrayRemove(friendRequest),
     });
-   // Functions.showToast("Frined request rejected!");
+    // Functions.showToast("Frined request rejected!");
   }
 
   //accept friend request
-  static Future<void> acceptFriendRequest(friendID)async{
+  static Future<void> acceptFriendRequest(friendID) async {
     //adds friend id in user's myfriends
     List<String> myFrineds = [friendID];
-    await users.doc(uid).update({
-      "myfriends": FieldValue.arrayUnion(myFrineds)
-    });
+    await users
+        .doc(uid)
+        .update({"myfriends": FieldValue.arrayUnion(myFrineds)});
 
     //adds userid in frined's myfriends
     List<String> friendsMyFrineds = [uid];
-    await users.doc(friendID).update({
-      "myfriends": FieldValue.arrayUnion(friendsMyFrineds)
-    });
+    await users
+        .doc(friendID)
+        .update({"myfriends": FieldValue.arrayUnion(friendsMyFrineds)});
 
     //to remove ids from friendrequests and sent requests
     Functions.rejectFriendRequest(friendID);
     Functions.showToast("Say Hi to new friend");
-
   }
 
 //toast function
@@ -147,8 +173,8 @@ class Functions {
     // checking if Textfields are empty
     if (emailController.text == "" || passwordController.text == "") {
       emailController.text == ""
-          ? Functions.showToast("Required Email Address")
-          : Functions.showToast("Required Password");
+          ? showToast("Required Email Address")
+          : showToast("Required Password");
     } else {
       try {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -156,7 +182,7 @@ class Functions {
 
         CheckUser.isCreatedProfile(context);
       } catch (e) {
-        Functions.showToast("Incorrect Email or password");
+        showToast("Incorrect Email or password");
       }
     }
   }
@@ -171,15 +197,15 @@ class Functions {
     // checking if Textfields are empty
     if (emailController.text == "" || passwordController.text == "") {
       emailController.text == ""
-          ? Functions.showToast("Required Email Address")
-          : Functions.showToast("Required Password");
+          ? showToast("Required Email Address")
+          : showToast("Required Password");
     } else if (confirmPassController.text != passwordController.text) {
-      Functions.showToast("Confirm password doesn't match!");
+      showToast("Confirm password doesn't match!");
     } else {
       try {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text, password: passwordController.text);
-        Functions.showToast("Ready to Inspire your world? ");
+        showToast("Ready to Inspire your world? ");
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
@@ -188,7 +214,7 @@ class Functions {
             (route) => false);
       } catch (error) {
         var e = error as FirebaseAuthException;
-        Functions.showToast(e.message!);
+        showToast(e.message!);
       }
     }
   }
@@ -278,16 +304,16 @@ class Functions {
         phoneController.text == "" ||
         countryController.text == "" ||
         addressController.text == "") {
-      Functions.showToast("Please fill all the fields");
+      showToast("Please fill all the fields");
 
       //checking from where the user is coming? from sign up or from edit profile
     } else if (selectedImage == null && uploadedimageUrl == null) {
-      Functions.showToast("Please select the profile picture");
+      showToast("Please select the profile picture");
     } else {
       try {
-        Functions.showLoading(context);
+        showLoading(context);
         if (uploadedimageUrl == null || selectedImage != null) {
-          imageUrl = await Functions.uploadFile(selectedImage!);
+          imageUrl = await uploadFile(selectedImage!);
         } else {
           imageUrl = uploadedimageUrl;
         }
@@ -304,11 +330,11 @@ class Functions {
             sentrequest: []);
 
         if (isEditing) {
-          await Functions.updateUser(user);
-          Functions.showToast("Profile Edited sucessfully");
+          await updateUser(user);
+          showToast("Profile Edited sucessfully");
           Navigator.pop(context);
         } else {
-          await Functions.createNewUser(user);
+          await createNewUser(user);
           Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(
@@ -317,9 +343,7 @@ class Functions {
               (route) => false);
         }
       } catch (error) {
-        // var e = error as  ;
-        // Functions.showToast(e.message!);
-        Functions.showToast("An error occors, please try again");
+        showToast("An error occors, please try again");
         Navigator.pop(context);
       }
     }

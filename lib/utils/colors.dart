@@ -7,20 +7,6 @@ static Color secondarydark = const Color(0xff1C5B2A);
 static  Color background = const Color(0xffCCFDD2);
 static  Color bottomAppBarcolor = const Color(0xffa3e6a5);
 
-
-static Color grad1 = const Color(0xff8B7831);
-static Color grad2 = const Color(0xffC0A343);
-static Color grad3 = const Color(0xffE0D798);
-static Color grad4 = const Color(0xffE5D177);
-static Color grad5 = const Color(0xff947F30);
-
-static Color redGrad1 = const Color(0xffED3237);
-static Color redGrad2 = const Color(0xffA01D20);
-
-static Color blackGrad1 = const Color(0xff121315);
-static Color blackGrad2 = const Color(0xff3E3E3E);
-
-
 static Color greenGrad1 = const Color(0xff01AA45);
 static Color greenGrad2 = const Color(0xff00702D);
 
