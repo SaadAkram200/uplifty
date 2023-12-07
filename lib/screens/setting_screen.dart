@@ -20,20 +20,24 @@ class SettingScreen extends StatelessWidget {
         backgroundColor: CColors.background,
         body: SafeArea(
           child: Padding(
-              padding: const EdgeInsets.all(15),
+              padding: const EdgeInsets.all(10),
               child: Consumer<DataProvider>(builder: (context, value, child) {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     //page name
-                    Text(
-                      "Settings",
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: CColors.primary),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "Settings",
+                        style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: CColors.primary),
+                      ),
                     ),
+                    Divider(color: CColors.primary),
                     const Spacer(),
 
                     //profile details

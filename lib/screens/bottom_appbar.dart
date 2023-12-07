@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
+import 'package:uplifty/screens/addpost_screen.dart';
 import 'package:uplifty/screens/chat_screen.dart';
 import 'package:uplifty/screens/home_screen.dart';
 import 'package:uplifty/screens/search_screen.dart';
@@ -20,18 +21,19 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
   final pageOptions = [
     const HomeScreen(),
     const ChatScrreen(),
-     SearchScreen(),
-   const SettingScreen(),
+    SearchScreen(),
+    const SettingScreen(),
   ];
 
-// for initializing the Functions constructor 
+// for initializing the Functions constructor
 // changing the uid
-late Functions functions;
-@override
+  late Functions functions;
+  @override
   void initState() {
-   functions = Functions();
+    functions = Functions();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<FunctionsProvider>(builder: (context, value, child) {
@@ -40,7 +42,14 @@ late Functions functions;
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddPost(),
+                ),
+                (route) => true);
+          },
           tooltip: 'Increment',
           elevation: 5.0,
           backgroundColor: CColors.secondary,
@@ -67,7 +76,7 @@ late Functions functions;
                     value.onTabTapped(0);
                   },
                 ),
-                
+
                 //chat screen
                 IconButton(
                   iconSize: 30.0,
@@ -80,7 +89,7 @@ late Functions functions;
                     value.onTabTapped(1);
                   },
                 ),
-                
+
                 //search screen
                 IconButton(
                   iconSize: 30.0,
@@ -93,7 +102,7 @@ late Functions functions;
                     value.onTabTapped(2);
                   },
                 ),
-                
+
                 //setting screen
                 IconButton(
                   iconSize: 30.0,

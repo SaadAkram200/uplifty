@@ -37,6 +37,7 @@ class SearchScreen extends StatelessWidget {
                               color: CColors.primary),
                         ),
                       ),
+                      Divider(color: CColors.primary),
 
                       //textfield for search users
                       Padding(
@@ -61,7 +62,7 @@ class SearchScreen extends StatelessWidget {
                                 itemBuilder: (context, index) {
                                   return Padding(
                                     padding:
-                                        const EdgeInsets.symmetric(vertical: 8),
+                                        const EdgeInsets.symmetric(vertical: 8,horizontal: 5),
                                     child: Container(
                                       decoration: BoxDecoration(
                                           color: CColors.bottomAppBarcolor,

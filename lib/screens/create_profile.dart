@@ -2,7 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:uplifty/models/user_model.dart';
+import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
@@ -53,134 +55,140 @@ class _CreateProfileState extends State<CreateProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: CColors.background,
-      body: SafeArea(
-          child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              //pagename and back button
-              Row(
+    return Consumer<FunctionsProvider>(
+      builder: (context, value, child) {
+        return Scaffold(
+          backgroundColor: CColors.background,
+          body: SafeArea(
+              child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Column(
                 children: [
-                  //back button
-                  if (widget.isEditing) //runs only when user is coming to edit profile
-                    IconButton(
-                        onPressed: () => (Navigator.pop(context)),
-                        icon: Icon(
-                          IconlyLight.arrow_left_2,
-                          color: CColors.secondary,
-                          size: 30,
-                        )),
-                  if(!widget.isEditing)
-                  Opacity(
-                    opacity: 0,
-                    child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          IconlyLight.arrow_left_2,
-                          size: 30,
-                        )),
+                  //pagename and back button
+                  Row(
+                    children: [
+                      //back button
+                      if (widget
+                          .isEditing) //runs only when user is coming to edit profile
+                        IconButton(
+                            onPressed: () => (Navigator.pop(context)),
+                            icon: Icon(
+                              IconlyLight.arrow_left_2,
+                              color: CColors.secondary,
+                              size: 30,
+                            )),
+                      if (!widget.isEditing)
+                        Opacity(
+                          opacity: 0,
+                          child: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                IconlyLight.arrow_left_2,
+                                size: 30,
+                              )),
+                        ),
+                      //page name
+                      Expanded(
+                        child: Text(
+                          widget.isEditing ? "Edit Profile" : "Create Profile",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: CColors.primary),
+                        ),
+                      ),
+                      Opacity(
+                        opacity: 0,
+                        child: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              IconlyLight.arrow_left_2,
+                              size: 30,
+                            )),
+                      ),
+                    ],
                   ),
-                  //page name
-                  Expanded(
-                    child: Text(
-                      widget.isEditing ? "Edit Profile" : "Create Profile",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: CColors.primary),
+                  Divider(color: CColors.primary),
+                  // Profile avatar
+                  ProfileAvatar(
+                    imageUrl: widget.userData?.image!,
+                    selectedImage: selectedImage,
+                    onTap: () async {
+                      selectedImage = await Functions.imagePicker();
+                      setState(() {});
+                    },
+                  ),
+
+                  //username textfield
+                  Padding(
+                    padding: const EdgeInsets.only(top: 80.0),
+                    child: UpliftyTextfields(
+                      controller: usernameController,
+                      fieldName: "User Name",
+                      prefixIcon: IconlyLight.profile,
+                      keyboardType: TextInputType.name,
                     ),
                   ),
-                  Opacity(
-                    opacity: 0,
-                    child: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          IconlyLight.arrow_left_2,
-                          size: 30,
-                        )),
+
+                  //country textfield
+                  UpliftyTextfields(
+                    controller: countryController,
+                    fieldName: "Country",
+                    prefixIcon: IconlyLight.location,
+                    readOnly: true,
+                    onTap: () {
+                      Functions.countryPicker(context, (Country country) {
+                        countryController.text =
+                            country.displayNameNoCountryCode;
+                      });
+                    },
+                    suffixIcon: IconlyLight.arrow_down_2,
+                  ),
+
+                  //phone textfield
+                  UpliftyTextfields(
+                    controller: phoneController,
+                    fieldName: "Phone Number",
+                    prefixIcon: IconlyLight.call,
+                    keyboardType: TextInputType.phone,
+                  ),
+
+                  //Address
+                  UpliftyTextfields(
+                    controller: addressController,
+                    fieldName: "Address",
+                    maxLines: 3,
+                    //prefixIcon: IconlyLight.home,
+                    keyboardType: TextInputType.streetAddress,
+                  ),
+
+                  //get started
+                  Padding(
+                    padding: const EdgeInsets.only(top: 80),
+                    child: SignButton(
+                        buttonName:
+                            widget.isEditing ? "Edit Profile" : "Get Started",
+                        onPressed: () {
+                          // displayData(value.userData!);
+                          Functions.profileCreation(
+                              context,
+                              selectedImage,
+                              widget.userData?.image!,
+                              usernameController,
+                              phoneController,
+                              countryController,
+                              addressController,
+                              widget.isEditing);
+                        }),
                   ),
                 ],
               ),
-
-              // Profile avatar
-              ProfileAvatar(
-                imageUrl: widget.userData?.image!,
-                selectedImage: selectedImage,
-                onTap: () async {
-                  selectedImage = await Functions.imagePicker();
-                  setState(() {});
-                },
-              ),
-
-              //username textfield
-              Padding(
-                padding: const EdgeInsets.only(top: 80.0),
-                child: UpliftyTextfields(
-                  controller: usernameController,
-                  fieldName: "User Name",
-                  prefixIcon: IconlyLight.profile,
-                  keyboardType: TextInputType.name,
-                ),
-              ),
-
-              //country textfield
-              UpliftyTextfields(
-                controller: countryController,
-                fieldName: "Country",
-                prefixIcon: IconlyLight.location,
-                readOnly: true,
-                onTap: () {
-                  Functions.countryPicker(context, (Country country) {
-                    countryController.text = country.displayNameNoCountryCode;
-                  });
-                },
-                suffixIcon: IconlyLight.arrow_down_2,
-              ),
-
-              //phone textfield
-              UpliftyTextfields(
-                controller: phoneController,
-                fieldName: "Phone Number",
-                prefixIcon: IconlyLight.call,
-                keyboardType: TextInputType.phone,
-              ),
-
-              //Address
-              UpliftyTextfields(
-                controller: addressController,
-                fieldName: "Address",
-                maxLines: 3,
-                //prefixIcon: IconlyLight.home,
-                keyboardType: TextInputType.streetAddress,
-              ),
-
-              //get started
-              Padding(
-                padding: const EdgeInsets.only(top: 80),
-                child: SignButton(
-                    buttonName:
-                        widget.isEditing ? "Edit Profile" : "Get Started",
-                    onPressed: () {
-                      // displayData(value.userData!);
-                      Functions.profileCreation(
-                          context,
-                          selectedImage,
-                          widget.userData?.image!,
-                          usernameController,
-                          phoneController,
-                          countryController,
-                          addressController,
-                          widget.isEditing);
-                    }),
-              ),
-            ],
-          ),
-        ),
-      )),
+            ),
+          )),
+        );
+      },
     );
   }
 }

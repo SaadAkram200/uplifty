@@ -36,7 +36,7 @@ late List<UserModel>? listFriendRequests ;
                      Navigator.pop(context);
                   },
                 ),
-                 const SizedBox(height: 30,),
+                Divider(color: CColors.primary),
 
                 //to show all the friendrequets of current User
                 Expanded(
@@ -44,7 +44,7 @@ late List<UserModel>? listFriendRequests ;
                   itemCount: value.friendRequestList.length,
                   itemBuilder: (context, index) {
                     return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.symmetric(vertical: 8,horizontal: 5),
                       child: Container(
                         decoration: BoxDecoration(
                             color: CColors.bottomAppBarcolor,
