@@ -5,7 +5,7 @@ import 'package:uplifty/models/user_model.dart';
 class FunctionsProvider with ChangeNotifier {
   //for bottom appbar
   int selectedPage = 0;
-  
+
   onTabTapped(int index) {
     selectedPage = index;
     notifyListeners();
@@ -37,6 +37,21 @@ class FunctionsProvider with ChangeNotifier {
     }
     notifyListeners();
   }
+
+  //for like button
+  bool isliked = false;
+  liked(index) {
+    isliked = !isliked;
+    if (isliked) {
+       favlist.add(index);
+    } else {
+      favlist.remove(index);
+    }
+    notifyListeners();
+  }
+
+  List favlist = [];
+  
 
   List<UserModel> friendRequestList = [];
   getFriendRequests(UserModel? userData, List<UserModel?> allUsers) {

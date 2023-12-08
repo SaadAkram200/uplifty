@@ -93,6 +93,7 @@ class AddPost extends StatelessWidget {
                   onPressed: () async{
                    await Functions.postCreation(context, value.selectedImage, captionController);
                    value.selectedImage = null;
+                   captionController.clear();
                   },
                 ),
                 const Spacer(),

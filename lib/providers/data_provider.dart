@@ -29,7 +29,7 @@ class DataProvider with ChangeNotifier {
   callFunctions() {
     getUserProfile();
     getUsersData();
-    getPosts();
+    
   }
 
   //to dispose all the streams
@@ -53,6 +53,8 @@ class DataProvider with ChangeNotifier {
     userStream = doc.snapshots().listen((snapshot) {
       if (snapshot.exists) {
         userData = UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
+
+        getPosts();// to get user's friends posts
       } else {
         userData = null;
       }
@@ -61,6 +63,7 @@ class DataProvider with ChangeNotifier {
   }
 
 //to get all the users from firestore
+//execpt the current user
   List<UserModel> allUsers = [];
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? usersStream;
@@ -76,18 +79,31 @@ class DataProvider with ChangeNotifier {
       }
     });
   }
-//to get all the posts
-List<PostModel> allPosts = [];
-StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? postsStream;
-getPosts(){
-  postsStream = posts.snapshots().listen((snapshot) {
-    allPosts.clear();
-    for (var element in snapshot.docs) {
-      allPosts.add(PostModel.fromMap(element.data()));
-      notifyListeners();
-    }
-   });
+  
+  //to get poster's data
+  UserModel? getPosterData(String posterUid) {
+  return allUsers.where((user) => user.id == posterUid).first;
+  
 }
+
+//to get all the posts of the user's friends only
+  List<PostModel> allPosts = [];
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? postsStream;
+  getPosts() {
+    postsStream?.cancel();
+    postsStream = posts
+        .where('posterUid', whereIn: userData?.myfriends)
+        .snapshots()
+        .listen((snapshot) {
+      allPosts.clear();
+      for (var element in snapshot.docs) {
+        
+        allPosts.add(PostModel.fromMap(element.data()));
+        
+        notifyListeners();
+      }
+    });
+  }
 
 //stores all the users of user's friendrequest in list
   List<UserModel> friendRequestList = [];
