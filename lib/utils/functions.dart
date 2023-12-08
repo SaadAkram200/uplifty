@@ -41,10 +41,21 @@ class Functions {
       FirebaseFirestore.instance.collection("posts");
 
   //create new post
-  static Future<void> createNewPost(PostModel post) {
-    return posts.add(post.toMap());
+  static Future<void> createNewPost(
+      String imageUrl, TextEditingController captionController) {
+    var postdoc = posts.doc();
+    String postid = postdoc.id;
+    final newPost = PostModel(
+        posterUid: uid,
+        image: imageUrl,
+        caption: captionController.text,
+        postid: postid,
+        likedby: [],
+        );
+    return postdoc.set(newPost.toMap());
   }
 
+  //to create post
   static Future postCreation(context, XFile? selectedImage,
       TextEditingController captionController) async {
     if (selectedImage == null) {
@@ -53,9 +64,7 @@ class Functions {
       try {
         showLoading(context);
         String imageUrl = await uploadFile(selectedImage);
-        final newPost = PostModel(
-            id: uid, image: imageUrl, caption: captionController.text);
-        await createNewPost(newPost);
+        await createNewPost(imageUrl, captionController);
         showToast("Posted Sucessfully!");
         Navigator.pop(context);
       } catch (e) {
@@ -63,7 +72,11 @@ class Functions {
       }
     }
   }
-
+//for liked button// adds current
+ static Future<void> addLike(username) async {
+  List<String> likedby = [username];
+  await posts.doc();
+ }
   //firebase work for users
   static final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');
@@ -131,9 +144,10 @@ class Functions {
         .update({"myfriends": FieldValue.arrayUnion(friendsMyFrineds)});
 
     //to remove ids from friendrequests and sent requests
-    Functions.rejectFriendRequest(friendID);
-    Functions.showToast("Say Hi to new friend");
+    rejectFriendRequest(friendID);
+    showToast("Say Hi to new friend");
   }
+
 
 //toast function
   static showToast(String message) {
