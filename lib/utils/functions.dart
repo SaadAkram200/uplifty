@@ -72,11 +72,23 @@ class Functions {
       }
     }
   }
-//for liked button// adds current
- static Future<void> addLike(username) async {
-  List<String> likedby = [username];
-  await posts.doc();
+
+//for like button// adds current uid in  post's likedby
+ static Future<void> addLike(String postid,String uid) async {
+  List<String> likedby = [ uid ];
+  await posts.doc(postid).update({
+    'likedby': FieldValue.arrayUnion(likedby),
+  });
  }
+ 
+ //for like button// removes current uid in  post's likedby
+ static Future<void> removeLike(String postid,String uid) async {
+  List<String> unlikedby = [ uid ];
+  await posts.doc(postid).update({
+    'likedby': FieldValue.arrayRemove(unlikedby),
+  });
+ }
+ 
   //firebase work for users
   static final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');

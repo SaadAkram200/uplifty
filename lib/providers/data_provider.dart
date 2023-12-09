@@ -29,7 +29,6 @@ class DataProvider with ChangeNotifier {
   callFunctions() {
     getUserProfile();
     getUsersData();
-    
   }
 
   //to dispose all the streams
@@ -45,6 +44,9 @@ class DataProvider with ChangeNotifier {
   final CollectionReference<Map<String, dynamic>> posts =
       FirebaseFirestore.instance.collection('posts');
 
+  final CollectionReference<Map<String, dynamic >> postcomments = 
+      FirebaseFirestore.instance.collection("posts").doc(  ).collection("comments");
+  
   // to get current user data
   UserModel? userData;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? userStream;
@@ -54,7 +56,7 @@ class DataProvider with ChangeNotifier {
       if (snapshot.exists) {
         userData = UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
 
-        getPosts();// to get user's friends posts
+        getPosts(); // to get user's friends posts
       } else {
         userData = null;
       }
@@ -65,13 +67,16 @@ class DataProvider with ChangeNotifier {
 //to get all the users from firestore
 //execpt the current user
   List<UserModel> allUsers = [];
+  List<UserModel> everyUsers = [];
 
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? usersStream;
   getUsersData() {
     usersStream = users.snapshots().listen((snapshot) {
       allUsers.clear();
+      everyUsers.clear();
       friendRequestList.clear();
       for (var element in snapshot.docs) {
+        everyUsers.add(UserModel.fromMap(element.data()));
         if (element.id != uid) {
           allUsers.add(UserModel.fromMap(element.data()));
         }
@@ -79,12 +84,11 @@ class DataProvider with ChangeNotifier {
       }
     });
   }
-  
+
   //to get poster's data
   UserModel? getPosterData(String posterUid) {
-  return allUsers.where((user) => user.id == posterUid).first;
-  
-}
+    return everyUsers.where((user) => user.id == posterUid).toList().first;
+  }
 
 //to get all the posts of the user's friends only
   List<PostModel> allPosts = [];
@@ -97,9 +101,8 @@ class DataProvider with ChangeNotifier {
         .listen((snapshot) {
       allPosts.clear();
       for (var element in snapshot.docs) {
-        
         allPosts.add(PostModel.fromMap(element.data()));
-        
+
         notifyListeners();
       }
     });
