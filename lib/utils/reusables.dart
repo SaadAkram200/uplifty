@@ -63,6 +63,7 @@ class UpliftyTextfields extends StatelessWidget {
   final TextInputType keyboardType;
   void Function()? onTap;
   void Function(String)? onChanged;
+  void Function()? suffixIconOnpressed;
 
   UpliftyTextfields({
     super.key,
@@ -76,6 +77,7 @@ class UpliftyTextfields extends StatelessWidget {
     this.keyboardType = TextInputType.text,
     this.onTap,
     this.onChanged,
+    this.suffixIconOnpressed,
   });
 
   @override
@@ -114,8 +116,9 @@ class UpliftyTextfields extends StatelessWidget {
                 prefixIcon,
                 color: CColors.secondary,
               ),
-              suffixIcon: Icon(
-                suffixIcon,
+              suffixIcon: IconButton(
+                onPressed: suffixIconOnpressed,
+                icon: Icon(suffixIcon),
                 color: CColors.secondary,
               ),
               filled: true,

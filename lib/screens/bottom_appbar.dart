@@ -19,7 +19,7 @@ class BottomAppBarClass extends StatefulWidget {
 
 class _BottomAppBarClassState extends State<BottomAppBarClass> {
   final pageOptions = [
-    const HomeScreen(),
+     HomeScreen(),
     const ChatScrreen(),
     SearchScreen(),
     const SettingScreen(),

@@ -1,13 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class UserModel{
-
+class UserModel {
 //late String id;
-  late String username, email, id, phone; 
-   String? country, address,image;
-   List<dynamic>? sentrequest,friendrequest,myfriends;
-   
-  
+  late String username, email, id, phone;
+  String? country, address, image;
+  List<dynamic>? sentrequest, friendrequest, myfriends;
+
   UserModel({
     required this.username,
     required this.email,
@@ -20,8 +18,7 @@ class UserModel{
     this.myfriends,
   });
 
-  UserModel.fromMap(Map<String, dynamic>data)
-  {
+  UserModel.fromMap(Map<String, dynamic> data) {
     id = data["id"];
     username = data['username'];
     phone = data['phone'];
@@ -32,12 +29,10 @@ class UserModel{
     sentrequest = data['sentrequest'];
     friendrequest = data['friendrequest'];
     myfriends = data['myfriends'];
-    
-
   }
 
-  Map<String, dynamic>toMap(){
-    return{
+  Map<String, dynamic> toMap() {
+    return {
       "id": id,
       'username': username,
       'phone': phone,
@@ -45,12 +40,10 @@ class UserModel{
       'country': country,
       'address': address,
       'image': image,
-      'sentrequest': sentrequest,  
-      'friendrequest': friendrequest,  
-      'myfriends': myfriends,  
+      'sentrequest': sentrequest,
+      'friendrequest': friendrequest,
+      'myfriends': myfriends,
       'timestamp': Timestamp.now(),
-      
     };
   }
-
 }
