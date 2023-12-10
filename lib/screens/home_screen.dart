@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
+import 'package:uplifty/models/comment_model.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
@@ -12,55 +13,6 @@ import 'package:uplifty/utils/reusables.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   TextEditingController commentController = TextEditingController();
-  
-  commentDialog(index) {
-    return AlertDialog(
-      backgroundColor: CColors.background,
-      title: const Text("Comments"),
-      titleTextStyle: TextStyle(color: CColors.secondary),
-      content: Container(
-        constraints: const BoxConstraints(maxHeight: 340),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                  color: CColors.bottomAppBarcolor,
-                  borderRadius: BorderRadius.circular(30),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black45,
-                      blurRadius: 4,
-                      offset: Offset(0, 4),
-                    )
-                  ]),
-              child: ListTile(
-                leading: const CircleAvatar(
-                    backgroundImage: AssetImage("assets/images/dummyuser.jpg")),
-                title: Text(
-                  " commenter's name",
-                  style: TextStyle(color: CColors.secondary, fontSize: 12),
-                ),
-                subtitle: Text(
-                  "very nice picture bro <3",
-                  style: TextStyle(color: CColors.secondarydark),
-                ),
-              ),
-            ),
-            UpliftyTextfields(
-              controller: commentController,
-              fieldName: "Write a comment",
-              prefixIcon: Icons.comment_outlined,
-              suffixIcon: Icons.send,
-              suffixIconOnpressed: () {
-                print(index);
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
 
 //to show list of users who liked the post
   likedByDialog(index, DataProvider value) {
@@ -69,61 +21,166 @@ class HomeScreen extends StatelessWidget {
       title: const Text(
         "Liked By:",
       ),
-      titleTextStyle: TextStyle(color: CColors.secondary),
+      titleTextStyle: TextStyle(color: CColors.secondarydark),
       content: Container(
         constraints: const BoxConstraints(
           maxHeight: 340,
         ),
         width: double.maxFinite,
-        child: ListView.builder(
-          itemCount: value.allPosts[index].likedby?.length,
-          itemBuilder: (context, i) {
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-              child: Container(
-                decoration: BoxDecoration(
-                    color: CColors.bottomAppBarcolor,
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black45,
-                        blurRadius: 4,
-                        offset: Offset(0, 4),
-                      )
-                    ]),
-                child: ListTile(
-                  leading: CircleAvatar(
-                      backgroundImage: NetworkImage(value
-                          .getPosterData(
-                            value.allPosts[index].likedby?[i],
-                          )
-                          ?.image as String)),
-                  title: Text(
-                    value
-                        .getPosterData(value.allPosts[index].likedby?[i])!
-                        .username,
-                    style: TextStyle(
-                        color: CColors.secondarydark,
-                        fontWeight: FontWeight.w500),
-                  ),
-                  subtitle: Text(
-                    value
-                        .getPosterData(value.allPosts[index].likedby?[i])!
-                        .country as String,
-                    style: TextStyle(
-                        color: CColors.secondary, fontWeight: FontWeight.w500),
-                  ),
-                ),
+        child: value.allPosts[index].likedby!.isEmpty
+            ? Text(
+                "No likes yet...",
+                style: TextStyle(color: CColors.secondary, fontSize: 14),
+              )
+            : ListView.builder(
+                itemCount: value.allPosts[index].likedby?.length,
+                itemBuilder: (context, i) {
+                  return Padding(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: CColors.bottomAppBarcolor,
+                          borderRadius: BorderRadius.circular(30),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black45,
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                            )
+                          ]),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                            backgroundImage: NetworkImage(value
+                                .getPosterData(
+                                  value.allPosts[index].likedby?[i],
+                                )
+                                ?.image as String)),
+                        title: Text(
+                          value
+                              .getPosterData(value.allPosts[index].likedby?[i])!
+                              .username,
+                          style: TextStyle(
+                              color: CColors.secondarydark,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        subtitle: Text(
+                          value
+                              .getPosterData(value.allPosts[index].likedby?[i])!
+                              .country as String,
+                          style: TextStyle(
+                              color: CColors.secondary,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
-            );
-          },
-        ),
       ),
     );
   }
 
+//to show comments of post
+  commentsBottomSheet(context, index, DataProvider value) {
+    return showModalBottomSheet(
+      context: context,
+      backgroundColor: CColors.background,
+      showDragHandle: true,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Column(
+            children: [
+              Expanded(
+                  child: value.postCommentsList!.isEmpty
+                      ? Text(
+                          "No comments yet..",
+                          style:
+                              TextStyle(color: CColors.secondary, fontSize: 18),
+                        )
+                      : ListView.builder(
+                          itemCount: value.postCommentsList?.length,
+                          itemBuilder: (context, i) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 10),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: CColors.bottomAppBarcolor,
+                                    borderRadius: BorderRadius.circular(30),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.black45,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 4),
+                                      )
+                                    ]),
+                                child: ListTile(
+                                  leading: CircleAvatar(
+                                      backgroundImage: NetworkImage(value
+                                          .getPosterData(value
+                                              .postCommentsList![i].commenterId)
+                                          ?.image as String)),
+                                  title: Text(
+                                    value
+                                        .getPosterData(value
+                                            .postCommentsList![i].commenterId)!
+                                        .username,
+                                    style: TextStyle(
+                                        color: CColors.secondary,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  subtitle: Text(
+                                    value.postCommentsList![i].commentText,
+                                    style:
+                                        TextStyle(color: CColors.secondarydark),
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        )),
+              //comment textfield
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: UpliftyTextfields(
+                  controller: commentController,
+                  fieldName: "Write a comment...",
+                  prefixIcon: Icons.comment_outlined,
+                  suffixIcon: Icons.send,
+                  suffixIconOnpressed: () async {
+                    if (commentController.text == "") {
+                      Functions.showToast("Write a comment...");
+                    } else {
+                      try {
+                        //to add comment in post's sub collection
+                        final newComment = CommentModel(
+                          commentText: commentController.text,
+                          commenterId: value.userData!.id,
+                        );
+                        await Functions.addCommentToPost(
+                            value.allPosts[index].postid, newComment);
+                        commentController.clear();
+                      } catch (e) {
+                        Functions.showToast(
+                            "An error ocours, please try later");
+                      }
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
 // main container of post
-  postContainer(context, DataProvider value, index) {
+  postContainer(context, DataProvider value, int index) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       child: Container(
@@ -178,7 +235,9 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          value.getComments(value.allPosts[index].postid);
+                        },
                         icon: Icon(
                           IconlyLight.more_square,
                           color: CColors.secondary,
@@ -239,7 +298,6 @@ class HomeScreen extends StatelessWidget {
                             Functions.addLike(value.allPosts[index].postid,
                                 value.userData!.id);
                           }
-                          print(value.allPosts[index].postid);
                         },
                         child: Icon(
                           value.allPosts[index].likedby!.contains(value.uid)
@@ -254,13 +312,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   //comment button
                   IconButton(
-                      onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return commentDialog(index);
-                          },
-                        );
+                      onPressed: () async {
+                        await value.getComments(value.allPosts[index].postid);
+                        commentsBottomSheet(context, index, value);
                       },
                       icon: Icon(
                         IconlyLight.chat,
