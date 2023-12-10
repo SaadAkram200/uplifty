@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:uplifty/models/comment_model.dart';
 import 'package:uplifty/models/post_model.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/screens/create_profile.dart';
@@ -46,12 +47,12 @@ class Functions {
     var postdoc = posts.doc();
     String postid = postdoc.id;
     final newPost = PostModel(
-        posterUid: uid,
-        image: imageUrl,
-        caption: captionController.text,
-        postid: postid,
-        likedby: [],
-        );
+      posterUid: uid,
+      image: imageUrl,
+      caption: captionController.text,
+      postid: postid,
+      likedby: [],
+    );
     return postdoc.set(newPost.toMap());
   }
 
@@ -74,21 +75,32 @@ class Functions {
   }
 
 //for like button// adds current uid in  post's likedby
- static Future<void> addLike(String postid,String uid) async {
-  List<String> likedby = [ uid ];
-  await posts.doc(postid).update({
-    'likedby': FieldValue.arrayUnion(likedby),
-  });
- }
- 
- //for like button// removes current uid in  post's likedby
- static Future<void> removeLike(String postid,String uid) async {
-  List<String> unlikedby = [ uid ];
-  await posts.doc(postid).update({
-    'likedby': FieldValue.arrayRemove(unlikedby),
-  });
- }
- 
+  static Future<void> addLike(String postid, String uid) async {
+    List<String> likedby = [uid];
+    await posts.doc(postid).update({
+      'likedby': FieldValue.arrayUnion(likedby),
+    });
+  }
+
+  //for like button// removes current uid in  post's likedby
+  static Future<void> removeLike(String postid, String uid) async {
+    List<String> unlikedby = [uid];
+    await posts.doc(postid).update({
+      'likedby': FieldValue.arrayRemove(unlikedby),
+    });
+  }
+
+  //to add new comment it the post's sub colllection
+  static Future<void> addCommentToPost(String postId, CommentModel newComment) {
+    final CollectionReference<Map<String, dynamic>> postcomments =
+        FirebaseFirestore.instance
+            .collection("posts")
+            .doc(postId)
+            .collection("comments");
+
+    return postcomments.add(newComment.toMap());
+  }
+
   //firebase work for users
   static final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');
@@ -159,7 +171,6 @@ class Functions {
     rejectFriendRequest(friendID);
     showToast("Say Hi to new friend");
   }
-
 
 //toast function
   static showToast(String message) {

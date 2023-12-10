@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uplifty/models/comment_model.dart';
 import 'package:uplifty/models/post_model.dart';
 import 'package:uplifty/models/user_model.dart';
 
@@ -43,9 +44,6 @@ class DataProvider with ChangeNotifier {
 
   final CollectionReference<Map<String, dynamic>> posts =
       FirebaseFirestore.instance.collection('posts');
-
-  final CollectionReference<Map<String, dynamic >> postcomments = 
-      FirebaseFirestore.instance.collection("posts").doc(  ).collection("comments");
   
   // to get current user data
   UserModel? userData;
@@ -85,7 +83,7 @@ class DataProvider with ChangeNotifier {
     });
   }
 
-  //to get poster's data
+  //to get poster's data. takes any uid and returns its data
   UserModel? getPosterData(String posterUid) {
     return everyUsers.where((user) => user.id == posterUid).toList().first;
   }
@@ -101,11 +99,34 @@ class DataProvider with ChangeNotifier {
         .listen((snapshot) {
       allPosts.clear();
       for (var element in snapshot.docs) {
-        allPosts.add(PostModel.fromMap(element.data()));
 
+        PostModel post = PostModel.fromMap(element.data());
+      
+        allPosts.add(post);
+        
         notifyListeners();
       }
     });
+  }
+
+  List<CommentModel>? postCommentsList = [];
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? commentsStream;
+  getComments(postId){
+    commentsStream?.cancel();
+    final CollectionReference<Map<String, dynamic>> postcomments =
+        FirebaseFirestore.instance
+            .collection("posts")
+            .doc(postId)
+            .collection("comments");
+    commentsStream = postcomments.snapshots().listen((comments) { 
+      postCommentsList?.clear();
+      print("commentstream started of Postid : " + postId.toString());
+      for (var element in comments.docs) {
+        postCommentsList?.add(CommentModel.fromMap(element.data()));
+        notifyListeners();
+      }
+    });
+
   }
 
 //stores all the users of user's friendrequest in list
