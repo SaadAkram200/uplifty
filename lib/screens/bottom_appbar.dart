@@ -58,6 +58,7 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
         bottomNavigationBar: BottomAppBar(
           shape: const CircularNotchedRectangle(),
           color: CColors.bottomAppBarcolor,
+          notchMargin: 6,
           child: SizedBox(
             height: 50,
             child: Row(
