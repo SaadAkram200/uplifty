@@ -3,7 +3,7 @@ import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/screens/addpost_screen.dart';
-import 'package:uplifty/screens/chat_screen.dart';
+import 'package:uplifty/screens/chats/chat_dashboard.dart';
 import 'package:uplifty/screens/home_screen.dart';
 import 'package:uplifty/screens/search_screen.dart';
 import 'package:uplifty/screens/setting_screen.dart';
@@ -20,7 +20,7 @@ class BottomAppBarClass extends StatefulWidget {
 class _BottomAppBarClassState extends State<BottomAppBarClass> {
   final pageOptions = [
      HomeScreen(),
-    const ChatScrreen(),
+    const ChatDashboard(),
     SearchScreen(),
     const SettingScreen(),
   ];

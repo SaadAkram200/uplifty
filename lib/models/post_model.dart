@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class PostModel {
   late String posterUid, image, caption, postid;
   List<dynamic>? likedby;
+  late DateTime timestamp;
   PostModel({
     required this.posterUid,
     required this.image,
@@ -16,6 +17,7 @@ class PostModel {
     caption = data['caption'];
     postid = data['postid'];
     likedby = data['likedby'] ?? [];
+    timestamp = (data['timestamp'] as Timestamp).toDate();
   }
 
   Map<String, dynamic> toMap() {

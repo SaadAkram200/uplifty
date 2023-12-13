@@ -107,26 +107,6 @@ class DataProvider with ChangeNotifier {
     });
   }
 
-  // List<CommentModel>? postCommentsList = [];
-  // StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? commentsStream;
-  // getComments(postId){
-  //   commentsStream?.cancel();
-  //   final CollectionReference<Map<String, dynamic>> postcomments =
-  //       FirebaseFirestore.instance
-  //           .collection("posts")
-  //           .doc(postId)
-  //           .collection("comments");
-  //   commentsStream = postcomments.snapshots().listen((comments) { 
-  //     postCommentsList?.clear();
-  //     print("commentstream started of Postid : " + postId.toString());
-  //     for (var element in comments.docs) {
-  //       postCommentsList?.add(CommentModel.fromMap(element.data()));
-  //     }
-  //     notifyListeners();
-  //   });
-
-  // }
-
 //stores all the users of user's friendrequest in list
   List<UserModel> friendRequestList = [];
   getFriendRequests() {

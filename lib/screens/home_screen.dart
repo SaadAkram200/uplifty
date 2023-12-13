@@ -10,6 +10,7 @@ import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -156,6 +157,7 @@ class HomeScreen extends StatelessWidget {
                                                 style: TextStyle(
                                                     color: CColors.secondarydark),
                                               ),
+                                              trailing: Text(DateFormat('hh:mm a').format(value1.postCommentsList![i].timestamp)),
                                             ),
                                           ),
                                         );
@@ -260,7 +262,9 @@ class HomeScreen extends StatelessWidget {
                     ),
                     IconButton(
                         onPressed: () {
-                          //value.getComments(value.allPosts[index].postid);
+                          
+                         print(DateFormat('hh:mm a').format(value.allPosts[index].timestamp)) ;
+                         print(value.allPosts[index].postid) ;
                         },
                         icon: Icon(
                           IconlyLight.more_square,

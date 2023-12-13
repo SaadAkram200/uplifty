@@ -64,6 +64,7 @@ class UpliftyTextfields extends StatelessWidget {
   void Function()? onTap;
   void Function(String)? onChanged;
   void Function()? suffixIconOnpressed;
+  void Function()? prefixIconOnpressed;
 
   UpliftyTextfields({
     super.key,
@@ -78,6 +79,7 @@ class UpliftyTextfields extends StatelessWidget {
     this.onTap,
     this.onChanged,
     this.suffixIconOnpressed,
+    this.prefixIconOnpressed,
   });
 
   @override
@@ -112,13 +114,14 @@ class UpliftyTextfields extends StatelessWidget {
                 left: 20,
                 top: 20,
               ),
-              prefixIcon: Icon(
-                prefixIcon,
+              prefixIcon: IconButton(
+                onPressed: prefixIconOnpressed,
+                icon:Icon(prefixIcon , color: CColors.secondary,),
                 color: CColors.secondary,
               ),
               suffixIcon: IconButton(
                 onPressed: suffixIconOnpressed,
-                icon: Icon(suffixIcon),
+                icon: Icon(suffixIcon , color: CColors.secondary,),
                 color: CColors.secondary,
               ),
               filled: true,

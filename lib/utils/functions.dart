@@ -37,10 +37,30 @@ class Functions {
       }
     });
   }
+
+  //firebase work for chats
+  static final CollectionReference<Map<String, dynamic>> chats =
+      FirebaseFirestore.instance.collection("uplifty_chats");
+  static Future<void> initiateChat(String userID, String friendID) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String docID = list.join("_");
+    chats.doc(docID).set({});
+
+    //adds friend id in user's myfriends
+    List<String> mychatwith = [friendID];
+    users.doc(uid).update({"chatwith": FieldValue.arrayUnion(mychatwith)});
+
+    //adds userid in frined's myfriends
+    List<String> friendschatwith = [userID];
+    users
+        .doc(friendID)
+        .update({"chatwith": FieldValue.arrayUnion(friendschatwith)});
+  }
+
   //firebase work for posts
   static final CollectionReference<Map<String, dynamic>> posts =
       FirebaseFirestore.instance.collection("posts");
-
   //create new post
   static Future<void> createNewPost(
       String imageUrl, TextEditingController captionController) {
@@ -364,7 +384,8 @@ class Functions {
             image: imageUrl,
             friendrequest: [],
             myfriends: [],
-            sentrequest: []);
+            sentrequest: [],
+            chatwith: []);
 
         if (isEditing) {
           await updateUser(user);
