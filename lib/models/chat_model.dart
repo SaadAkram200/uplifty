@@ -1,22 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatModel {
-  late String message, senderID;
+  late String messageText, messageID, senderID;
   late DateTime timestamp;
 
   ChatModel({
-    required this.message,
+    required this.messageText,
+    required this.messageID,
     required this.senderID,
   });
 
-  ChatModel.fromMapfromMap(Map<String, dynamic> data) {
-    message = data['message'];
+  ChatModel.fromMap(Map<String, dynamic> data) {
+    messageText = data['messageText'];
+    messageID = data['messageID'];
     senderID = data['senderID'];
     timestamp = (data['timestamp'] as Timestamp).toDate();
   }
   Map<String, dynamic> toMap() {
     return {
-      'message': message,
+      'messageText': messageText,
+      'messageID': messageID,
       'senderID': senderID,
       'timestamp': Timestamp.now(),
     };

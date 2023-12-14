@@ -5,15 +5,13 @@ import 'package:flutter/foundation.dart';
 import 'package:uplifty/models/comment_model.dart';
 
 class CommentProvider with ChangeNotifier {
-
-  CommentProvider(postId){
+  CommentProvider(postId) {
     getComments(postId);
   }
 
   List<CommentModel>? postCommentsList = [];
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? commentsStream;
   getComments(postId) {
-    
     final CollectionReference<Map<String, dynamic>> postcomments =
         FirebaseFirestore.instance
             .collection("posts")
@@ -27,6 +25,7 @@ class CommentProvider with ChangeNotifier {
       notifyListeners();
     });
   }
+
   @override
   void dispose() {
     commentsStream?.cancel();
