@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
+import 'package:uplifty/screens/user_profile.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
@@ -47,9 +48,9 @@ class SearchScreen extends StatelessWidget {
                           fieldName: "Seach",
                           prefixIcon: IconlyLight.search,
                           onChanged: (text) {
-                            value2.filterSearchResults(text, value.userData as UserModel, value.allUsers);
+                            value2.filterSearchResults(text,
+                                value.userData as UserModel, value.allUsers);
                             value2.checking(searchController);
-                            
                           },
                         ),
                       ),
@@ -61,44 +62,62 @@ class SearchScreen extends StatelessWidget {
                                 itemCount: value2.foundUsers.length,
                                 itemBuilder: (context, index) {
                                   return Padding(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 8,horizontal: 5),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          color: CColors.bottomAppBarcolor,
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: Colors.black45,
-                                              blurRadius: 4,
-                                              offset: Offset(0, 4),
-                                            )
-                                          ]),
-                                      child: ListTile(
-                                        leading: CircleAvatar(
-                                            backgroundImage: NetworkImage(value2
-                                                .foundUsers[index]!.image!)),
-                                        title: Text(
-                                          value2.foundUsers[index]!.username,
-                                          style: TextStyle(
-                                              color: CColors.secondarydark,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                        subtitle: Text(
-                                            value2.foundUsers[index]!.country!,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 5),
+                                    //to see user's profile
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    UserProfile(
+                                                        friendID: value2
+                                                            .foundUsers[index]!
+                                                            .id)),
+                                            (route) => true);
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            color: CColors.bottomAppBarcolor,
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.black45,
+                                                blurRadius: 4,
+                                                offset: Offset(0, 4),
+                                              )
+                                            ]),
+                                        child: ListTile(
+                                          leading: CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  value2.foundUsers[index]!
+                                                      .image!)),
+                                          title: Text(
+                                            value2.foundUsers[index]!.username,
                                             style: TextStyle(
-                                                color: CColors.secondarydark)),
-                                        trailing: IconButton(
-                                            onPressed: () {
-                                              //sends friend request
-                                              Functions.sendFriendRequest(
-                                                  value2.foundUsers[index]!.id);
-                                            },
-                                            icon: Icon(
-                                              IconlyLight.add_user,
-                                              color: CColors.secondary,
-                                            )),
+                                                color: CColors.secondarydark,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          subtitle: Text(
+                                              value2
+                                                  .foundUsers[index]!.country!,
+                                              style: TextStyle(
+                                                  color:
+                                                      CColors.secondarydark)),
+                                          trailing: IconButton(
+                                              onPressed: () {
+                                                //sends friend request
+                                                Functions.sendFriendRequest(
+                                                    value2
+                                                        .foundUsers[index]!.id);
+                                              },
+                                              icon: Icon(
+                                                IconlyLight.add_user,
+                                                color: CColors.secondary,
+                                              )),
+                                        ),
                                       ),
                                     ),
                                   );

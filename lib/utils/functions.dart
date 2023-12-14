@@ -11,6 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:uplifty/models/chat_model.dart';
 import 'package:uplifty/models/comment_model.dart';
 import 'package:uplifty/models/post_model.dart';
 import 'package:uplifty/models/user_model.dart';
@@ -41,11 +42,18 @@ class Functions {
   //firebase work for chats
   static final CollectionReference<Map<String, dynamic>> chats =
       FirebaseFirestore.instance.collection("uplifty_chats");
+  
+  
   static Future<void> initiateChat(String userID, String friendID) async {
     List<String> list = [userID, friendID];
     list.sort();
     String docID = list.join("_");
-    chats.doc(docID).set({});
+
+    
+    chats.doc(docID)..set({})..collection("messages").doc();
+
+    //print("calling start chating");
+    //startChatting(userID, friendID);
 
     //adds friend id in user's myfriends
     List<String> mychatwith = [friendID];
@@ -58,6 +66,24 @@ class Functions {
         .update({"chatwith": FieldValue.arrayUnion(friendschatwith)});
   }
 
+  static Future<void> startChatting(String userID, String friendID, TextEditingController messageController) async {
+    
+    
+    
+    List<String> list = [userID, friendID];
+    list.sort();
+    String docID = list.join("_");
+    
+   //
+    //to get the message doc id
+    var messageDoc = chats.doc(docID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final message = ChatModel(messageText: messageController.text, messageID: messageID, senderID: userID);
+
+      messageDoc.set(message.toMap());
+    
+  }
   //firebase work for posts
   static final CollectionReference<Map<String, dynamic>> posts =
       FirebaseFirestore.instance.collection("posts");
@@ -138,7 +164,7 @@ class Functions {
 // update user
   static Future<void> updateUser(UserModel updateUser) {
     updateUser.id = uid!;
-    return doc.update(updateUser.toMap());
+    return doc.update(updateUser.updatetoMap());
   }
 
 //sends friend request
@@ -154,7 +180,7 @@ class Functions {
     await users.doc(friendID).update({
       "friendrequest": FieldValue.arrayUnion(friendRequest),
     });
-    Functions.showToast("Frined request sent!");
+    Functions.showToast("Friend request sent!");
   }
 
   //to reomve ids from both users requests
@@ -375,6 +401,7 @@ class Functions {
           imageUrl = uploadedimageUrl;
         }
 
+        // for new user
         final user = UserModel(
             username: usernameController.text,
             email: Functions.userEmail as String,
@@ -386,9 +413,17 @@ class Functions {
             myfriends: [],
             sentrequest: [],
             chatwith: []);
+        //for updating user data
+        final updatedUser = UserModel(
+            username: usernameController.text,
+            email: userEmail,
+            phone: phoneController.text,
+            country: countryController.text,
+            address: addressController.text,
+            image: imageUrl);
 
         if (isEditing) {
-          await updateUser(user);
+          await updateUser(updatedUser);
           showToast("Profile Edited sucessfully");
           Navigator.pop(context);
         } else {

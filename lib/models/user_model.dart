@@ -49,4 +49,18 @@ class UserModel {
       'timestamp': Timestamp.now(),
     };
   }
+
+  //for update userdata
+  Map<String, dynamic> updatetoMap(){
+    return {
+      "id": id,
+      'username': username,
+      'phone': phone,
+      'email': email,
+      'country': country,
+      'address': address,
+      'image': image,
+      'timestamp': Timestamp.now(),
+    };
+  }
 }

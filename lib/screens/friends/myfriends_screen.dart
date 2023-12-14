@@ -2,13 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/providers/data_provider.dart';
+import 'package:uplifty/screens/chats/chat_screen.dart';
 import 'package:uplifty/screens/user_profile.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
 // ignore: must_be_immutable
 class MyFriends extends StatelessWidget {
-  MyFriends({super.key});
+  //if user is selecting friend from chat dashborad?
+  //will driect it to chat screen instead of friend's profile
+  bool isComingfromChatD;
+
+  MyFriends({
+    super.key,
+    this.isComingfromChatD = false,
+  });
 
 //to get the freindrequests
   late List<UserModel>? listMyFriends;
@@ -47,12 +56,27 @@ class MyFriends extends StatelessWidget {
                           vertical: 8, horizontal: 5),
                       child: InkWell(
                         onTap: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UserProfile( friendID: listMyFriends![index].id,),
-                              ),
-                              (route) => true);
+                          //checking from where the user is coming?
+                          if (!isComingfromChatD) {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UserProfile(
+                                    friendID: listMyFriends![index].id,
+                                  ),
+                                ),
+                                (route) => true);
+                          } else {
+                            Functions.initiateChat(
+                                value.userData!.id, listMyFriends![index].id);
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen(
+                                      friendID: listMyFriends![index].id),
+                                ),
+                                (route) => true);
+                          }
                         },
                         child: Container(
                           decoration: BoxDecoration(

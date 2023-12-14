@@ -2,9 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:uplifty/providers/chat_provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -13,7 +16,7 @@ class ChatScreen extends StatelessWidget {
 
   TextEditingController messageController = TextEditingController();
 
-  //bottomsheet for attachments
+  //bottomsheet for attachments- used in message textfield
   attachmentsBottomSheet(context) {
     showModalBottomSheet(
       context: context,
@@ -27,6 +30,8 @@ class ChatScreen extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
+            SettingsButton(
+                onTap: () {}, buttonName: "Audio", icon: IconlyLight.voice),
             SettingsButton(
                 onTap: () {}, buttonName: "Camera", icon: IconlyLight.camera),
             SettingsButton(
@@ -43,6 +48,43 @@ class ChatScreen extends StatelessWidget {
           ]),
         );
       },
+    );
+  }
+
+  chatBuilder(DataProvider value) {
+    return ChangeNotifierProvider<ChatProvider>(
+      create: (context) => ChatProvider(value.userData!.id, friendID),
+      child: Consumer<ChatProvider>(
+        builder: (context, value1, child) {
+          return ListView.builder(
+            reverse: true,
+            itemCount: value1.chatList?.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                 // decoration:
+                     // BoxDecoration(border: Border.all(color: CColors.primary)),
+                  child: Column(
+                    crossAxisAlignment: value1.chatList?[index].senderID ==
+                            value.userData!.id
+                        ? CrossAxisAlignment.end
+                        : CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        value1.chatList![index].messageText,
+                        style: TextStyle(fontSize: 20, color: CColors.primary),
+                      ),
+                      Text(DateFormat('hh:mm a')
+                          .format(value1.chatList![index].timestamp)),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -112,7 +154,7 @@ class ChatScreen extends StatelessWidget {
                   ],
                 ),
                 Divider(color: CColors.primary),
-                const Spacer(),
+                Expanded(child: chatBuilder(value)),
 
                 // messeage textfield
                 Divider(color: CColors.primary),
@@ -128,7 +170,14 @@ class ChatScreen extends StatelessWidget {
                           prefixIconOnpressed: () {
                             attachmentsBottomSheet(context);
                           },
-                          suffixIcon: IconlyLight.voice,
+                          suffixIcon: IconlyLight.send,
+                          suffixIconOnpressed: () {
+                            Functions.startChatting(value.userData!.id,
+                                    friendID, messageController)
+                                .then((value) {
+                              messageController.clear();
+                            });
+                          },
                         ),
                       ),
                     ],
