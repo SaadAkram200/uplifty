@@ -51,38 +51,81 @@ class ChatScreen extends StatelessWidget {
     );
   }
 
+//builds chat for users
   chatBuilder(DataProvider value) {
     return ChangeNotifierProvider<ChatProvider>(
       create: (context) => ChatProvider(value.userData!.id, friendID),
       child: Consumer<ChatProvider>(
         builder: (context, value1, child) {
-          return ListView.builder(
-            reverse: true,
-            itemCount: value1.chatList?.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                 // decoration:
-                     // BoxDecoration(border: Border.all(color: CColors.primary)),
-                  child: Column(
-                    crossAxisAlignment: value1.chatList?[index].senderID ==
-                            value.userData!.id
-                        ? CrossAxisAlignment.end
-                        : CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        value1.chatList![index].messageText,
-                        style: TextStyle(fontSize: 20, color: CColors.primary),
+          return value1.chatList!.isEmpty
+              ? Text(
+                  "Say Hi to ${value.getPosterData(friendID)!.username}",
+                  style: TextStyle(color: CColors.secondary, fontSize: 20),
+                )
+              : ListView.builder(
+                  reverse: true,
+                  itemCount: value1.chatList?.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Align(
+                        alignment: value1.chatList?[index].senderID ==
+                                value.userData!.id
+                            ? Alignment.topRight // Sender's message alignment
+                            : Alignment.topLeft, // Receiver's message alignment
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            color: value1.chatList?[index].senderID ==
+                                    value.userData!.id
+                                ? CColors.secondary
+                                : CColors.bottomAppBarcolor,
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Colors.black45,
+                                blurRadius: 4,
+                                offset: Offset(0, 4),
+                              )
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, top: 8.0, right: 8, bottom: 2),
+                                child: Text(
+                                  value1.chatList![index].messageText,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: value1.chatList?[index].senderID ==
+                                            value.userData!.id
+                                        ? Colors.white
+                                        : CColors.secondarydark,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, bottom: 8.0, right: 8),
+                                child: Text(
+                                  DateFormat('hh:mm a').format(
+                                      value1.chatList![index].timestamp),
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: value1.chatList?[index].senderID ==
+                                              value.userData!.id
+                                          ? Colors.white70
+                                          : CColors.primary),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      Text(DateFormat('hh:mm a')
-                          .format(value1.chatList![index].timestamp)),
-                    ],
-                  ),
-                ),
-              );
-            },
-          );
+                    );
+                  },
+                );
         },
       ),
     );
@@ -98,6 +141,7 @@ class ChatScreen extends StatelessWidget {
               child: Padding(
             padding: const EdgeInsets.all(10),
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 //page title
                 Row(
@@ -154,6 +198,8 @@ class ChatScreen extends StatelessWidget {
                   ],
                 ),
                 Divider(color: CColors.primary),
+
+                //user's chat
                 Expanded(child: chatBuilder(value)),
 
                 // messeage textfield

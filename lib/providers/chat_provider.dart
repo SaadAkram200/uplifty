@@ -42,6 +42,8 @@ final Query<Map<String, dynamic>> chatMessagesQuery =
       });
   }
 
+  
+
   @override
   void dispose() {
     chatStream?.cancel();

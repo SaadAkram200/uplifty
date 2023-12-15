@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
+import 'package:uplifty/screens/chats/chat_screen.dart';
 import 'package:uplifty/screens/friends/myfriends_screen.dart';
 import 'package:uplifty/utils/colors.dart';
 
@@ -63,7 +65,7 @@ class ChatDashboard extends StatelessWidget {
                 ),
                 Divider(color: CColors.primary),
                 Expanded(
-                    child: ListView.builder(
+                    child: value.userData!.chatwith!.isEmpty ? Text("No chats yet...", style: TextStyle(color: CColors.secondary, fontSize: 20)) : ListView.builder(
                   itemCount: value.userData?.chatwith?.length,
                   itemBuilder: (context, index) {
                     return Padding(
@@ -80,27 +82,40 @@ class ChatDashboard extends StatelessWidget {
                                 offset: Offset(0, 4),
                               )
                             ]),
-                        child: ListTile(
-                          leading: CircleAvatar(
-                              backgroundImage: NetworkImage(value
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ChatScreen(
+                                      friendID: value
+                                          .getPosterData(
+                                              value.userData?.chatwith?[index])!.id),
+                                ),
+                                (route) => true);
+                          },
+                          child: ListTile(
+                            leading: CircleAvatar(
+                                backgroundImage: NetworkImage(value
+                                    .getPosterData(
+                                        value.userData?.chatwith?[index])
+                                    ?.image as String)),
+                            title: Text(
+                              value
                                   .getPosterData(
-                                      value.userData?.chatwith?[index])
-                                  ?.image as String)),
-                          title: Text(
-                            value
-                                .getPosterData(
-                                    value.userData?.chatwith?[index])!
-                                .username,
-                            style: TextStyle(
-                                color: CColors.secondary,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500),
+                                      value.userData?.chatwith?[index])!
+                                  .username,
+                              style: TextStyle(
+                                  color: CColors.secondarydark,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            subtitle: Text(
+                              value.allChats[index].messageText,
+                              style: TextStyle(color: CColors.secondarydark),
+                            ),
+                              trailing: Text(DateFormat('hh:mm a').format(value.allChats[index].timestamp)),
                           ),
-                          // subtitle: Text(
-                          //   value.userData?.chatwith?[index],
-                          //   style: TextStyle(color: CColors.secondarydark),
-                          // ),
-                          //  trailing: Text(DateFormat('hh:mm a').format(value1.postCommentsList![i].timestamp)),
                         ),
                       ),
                     );
