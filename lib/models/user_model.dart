@@ -4,7 +4,7 @@ class UserModel {
 //late String id;
   late String username, email, id, phone;
   String? country, address, image;
-  List<dynamic>? sentrequest, friendrequest, myfriends, chatwith;
+  List<dynamic>? sentrequest, friendrequest, myfriends, chatwith, userchats;
 
   UserModel({
     required this.username,
@@ -17,6 +17,7 @@ class UserModel {
     this.friendrequest,
     this.myfriends,
     this.chatwith,
+    this.userchats,
   });
 
   UserModel.fromMap(Map<String, dynamic> data) {
@@ -31,6 +32,7 @@ class UserModel {
     friendrequest = data['friendrequest'];
     myfriends = data['myfriends'];
     chatwith = data['chatwith'];
+    userchats = data['userchats'];
   }
 
   Map<String, dynamic> toMap() {
@@ -46,6 +48,7 @@ class UserModel {
       'friendrequest': friendrequest,
       'myfriends': myfriends,
       'chatwith':chatwith,
+      'userchats':userchats,
       'timestamp': Timestamp.now(),
     };
   }

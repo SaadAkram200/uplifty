@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:uplifty/models/chat_model.dart';
 import 'package:uplifty/models/post_model.dart';
 import 'package:uplifty/models/user_model.dart';
 
@@ -41,9 +42,6 @@ class DataProvider with ChangeNotifier {
   final CollectionReference<Map<String, dynamic>> users =
       FirebaseFirestore.instance.collection('uplifty_users');
 
-  final CollectionReference<Map<String, dynamic>> posts =
-      FirebaseFirestore.instance.collection('posts');
-  
   // to get current user data
   UserModel? userData;
   StreamSubscription<DocumentSnapshot<Map<String, dynamic>>>? userStream;
@@ -54,6 +52,7 @@ class DataProvider with ChangeNotifier {
         userData = UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
 
         getPosts(); // to get user's friends posts
+        getUserChats();// to get user's chats
       } else {
         userData = null;
       }
@@ -87,6 +86,9 @@ class DataProvider with ChangeNotifier {
     return everyUsers.where((user) => user.id == posterUid).toList().first;
   }
 
+  final CollectionReference<Map<String, dynamic>> posts =
+      FirebaseFirestore.instance.collection('posts');
+
 //to get all the posts of the user's friends only
   List<PostModel> allPosts = [];
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? postsStream;
@@ -98,12 +100,30 @@ class DataProvider with ChangeNotifier {
         .listen((snapshot) {
       allPosts.clear();
       for (var element in snapshot.docs) {
-
         PostModel post = PostModel.fromMap(element.data());
-      
-        allPosts.add(post);       
+
+        allPosts.add(post);
       }
-       notifyListeners();
+      notifyListeners();
+    });
+  }
+
+  final CollectionReference<Map<String, dynamic>> userChats =
+      FirebaseFirestore.instance.collection("uplifty_chats");
+//to get the current user's all chats
+  List<ChatModel> allChats = [];
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? chatsStream;
+  getUserChats() {
+    chatsStream?.cancel();
+    chatsStream = userChats
+        .where('chatID', whereIn: userData?.userchats)
+        .snapshots()
+        .listen((snapshot) {
+          allChats.clear();
+      for (var element in snapshot.docs) {
+        allChats.add(ChatModel.fromMap(element.data()));
+      }
+      notifyListeners();
     });
   }
 

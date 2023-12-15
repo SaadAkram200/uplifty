@@ -42,48 +42,55 @@ class Functions {
   //firebase work for chats
   static final CollectionReference<Map<String, dynamic>> chats =
       FirebaseFirestore.instance.collection("uplifty_chats");
-  
-  
+
   static Future<void> initiateChat(String userID, String friendID) async {
     List<String> list = [userID, friendID];
     list.sort();
-    String docID = list.join("_");
+    String chatID = list.join("_");
 
-    
-    chats.doc(docID)..set({})..collection("messages").doc();
+    chats.doc(chatID)
+      ..set({})
+      ..collection("messages").doc();
+  }
 
-    //print("calling start chating");
-    //startChatting(userID, friendID);
+  static Future<void> startChatting(String userID, String friendID,
+      TextEditingController messageController) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final message = ChatModel(
+        messageText: messageController.text,
+        messageID: messageID,
+        senderID: userID);
+    // to set data in chat's collection
+    chats.doc(chatID).set(message.toMap());
+    chats
+        .doc(chatID)
+        .update({"chatID": chatID, "userID": userID, "friendID": friendID});
+
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
 
     //adds friend id in user's myfriends
-    List<String> mychatwith = [friendID];
-    users.doc(uid).update({"chatwith": FieldValue.arrayUnion(mychatwith)});
+    //List<String> mychatwith = [friendID];
+    users.doc(uid).update({
+      "chatwith": FieldValue.arrayUnion([friendID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
 
     //adds userid in frined's myfriends
     List<String> friendschatwith = [userID];
-    users
-        .doc(friendID)
-        .update({"chatwith": FieldValue.arrayUnion(friendschatwith)});
+    users.doc(friendID).update({
+      "chatwith": FieldValue.arrayUnion(friendschatwith),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
   }
 
-  static Future<void> startChatting(String userID, String friendID, TextEditingController messageController) async {
-    
-    
-    
-    List<String> list = [userID, friendID];
-    list.sort();
-    String docID = list.join("_");
-    
-   //
-    //to get the message doc id
-    var messageDoc = chats.doc(docID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final message = ChatModel(messageText: messageController.text, messageID: messageID, senderID: userID);
-
-      messageDoc.set(message.toMap());
-    
-  }
   //firebase work for posts
   static final CollectionReference<Map<String, dynamic>> posts =
       FirebaseFirestore.instance.collection("posts");
@@ -403,16 +410,18 @@ class Functions {
 
         // for new user
         final user = UserModel(
-            username: usernameController.text,
-            email: Functions.userEmail as String,
-            phone: phoneController.text,
-            country: countryController.text,
-            address: addressController.text,
-            image: imageUrl,
-            friendrequest: [],
-            myfriends: [],
-            sentrequest: [],
-            chatwith: []);
+          username: usernameController.text,
+          email: Functions.userEmail as String,
+          phone: phoneController.text,
+          country: countryController.text,
+          address: addressController.text,
+          image: imageUrl,
+          friendrequest: [],
+          myfriends: [],
+          sentrequest: [],
+          chatwith: [],
+          userchats: [],
+        );
         //for updating user data
         final updatedUser = UserModel(
             username: usernameController.text,
