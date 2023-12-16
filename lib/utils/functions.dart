@@ -63,16 +63,24 @@ class Functions {
     var messageDoc = chats.doc(chatID).collection("messages").doc();
     String messageID = messageDoc.id;
 
+
+    final messageforchatdoc = ChatModel(
+        messageText: messageController.text,
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+    // chats
+    //     .doc(chatID)
+    //     .update({"chatID": chatID, "userID": userID, "friendID": friendID});
+
     final message = ChatModel(
         messageText: messageController.text,
         messageID: messageID,
         senderID: userID);
-    // to set data in chat's collection
-    chats.doc(chatID).set(message.toMap());
-    chats
-        .doc(chatID)
-        .update({"chatID": chatID, "userID": userID, "friendID": friendID});
-
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap());
 

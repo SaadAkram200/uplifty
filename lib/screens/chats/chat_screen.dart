@@ -54,7 +54,7 @@ class ChatScreen extends StatelessWidget {
 //builds chat for users
   chatBuilder(DataProvider value) {
     return ChangeNotifierProvider<ChatProvider>(
-      create: (context) => ChatProvider(value.userData!.id, friendID),
+      create: (context) => ChatProvider(value.uid, friendID),
       child: Consumer<ChatProvider>(
         builder: (context, value1, child) {
           return value1.chatList!.isEmpty
@@ -70,14 +70,14 @@ class ChatScreen extends StatelessWidget {
                       padding: const EdgeInsets.all(5.0),
                       child: Align(
                         alignment: value1.chatList?[index].senderID ==
-                                value.userData!.id
+                                value.uid
                             ? Alignment.topRight // Sender's message alignment
                             : Alignment.topLeft, // Receiver's message alignment
                         child: Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8.0),
+                            borderRadius: BorderRadius.circular(20.0),
                             color: value1.chatList?[index].senderID ==
-                                    value.userData!.id
+                                    value.uid
                                 ? CColors.secondary
                                 : CColors.bottomAppBarcolor,
                             boxShadow: const [
@@ -88,37 +88,46 @@ class ChatScreen extends StatelessWidget {
                               )
                             ],
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Wrap(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0, top: 8.0, right: 8, bottom: 2),
+                                padding: const EdgeInsets.all(12),
                                 child: Text(
                                   value1.chatList![index].messageText,
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: value1.chatList?[index].senderID ==
-                                            value.userData!.id
+                                            value.uid
                                         ? Colors.white
                                         : CColors.secondarydark,
                                   ),
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 8.0, bottom: 8.0, right: 8),
+                                padding: value1.chatList?[index].senderID ==
+                                          value.uid 
+                                          ? const EdgeInsets.only(left: 8,top: 24,right: 3)
+                                          : const EdgeInsets.only(left: 8,top: 24,right: 12),
                                 child: Text(
                                   DateFormat('hh:mm a').format(
                                       value1.chatList![index].timestamp),
                                   style: TextStyle(
                                       fontSize: 12,
                                       color: value1.chatList?[index].senderID ==
-                                              value.userData!.id
+                                              value.uid
                                           ? Colors.white70
                                           : CColors.primary),
                                 ),
                               ),
+                              if(value1.chatList?[index].senderID ==
+                                  value.uid)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 22, right: 10),
+                                child: value1.chatList![index].isReaded
+                                    ? Image.asset("assets/images/seen5.png", scale: 3.2,)
+                                    : Image.asset("assets/images/unseen5.png", scale: 3.2,),
+                              ),
+                             // Image.asset("assets/images/unseen5.png", scale: 3,),
                             ],
                           ),
                         ),
@@ -197,13 +206,14 @@ class ChatScreen extends StatelessWidget {
                         )),
                   ],
                 ),
-                Divider(color: CColors.primary),
+               const SizedBox(height: 5,),
+                Divider(color: CColors.primary,height: 1,),
 
                 //user's chat
                 Expanded(child: chatBuilder(value)),
 
                 // messeage textfield
-                Divider(color: CColors.primary),
+                Divider(color: CColors.primary,),
                 SizedBox(
                   height: 50,
                   child: Row(
@@ -218,7 +228,7 @@ class ChatScreen extends StatelessWidget {
                           },
                           suffixIcon: IconlyLight.send,
                           suffixIconOnpressed: () {
-                            Functions.startChatting(value.userData!.id,
+                            Functions.startChatting(value.uid,
                                     friendID, messageController)
                                 .then((value) {
                               messageController.clear();

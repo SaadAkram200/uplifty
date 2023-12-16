@@ -263,8 +263,7 @@ class HomeScreen extends StatelessWidget {
                     IconButton(
                         onPressed: () {
                           
-                         print(DateFormat('hh:mm a').format(value.allPosts[index].timestamp)) ;
-                         print(value.allPosts[index].postid) ;
+                         
                         },
                         icon: Icon(
                           IconlyLight.more_square,

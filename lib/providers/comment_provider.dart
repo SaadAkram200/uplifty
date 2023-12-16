@@ -20,7 +20,10 @@ class CommentProvider with ChangeNotifier {
     commentsStream = postcomments.snapshots().listen((comments) {
       postCommentsList?.clear();
       for (var element in comments.docs) {
-        postCommentsList?.add(CommentModel.fromMap(element.data()));
+        if (element.exists) {
+          postCommentsList?.add(CommentModel.fromMap(element.data()));
+        }
+        
       }
       notifyListeners();
     });

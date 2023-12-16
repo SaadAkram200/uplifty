@@ -100,9 +100,11 @@ class DataProvider with ChangeNotifier {
         .listen((snapshot) {
       allPosts.clear();
       for (var element in snapshot.docs) {
-        PostModel post = PostModel.fromMap(element.data());
+        if (element.exists) {
+          PostModel post = PostModel.fromMap(element.data());
 
-        allPosts.add(post);
+          allPosts.add(post);
+        } else {}
       }
       notifyListeners();
     });
@@ -119,9 +121,12 @@ class DataProvider with ChangeNotifier {
         .where('chatID', whereIn: userData?.userchats)
         .snapshots()
         .listen((snapshot) {
-          allChats.clear();
+      allChats.clear();
       for (var element in snapshot.docs) {
-        allChats.add(ChatModel.fromMap(element.data()));
+        if (element.exists) {
+          allChats.add(ChatModel.fromMap(element.data()));
+        }
+        
       }
       notifyListeners();
     });
