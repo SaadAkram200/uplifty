@@ -25,7 +25,7 @@ class ChatDashboard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    //page title
+                   // page title
                     Opacity(
                       opacity: 0,
                       child: IconButton(
@@ -65,7 +65,11 @@ class ChatDashboard extends StatelessWidget {
                 ),
                 Divider(color: CColors.primary),
                 Expanded(
-                    child: value.userData!.chatwith!.isEmpty ? Text("No chats yet...", style: TextStyle(color: CColors.secondary, fontSize: 20)) : ListView.builder(
+                    child: value.userData!.chatwith!.isEmpty
+                     ? Text(
+                        "No chats yet...", 
+                        style: TextStyle(color: CColors.secondary, fontSize: 20))
+                     : ListView.builder(
                   itemCount: value.userData?.chatwith?.length,
                   itemBuilder: (context, index) {
                     return Padding(
@@ -107,14 +111,33 @@ class ChatDashboard extends StatelessWidget {
                                   .username,
                               style: TextStyle(
                                   color: CColors.secondarydark,
-                                  fontSize: 14,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w500),
                             ),
-                            subtitle: Text(
-                              value.allChats[index].messageText,
-                              style: TextStyle(color: CColors.secondarydark),
+                            subtitle: Row(
+                              children: [
+                               //Image.asset("assets/images/unseen5.png", scale: 3,),
+                               if(value.allChats[index].senderID == value.uid)
+                                Padding(
+                                  padding: const EdgeInsets.only(top:2,right: 5),
+                                  child: value.allChats[index].isReaded==false
+                                      ? Image.asset("assets/images/unseen5.png", scale: 3,)
+                                      : Image.asset("assets/images/seen5.png", scale: 3,),
+                                ),
+                               
+                                Text(
+                                  value.allChats[index].messageText,
+                                  style: TextStyle(
+                                    color: CColors.primary,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500),
+                                ),
+                              ],
                             ),
-                              trailing: Text(DateFormat('hh:mm a').format(value.allChats[index].timestamp)),
+                              trailing: Text(
+                                DateFormat('hh:mm a')
+                                .format(value.allChats[index].timestamp),
+                                style: TextStyle(color: CColors.primary,fontSize: 16),),
                           ),
                         ),
                       ),
