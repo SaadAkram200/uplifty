@@ -115,7 +115,7 @@ class ChatScreen extends StatelessWidget {
                                       fontSize: 12,
                                       color: value1.chatList?[index].senderID ==
                                               value.uid
-                                          ? Colors.white70
+                                          ? CColors.background
                                           : CColors.primary),
                                 ),
                               ),

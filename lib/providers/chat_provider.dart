@@ -20,8 +20,26 @@ class ChatProvider with ChangeNotifier {
 
     final DocumentReference<Map<String, dynamic>> chatDoc =
         userChats.doc(chatID);
-
+    //updates the chatdoc's isreaded
     await chatDoc.update({'isReaded': true});
+
+
+
+    final CollectionReference<Map<String, dynamic>> messagesCollection =
+        chatDoc.collection("messages");
+
+    final QuerySnapshot<Map<String, dynamic>> messagesSnapshot =
+        await messagesCollection.get();
+
+    final WriteBatch batch = FirebaseFirestore.instance.batch();
+
+    for (final QueryDocumentSnapshot<Map<String, dynamic>> messageDoc
+        in messagesSnapshot.docs) {
+      batch.update(messageDoc.reference, {'isReaded': true});
+    }
+
+    // Commit the batch update
+    await batch.commit();
   }
 
   List<ChatModel>? chatList = [];
@@ -50,10 +68,12 @@ class ChatProvider with ChangeNotifier {
       }
       // Mark the chat as read when the receiver opens the chat
       if (chatList!.isNotEmpty &&
-          chatList!.last.senderID != FirebaseAuth.instance.currentUser!.uid &&
-          !chatList!.last.isReaded) {
+          chatList!.first.senderID != FirebaseAuth.instance.currentUser!.uid &&
+          !chatList!.first.isReaded) {
+        print("works?");
         await markChatAsRead(chatID);
       }
+      print(chatList?.first.messageText);
       notifyListeners();
     });
   }

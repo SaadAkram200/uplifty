@@ -116,15 +116,15 @@ class ChatDashboard extends StatelessWidget {
                             ),
                             subtitle: Row(
                               children: [
-                               //Image.asset("assets/images/unseen5.png", scale: 3,),
-                               if(value.allChats[index].senderID == value.uid)
+                               if(value.allChats.isNotEmpty &&
+                                value.allChats[index].senderID == value.uid)
                                 Padding(
                                   padding: const EdgeInsets.only(top:2,right: 5),
                                   child: value.allChats[index].isReaded==false
                                       ? Image.asset("assets/images/unseen5.png", scale: 3,)
                                       : Image.asset("assets/images/seen5.png", scale: 3,),
                                 ),
-                               
+                               if(value.allChats.isNotEmpty)
                                 Text(
                                   value.allChats[index].messageText,
                                   style: TextStyle(
@@ -134,9 +134,10 @@ class ChatDashboard extends StatelessWidget {
                                 ),
                               ],
                             ),
-                              trailing: Text(
+                              trailing: 
+                              Text(value.allChats.isNotEmpty ? 
                                 DateFormat('hh:mm a')
-                                .format(value.allChats[index].timestamp),
+                                .format(value.allChats[index].timestamp) : "",
                                 style: TextStyle(color: CColors.primary,fontSize: 16),),
                           ),
                         ),
