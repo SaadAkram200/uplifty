@@ -44,7 +44,7 @@ class AddPost extends StatelessWidget {
                 const Spacer(),
                 InkWell(
                   onTap: () {
-                    value.imagePicker();
+                    value.imagePicker(true);
                   },
                   child: Container(
                     decoration: BoxDecoration(

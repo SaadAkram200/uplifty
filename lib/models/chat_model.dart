@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatModel {
-  late String messageText, messageID, senderID;
+  late String messageText, messageID, senderID, type, link;
   late String? chatID, userID, friendID;
   late DateTime timestamp;
   bool isReaded = false;
@@ -10,6 +10,9 @@ class ChatModel {
     required this.messageText,
     required this.messageID,
     required this.senderID,
+    required this.type,
+    required this.link,
+
     this.chatID,
     this.friendID,
     this.userID,
@@ -20,6 +23,8 @@ class ChatModel {
     messageID = data['messageID'];
     senderID = data['senderID'];
     isReaded = data['isReaded'];
+    type = data['type'];
+    link = data['link'];
     timestamp = (data['timestamp'] as Timestamp).toDate();
   }
   Map<String, dynamic> toMap() {
@@ -28,6 +33,8 @@ class ChatModel {
       'messageID': messageID,
       'senderID': senderID,
       'isReaded': isReaded,
+      'type' : type,
+      'link' : link,
       'timestamp': Timestamp.now(),
     };
   }
@@ -41,6 +48,8 @@ class ChatModel {
       'chatID': chatID,
       'userID': userID,
       'friendID': friendID,
+      'type' : type,
+      'link' : link,
       'timestamp': Timestamp.now(),
     };
   }

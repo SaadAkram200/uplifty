@@ -1,11 +1,14 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/providers/chat_provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
+import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
@@ -22,20 +25,54 @@ class ChatScreen extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
+      useSafeArea: true,
       backgroundColor: CColors.background,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30), topRight: Radius.circular(30))),
       builder: (context) {
-        return Padding(
+        return Consumer<FunctionsProvider>(builder: (context, value, child) {
+         return value.selectedImage != null // for selecting photo/video
+          ? Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(onPressed: (){
+                  value.selectedImage= null;
+                  }, 
+                icon: Icon(Icons.cancel_outlined, color: CColors.secondary,)),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: CColors.primary)
+                ),
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.width * 0.8,
+                  maxWidth: MediaQuery.of(context).size.width * 0.8,),
+                child:Image(image: FileImage(File(value.selectedImage!.path))),),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50,vertical: 20),
+                  child: SignButton(buttonName: "Share", onPressed: (){}),
+                ),
+            ],
+          )
+          : Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
             SettingsButton(
                 onTap: () {}, buttonName: "Audio", icon: IconlyLight.voice),
             SettingsButton(
-                onTap: () {}, buttonName: "Camera", icon: IconlyLight.camera),
+                onTap: () {
+                  value.imagePicker(false);
+                  }, buttonName: "Camera", icon: IconlyLight.camera),
             SettingsButton(
-                onTap: () {},
+                onTap: () {
+                  value.imagePicker(true);
+                },
                 buttonName: "Photo/Video",
                 icon: IconlyLight.image),
             SettingsButton(
@@ -46,7 +83,8 @@ class ChatScreen extends StatelessWidget {
               height: 20,
             )
           ]),
-        );
+        );  
+        },);
       },
     );
   }
@@ -66,69 +104,72 @@ class ChatScreen extends StatelessWidget {
                   reverse: true,
                   itemCount: value1.chatList?.length,
                   itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Align(
-                        alignment: value1.chatList?[index].senderID ==
-                                value.uid
-                            ? Alignment.topRight // Sender's message alignment
-                            : Alignment.topLeft, // Receiver's message alignment
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.0),
-                            color: value1.chatList?[index].senderID ==
-                                    value.uid
-                                ? CColors.secondary
-                                : CColors.bottomAppBarcolor,
-                            boxShadow: const [
-                              BoxShadow(
-                                color: Colors.black45,
-                                blurRadius: 4,
-                                offset: Offset(0, 4),
-                              )
-                            ],
+                    return Align(
+                      alignment: value1.chatList?[index].senderID ==
+                              value.uid
+                          ? Alignment.topRight // Sender's message alignment
+                          : Alignment.topLeft, // Receiver's message alignment
+                      child: Container(
+                        padding: const EdgeInsets.only(top: 12,right: 12,left: 12,bottom: 4),
+                        margin: const EdgeInsets.all(5),
+                        constraints: const BoxConstraints(
+                          maxHeight: 400,
+                          maxWidth: 250,
+                          minWidth: 0
                           ),
-                          child: Wrap(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Text(
-                                  value1.chatList![index].messageText,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: value1.chatList?[index].senderID ==
-                                            value.uid
-                                        ? Colors.white
-                                        : CColors.secondarydark,
-                                  ),
-                                ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20.0),
+                          color: value1.chatList?[index].senderID ==
+                                  value.uid
+                              ? CColors.secondary
+                              : CColors.bottomAppBarcolor,
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.black45,
+                              blurRadius: 4,
+                              offset: Offset(0, 4),
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          //crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                        
+                        
+                            Text(
+                              value1.chatList![index].messageText,
+                              textAlign: TextAlign.start,
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: value1.chatList?[index].senderID ==
+                                        value.uid
+                                    ? Colors.white
+                                    : CColors.secondarydark,
                               ),
-                              Padding(
-                                padding: value1.chatList?[index].senderID ==
-                                          value.uid 
-                                          ? const EdgeInsets.only(left: 8,top: 24,right: 3)
-                                          : const EdgeInsets.only(left: 8,top: 24,right: 12),
-                                child: Text(
-                                  DateFormat('hh:mm a').format(
-                                      value1.chatList![index].timestamp),
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: value1.chatList?[index].senderID ==
-                                              value.uid
-                                          ? CColors.background
-                                          : CColors.primary),
-                                ),
-                              ),
-                              if(value1.chatList?[index].senderID ==
-                                  value.uid)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 22, right: 10),
-                                child: value1.chatList![index].isReaded
-                                    ? Image.asset("assets/images/seen5.png", scale: 3.2,)
-                                    : Image.asset("assets/images/unseen5.png", scale: 3.2,),
-                              ),
-                            ],
-                          ),
+                            ),
+                        
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.end,
+                               children: [
+                                 Text(
+                                   DateFormat('hh:mm a').format(
+                                       value1.chatList![index].timestamp),
+                                   style: TextStyle(
+                                       fontSize: 12,
+                                       color: value1.chatList?[index].senderID ==
+                                               value.uid
+                                           ? CColors.background
+                                           : CColors.primary),
+                                 ),
+                                 if(value1.chatList?[index].senderID ==value.uid)
+                                   value1.chatList![index].isReaded
+                                 ? Image.asset("assets/images/seen5.png", scale: 3.2,)
+                                 : Image.asset("assets/images/unseen5.png", scale: 3.2,),
+                               ],
+                             ),
+                          ],
                         ),
                       ),
                     );
@@ -205,14 +246,21 @@ class ChatScreen extends StatelessWidget {
                         )),
                   ],
                 ),
-               const SizedBox(height: 5,),
-                Divider(color: CColors.primary,height: 1,),
+                const SizedBox(
+                  height: 5,
+                ),
+                Divider(
+                  color: CColors.primary,
+                  height: 1,
+                ),
 
                 //user's chat
                 Expanded(child: chatBuilder(value)),
 
                 // messeage textfield
-                Divider(color: CColors.primary,),
+                Divider(
+                  color: CColors.primary,
+                ),
                 SizedBox(
                   height: 50,
                   child: Row(
@@ -227,11 +275,14 @@ class ChatScreen extends StatelessWidget {
                           },
                           suffixIcon: IconlyLight.send,
                           suffixIconOnpressed: () {
-                            Functions.startChatting(value.uid,
-                                    friendID, messageController)
+                            if (messageController.text.isNotEmpty) {
+                               Functions.startChatting(
+                                    value.uid, friendID, messageController)
                                 .then((value) {
                               messageController.clear();
                             });
+                            }
+                           
                           },
                         ),
                       ),

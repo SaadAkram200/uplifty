@@ -70,7 +70,9 @@ class Functions {
         senderID: userID,
         chatID: chatID,
         friendID: friendID,
-        userID: userID);
+        userID: userID,
+        type: "text",
+        link: "");
     // to set data in chat's collection
     await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
     // chats
@@ -80,7 +82,9 @@ class Functions {
     final message = ChatModel(
         messageText: messageController.text,
         messageID: messageID,
-        senderID: userID);
+        senderID: userID,
+        link: "",
+        type: "text");
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap());
 

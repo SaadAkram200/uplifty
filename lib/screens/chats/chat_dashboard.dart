@@ -125,12 +125,15 @@ class ChatDashboard extends StatelessWidget {
                                       : Image.asset("assets/images/seen5.png", scale: 3,),
                                 ),
                                if(value.allChats.isNotEmpty)
-                                Text(
-                                  value.allChats[index].messageText,
-                                  style: TextStyle(
-                                    color: CColors.primary,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500),
+                                Container(
+                                  constraints:const BoxConstraints(maxWidth: 155,maxHeight: 20),
+                                  child: Text(
+                                    value.allChats[index].messageText,
+                                    style: TextStyle(
+                                      color: CColors.primary,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ],
                             ),

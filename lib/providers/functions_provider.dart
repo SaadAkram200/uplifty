@@ -3,7 +3,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uplifty/models/user_model.dart';
 
 class FunctionsProvider with ChangeNotifier {
- 
   //for bottom appbar
   int selectedPage = 0;
   onTabTapped(int index) {
@@ -60,9 +59,10 @@ class FunctionsProvider with ChangeNotifier {
 
   XFile? get selectedImage => _selectedImage;
 
-  imagePicker() async {
+  imagePicker(bool fromGallery) async {
     ImagePicker imagePicker = ImagePicker();
-    selectedImage = await imagePicker.pickImage(source: ImageSource.gallery);
+    selectedImage = await imagePicker.pickImage(
+        source: fromGallery ? ImageSource.gallery : ImageSource.camera);
     notifyListeners();
   }
 }
