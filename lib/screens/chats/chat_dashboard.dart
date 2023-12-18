@@ -135,10 +135,24 @@ class ChatDashboard extends StatelessWidget {
                               ],
                             ),
                               trailing: 
-                              Text(value.allChats.isNotEmpty ? 
-                                DateFormat('hh:mm a')
-                                .format(value.allChats[index].timestamp) : "",
-                                style: TextStyle(color: CColors.primary,fontSize: 16),),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(value.allChats.isNotEmpty ? 
+                                    DateFormat('hh:mm a')
+                                    .format(value.allChats[index].timestamp) : "",
+                                    style: TextStyle(color: CColors.primary,fontSize: 16),),
+                                  Badge(
+                                    backgroundColor: CColors.primary,
+                                    isLabelVisible: (
+                                      value.allChats.isNotEmpty &&
+                                      value.allChats[index].isReaded==false &&
+                                      value.allChats[index].senderID != value.uid) 
+                                      ? true : false,
+                                    smallSize: 12,
+                                  )
+                                ],
+                              ),
                           ),
                         ),
                       ),

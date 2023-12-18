@@ -127,7 +127,6 @@ class ChatScreen extends StatelessWidget {
                                     ? Image.asset("assets/images/seen5.png", scale: 3.2,)
                                     : Image.asset("assets/images/unseen5.png", scale: 3.2,),
                               ),
-                             // Image.asset("assets/images/unseen5.png", scale: 3,),
                             ],
                           ),
                         ),
