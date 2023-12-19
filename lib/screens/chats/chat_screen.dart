@@ -20,7 +20,7 @@ class ChatScreen extends StatelessWidget {
   TextEditingController messageController = TextEditingController();
 
   //bottomsheet for attachments- used in message textfield
-  attachmentsBottomSheet(context) {
+  attachmentsBottomSheet(context, DataProvider value1) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -56,7 +56,13 @@ class ChatScreen extends StatelessWidget {
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50,vertical: 20),
-                  child: SignButton(buttonName: "Share", onPressed: (){}),
+                  child: SignButton(buttonName: "Share", onPressed: (){
+                    Functions.sendImage(value1.uid, friendID, value.selectedImage)
+                    .then((v) {
+                      value.selectedImage=null;
+                      Navigator.pop(context);
+                     });
+                  }),
                 ),
             ],
           )
@@ -104,7 +110,23 @@ class ChatScreen extends StatelessWidget {
                   reverse: true,
                   itemCount: value1.chatList?.length,
                   itemBuilder: (context, index) {
-                    return Align(
+                    // if (value1.chatList?[index].type == "image") {
+                    //   return Column(
+
+                    //     children: [
+                    //       Container(
+                    //         decoration: BoxDecoration(
+                    //           border: Border.all(color: CColors.primary)
+                    //         ),
+                    //         constraints: BoxConstraints(
+                    //           maxHeight: MediaQuery.of(context).size.width * 0.8,
+                    //           maxWidth: MediaQuery.of(context).size.width * 0.4,),
+                    //         child: Image.asset("assets/images/DSC00575.jpg"),),
+                    //     ],
+                    //   );
+                    // }
+                    
+                      return Align(
                       alignment: value1.chatList?[index].senderID ==
                               value.uid
                           ? Alignment.topRight // Sender's message alignment
@@ -136,7 +158,7 @@ class ChatScreen extends StatelessWidget {
                           //crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                         
-                        
+                            if(value1.chatList?[index].type == "text")
                             Text(
                               value1.chatList![index].messageText,
                               textAlign: TextAlign.start,
@@ -147,6 +169,16 @@ class ChatScreen extends StatelessWidget {
                                     ? Colors.white
                                     : CColors.secondarydark,
                               ),
+                            ),
+
+                            if(value1.chatList?[index].type == "image")
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Container(
+                              constraints: BoxConstraints(
+                                maxHeight: MediaQuery.of(context).size.width * 0.8,
+                                maxWidth: MediaQuery.of(context).size.width * 0.4,),
+                              child: Image.network(value1.chatList![index].link,fit: BoxFit.fill, ),),
                             ),
                         
                           Row(
@@ -173,6 +205,8 @@ class ChatScreen extends StatelessWidget {
                         ),
                       ),
                     );
+                    
+                    
                   },
                 );
         },
@@ -271,7 +305,7 @@ class ChatScreen extends StatelessWidget {
                           fieldName: "Write a message..",
                           prefixIcon: Icons.add,
                           prefixIconOnpressed: () {
-                            attachmentsBottomSheet(context);
+                            attachmentsBottomSheet(context, value);
                           },
                           suffixIcon: IconlyLight.send,
                           suffixIconOnpressed: () {

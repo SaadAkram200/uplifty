@@ -63,7 +63,6 @@ class Functions {
     var messageDoc = chats.doc(chatID).collection("messages").doc();
     String messageID = messageDoc.id;
 
-
     final messageforchatdoc = ChatModel(
         messageText: messageController.text,
         messageID: messageID,
@@ -75,9 +74,6 @@ class Functions {
         link: "");
     // to set data in chat's collection
     await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-    // chats
-    //     .doc(chatID)
-    //     .update({"chatID": chatID, "userID": userID, "friendID": friendID});
 
     final message = ChatModel(
         messageText: messageController.text,
@@ -102,6 +98,43 @@ class Functions {
       "userchats": FieldValue.arrayUnion([chatID])
     });
   }
+  //for sending image in chat
+  static Future<void> sendImage(
+    String userID,
+    String friendID,
+    XFile? selectedImage,
+  ) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    String imageUrl = await uploadFile(selectedImage!); 
+      //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+        final messageforchatdoc = ChatModel(
+        messageText: "Photo",
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "image",
+        link: imageUrl);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+        final message = ChatModel(
+        messageText: "Photo",
+        messageID: messageID,
+        senderID: userID,
+        link: imageUrl,
+        type: "image");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
+  }
+
 
   //firebase work for posts
   static final CollectionReference<Map<String, dynamic>> posts =
