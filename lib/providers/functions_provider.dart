@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplifty/models/user_model.dart';
@@ -64,5 +65,24 @@ class FunctionsProvider with ChangeNotifier {
     selectedImage = await imagePicker.pickImage(
         source: fromGallery ? ImageSource.gallery : ImageSource.camera);
     notifyListeners();
+  }
+
+//for file picker
+  XFile? _selectedFile;
+
+  set selectedFile(XFile? selectedFile) {
+    _selectedFile = selectedFile;
+    notifyListeners();
+  }
+
+  XFile? get selectedFile => _selectedFile;
+  filePicker() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+//var fileName = result.files.single.name;
+      selectedFile = XFile(result.files.single.path as String);
+      print(selectedFile?.path);
+    }
   }
 }
