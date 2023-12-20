@@ -98,6 +98,7 @@ class Functions {
       "userchats": FieldValue.arrayUnion([chatID])
     });
   }
+
   //for sending image in chat
   static Future<void> sendImage(
     String userID,
@@ -108,13 +109,13 @@ class Functions {
     list.sort();
     String chatID = list.join("_");
 
-    String imageUrl = await uploadFile(selectedImage!); 
-      //to get the message doc id
+    String imageUrl = await uploadImage(selectedImage!);
+    //to get the message doc id
     var messageDoc = chats.doc(chatID).collection("messages").doc();
     String messageID = messageDoc.id;
 
-        final messageforchatdoc = ChatModel(
-        messageText: "Photo",
+    final messageforchatdoc = ChatModel(
+        messageText: "📷Photo",
         messageID: messageID,
         senderID: userID,
         chatID: chatID,
@@ -125,8 +126,8 @@ class Functions {
     // to set data in chat's collection
     await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
 
-        final message = ChatModel(
-        messageText: "Photo",
+    final message = ChatModel(
+        messageText: "📷Photo",
         messageID: messageID,
         senderID: userID,
         link: imageUrl,
@@ -134,7 +135,42 @@ class Functions {
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap());
   }
+  //for sending image in chat
+  static Future<void> sendFile(
+    String userID,
+    String friendID,
+    XFile? selectedFile,
+  ) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
 
+    String fileUrl = await uploadFile(selectedFile!);
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final messageforchatdoc = ChatModel(
+        messageText: "📄Document",
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "document",
+        link: fileUrl);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+    final message = ChatModel(
+        messageText: "📄Document",
+        messageID: messageID,
+        senderID: userID,
+        link: fileUrl,
+        type: "document");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
+  }
 
   //firebase work for posts
   static final CollectionReference<Map<String, dynamic>> posts =
@@ -162,7 +198,7 @@ class Functions {
     } else {
       try {
         showLoading(context);
-        String imageUrl = await uploadFile(selectedImage);
+        String imageUrl = await uploadImage(selectedImage);
         await createNewPost(imageUrl, captionController);
         showToast("Posted Sucessfully!");
         Navigator.pop(context);
@@ -402,7 +438,7 @@ class Functions {
   }
 
   //upload image
-  static Future<String> uploadFile(XFile file) async {
+  static Future<String> uploadImage(XFile file) async {
     try {
       final mimeType = lookupMimeType(file.path);
       String path = "images/${DateTime.now().millisecondsSinceEpoch}";
@@ -416,6 +452,29 @@ class Functions {
         String imageUrl = await reference.getDownloadURL();
 
         return imageUrl;
+      } else {
+        throw PlatformException(code: "404", message: "no download link found");
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  //upload file
+  static Future<String> uploadFile(XFile file) async {
+    try {
+      final mimeType = lookupMimeType(file.path);
+      String path = "files/${DateTime.now().millisecondsSinceEpoch}";
+      final firebasestorage.FirebaseStorage storage =
+          firebasestorage.FirebaseStorage.instance;
+      var reference = storage.ref().child(path);
+      var r = await reference.putData(
+          await file.readAsBytes(), SettableMetadata(contentType: mimeType));
+
+      if (r.state == firebasestorage.TaskState.success) {
+        String fileUrl = await reference.getDownloadURL();
+
+        return fileUrl;
       } else {
         throw PlatformException(code: "404", message: "no download link found");
       }
@@ -448,7 +507,7 @@ class Functions {
       try {
         showLoading(context);
         if (uploadedimageUrl == null || selectedImage != null) {
-          imageUrl = await uploadFile(selectedImage!);
+          imageUrl = await uploadImage(selectedImage!);
         } else {
           imageUrl = uploadedimageUrl;
         }

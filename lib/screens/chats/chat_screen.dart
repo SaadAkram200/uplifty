@@ -12,6 +12,7 @@ import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ChatScreen extends StatelessWidget {
   String friendID;
@@ -32,7 +33,8 @@ class ChatScreen extends StatelessWidget {
               topLeft: Radius.circular(30), topRight: Radius.circular(30))),
       builder: (context) {
         return Consumer<FunctionsProvider>(builder: (context, value, child) {
-         return value.selectedImage != null // for selecting photo/video
+         return value.selectedImage != null
+          || value.selectedFile != null // for selecting photo/documents
           ? Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -41,7 +43,8 @@ class ChatScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(onPressed: (){
-                  value.selectedImage= null;
+                  value.selectedImage = null;
+                  value.selectedFile = null;
                   }, 
                 icon: Icon(Icons.cancel_outlined, color: CColors.secondary,)),
               ),
@@ -52,16 +55,37 @@ class ChatScreen extends StatelessWidget {
                 constraints: BoxConstraints(
                   maxHeight: MediaQuery.of(context).size.width * 0.8,
                   maxWidth: MediaQuery.of(context).size.width * 0.8,),
-                child:Image(image: FileImage(File(value.selectedImage!.path))),),
+                child: value.selectedFile ==null
+                ? Image(image: FileImage(File(value.selectedImage!.path)))
+                : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(IconlyLight.document, size: 200,color: CColors.secondary,),
+                    Text(
+                      value.selectedFile!.name,
+                      style: TextStyle(color: CColors.secondary,fontSize: 20),)
+                  ],
+                )),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 50,vertical: 20),
-                  child: SignButton(buttonName: "Share", onPressed: (){
-                    Functions.sendImage(value1.uid, friendID, value.selectedImage)
-                    .then((v) {
-                      value.selectedImage=null;
-                      Navigator.pop(context);
-                     });
+                  child: SignButton(
+                    buttonName: "Share",
+                    onPressed: (){
+                      if (value.selectedImage != null) {
+                        Functions.sendImage(value1.uid, friendID, value.selectedImage)
+                          .then((v) {
+                            value.selectedImage=null;
+                            Navigator.pop(context);
+                          });
+                      }else if(value.selectedFile!=null){
+                        Functions.sendFile(value1.uid, friendID, value.selectedFile)
+                        .then((v){
+                          value.selectedFile = null;
+                          Navigator.pop(context);
+                        });
+                      }
+                    
                   }),
                 ),
             ],
@@ -69,8 +93,6 @@ class ChatScreen extends StatelessWidget {
           : Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Column(mainAxisSize: MainAxisSize.min, children: [
-            SettingsButton(
-                onTap: () {}, buttonName: "Audio", icon: IconlyLight.voice),
             SettingsButton(
                 onTap: () {
                   value.imagePicker(false);
@@ -82,7 +104,9 @@ class ChatScreen extends StatelessWidget {
                 buttonName: "Photo/Video",
                 icon: IconlyLight.image),
             SettingsButton(
-                onTap: () {},
+                onTap: () {
+                  value.filePicker();
+                },
                 buttonName: "Document",
                 icon: IconlyLight.document),
             const SizedBox(
@@ -110,29 +134,15 @@ class ChatScreen extends StatelessWidget {
                   reverse: true,
                   itemCount: value1.chatList?.length,
                   itemBuilder: (context, index) {
-                    // if (value1.chatList?[index].type == "image") {
-                    //   return Column(
-
-                    //     children: [
-                    //       Container(
-                    //         decoration: BoxDecoration(
-                    //           border: Border.all(color: CColors.primary)
-                    //         ),
-                    //         constraints: BoxConstraints(
-                    //           maxHeight: MediaQuery.of(context).size.width * 0.8,
-                    //           maxWidth: MediaQuery.of(context).size.width * 0.4,),
-                    //         child: Image.asset("assets/images/DSC00575.jpg"),),
-                    //     ],
-                    //   );
-                    // }
-                    
                       return Align(
                       alignment: value1.chatList?[index].senderID ==
                               value.uid
                           ? Alignment.topRight // Sender's message alignment
                           : Alignment.topLeft, // Receiver's message alignment
                       child: Container(
-                        padding: const EdgeInsets.only(top: 12,right: 12,left: 12,bottom: 4),
+                        padding: value1.chatList?[index].type == "image" 
+                        ? const EdgeInsets.all(4)
+                        : const EdgeInsets.only(top: 10,right: 10,left: 10,bottom: 4),
                         margin: const EdgeInsets.all(5),
                         constraints: const BoxConstraints(
                           maxHeight: 400,
@@ -171,16 +181,42 @@ class ChatScreen extends StatelessWidget {
                               ),
                             ),
 
+                            //create a container here for video player
+
+
+                            if(value1.chatList?[index].type == "document")
+                            InkWell(
+                              onTap: () async {
+                                final Uri url = Uri.parse(value1.chatList![index].link);
+                                if (!await launchUrl(url)) {
+                                  throw Exception('Could not launch ');
+                                  }
+                              },
+                              child: Container(
+                                constraints: BoxConstraints(
+                                  maxHeight: MediaQuery.of(context).size.width * 0.8,
+                                  maxWidth: MediaQuery.of(context).size.width * 0.5,),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(IconlyLight.document, size: 200,color: CColors.primary,),
+                                    Text(value1.chatList![index].type,
+                                      style: TextStyle(color: CColors.primary,fontSize: 20),)
+                                ]),
+                              ),
+                            ),
+
                             if(value1.chatList?[index].type == "image")
                             ClipRRect(
                               borderRadius: BorderRadius.circular(15),
                               child: Container(
                               constraints: BoxConstraints(
                                 maxHeight: MediaQuery.of(context).size.width * 0.8,
-                                maxWidth: MediaQuery.of(context).size.width * 0.4,),
+                                maxWidth: MediaQuery.of(context).size.width * 0.5,),
                               child: Image.network(value1.chatList![index].link,fit: BoxFit.fill, ),),
                             ),
-                        
+
+                          //for message time and seen/unseen
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -320,6 +356,34 @@ class ChatScreen extends StatelessWidget {
                           },
                         ),
                       ),
+                      //audio button
+                      Consumer<FunctionsProvider>(builder: (context, value1, child) {
+                        return GestureDetector(
+                        onLongPressStart: (details) {
+                          print("pressed started");
+                          value1.startRecording();
+                        },
+                        onLongPressEnd: (details) {
+                          value1.stopRecording();
+                          print("ends");
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          padding: const EdgeInsets.all(7),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black45,
+                                blurRadius: 4,
+                                offset: Offset(0, 4), // Shadow position
+                              ),]),
+                          child: Icon(IconlyLight.voice, color: CColors.secondary,),),
+                      );
+                      },),
+                      
+                      
                     ],
                   ),
                 )

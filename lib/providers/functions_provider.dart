@@ -1,3 +1,4 @@
+import 'package:record/record.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -80,9 +81,25 @@ class FunctionsProvider with ChangeNotifier {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
     if (result != null) {
-//var fileName = result.files.single.name;
       selectedFile = XFile(result.files.single.path as String);
       print(selectedFile?.path);
     }
+  }
+
+  //voice message work
+  bool isRecording = false;
+  String? audioPath = "";
+  final record =  Record();
+
+  Future<void> startRecording() async {
+   await record.start();
+   isRecording = true;
+  notifyListeners();
+  }
+  Future<void> stopRecording() async {
+    audioPath = await record.stop();
+    isRecording = false;
+    print(audioPath);
+    notifyListeners(); 
   }
 }
