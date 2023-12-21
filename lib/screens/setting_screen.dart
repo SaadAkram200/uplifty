@@ -122,14 +122,7 @@ class SettingScreen extends StatelessWidget {
                     SettingsButton(
                       icon: IconlyLight.password,
                       buttonName: "Reset Password",
-                      onTap: () {
-                        //  List<String>  list = [ "jarULOruwwRFvKOIvRnjeseb4Zx2","k0dMmbB4dSezcjHl28j35kNKC2H2", ];
-                        //  list.sort();
-                        //  String docID =  list.join("_");
-                        //  print(docID);
-
-                        Functions.initiateChat("Nke24ZtnzNceIZ4aIJrvsWS18fl2","jarULOruwwRFvKOIvRnjeseb4Zx2" );
-                      },
+                      onTap: () {},
                     ),
                     SettingsButton(
                       icon: IconlyLight.delete,

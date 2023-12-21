@@ -86,16 +86,14 @@ class Functions {
     messageDoc.set(message.toMap());
 
     //adds friend id in user's myfriends
-    //List<String> mychatwith = [friendID];
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
       "userchats": FieldValue.arrayUnion([chatID])
     });
 
     //adds userid in frined's myfriends
-    List<String> friendschatwith = [userID];
     users.doc(friendID).update({
-      "chatwith": FieldValue.arrayUnion(friendschatwith),
+      "chatwith": FieldValue.arrayUnion([userID]),
       "userchats": FieldValue.arrayUnion([chatID])
     });
   }
