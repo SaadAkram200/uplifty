@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
@@ -116,12 +117,18 @@ class UpliftyTextfields extends StatelessWidget {
               ),
               prefixIcon: IconButton(
                 onPressed: prefixIconOnpressed,
-                icon:Icon(prefixIcon , color: CColors.secondary,),
+                icon: Icon(
+                  prefixIcon,
+                  color: CColors.secondary,
+                ),
                 color: CColors.secondary,
               ),
               suffixIcon: IconButton(
                 onPressed: suffixIconOnpressed,
-                icon: Icon(suffixIcon , color: CColors.secondary,),
+                icon: Icon(
+                  suffixIcon,
+                  color: CColors.secondary,
+                ),
                 color: CColors.secondary,
               ),
               filled: true,
@@ -185,6 +192,111 @@ class ProfileAvatar extends StatelessWidget {
           ),
         ]),
       ),
+    );
+  }
+}
+
+//for audio message container
+class AudioMessageBox extends StatefulWidget {
+  AudioMessageBox({super.key, required this.link});
+
+  String link;
+  @override
+  State<AudioMessageBox> createState() => _AudioMessageBoxState();
+}
+
+class _AudioMessageBoxState extends State<AudioMessageBox> {
+  bool isPlaying = false;
+  late AudioPlayer audioPlayer;
+  double currentPosition = 0;
+  double audioDuration = 0;
+
+  String getFormattedDuration(double milliseconds) {
+    Duration duration = Duration(milliseconds: milliseconds.toInt());
+    String minutes = (duration.inMinutes).toString().padLeft(2, '0');
+    String seconds = (duration.inSeconds % 60).toString().padLeft(2, '0');
+    return '$minutes:$seconds';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    audioPlayer = AudioPlayer();
+    audioPlayer.onPositionChanged.listen((Duration duration) {
+      setState(() {
+        currentPosition = duration.inMilliseconds.toDouble();
+      });
+    });
+
+    audioPlayer.onDurationChanged.listen((Duration duration) {
+      setState(() {
+        audioDuration = duration.inMilliseconds.toDouble();
+      });
+    });
+
+    audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        isPlaying = !isPlaying;
+        currentPosition = 0;  
+      });
+     });
+  }
+
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
+  Future<void> playPause() async {
+    if (isPlaying) {
+      await audioPlayer.pause();
+    } else {
+      var audiolink = UrlSource(widget.link);
+      await audioPlayer.play(audiolink);
+    }
+    setState(() {
+      isPlaying = !isPlaying;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        InkWell(
+          onTap: () {
+            playPause();
+          },
+          child: Icon(
+            isPlaying == true
+                ? Icons.pause_circle_outline_rounded
+                : Icons.play_circle_outline_rounded,
+            color: CColors.primary,
+            size: 35,
+          ),
+        ),
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Slider(
+              thumbColor: CColors.primary,
+              inactiveColor: CColors.background,
+              activeColor: CColors.primary,
+              value: currentPosition,
+              min: 0,
+              max: audioDuration,
+              onChanged: (v) {
+                audioPlayer.seek(Duration(milliseconds: v.toInt()));
+              },
+            ),
+            //Text(getFormattedDuration(currentPosition)),
+          ],
+        ),
+      ],
     );
   }
 }

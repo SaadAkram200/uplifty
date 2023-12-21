@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'dart:async';
+import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_picker/country_picker.dart';
@@ -135,7 +136,10 @@ class Functions {
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap());
   }
-  //for sending image in chat
+
+
+  
+  //for sending documents in chat
   static Future<void> sendFile(
     String userID,
     String friendID,
@@ -170,6 +174,44 @@ class Functions {
         type: "document");
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap());
+  }
+
+
+  //for sending voice note in chat
+  static Future<void> sendAudio(
+    String userID,
+    String friendID,
+    String audioPath,
+  ) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    String fileUrl = await uploadAudio(audioPath);
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final messageforchatdoc = ChatModel(
+        messageText: "🎤Voice note",
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "voice note",
+        link: fileUrl);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+    final message = ChatModel(
+        messageText: "🎤Voice note",
+        messageID: messageID,
+        senderID: userID,
+        link: fileUrl,
+        type: "voice note");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap()).then((value) => showToast("audio sent"));
   }
 
   //firebase work for posts
@@ -483,6 +525,32 @@ class Functions {
     }
   }
 
+
+ //upload audio
+  static Future<String> uploadAudio(String audioPath) async {
+    try {
+      final mimeType = lookupMimeType(audioPath);
+      String path = "audios/${DateTime.now().millisecondsSinceEpoch}";
+      final firebasestorage.FirebaseStorage storage =
+          firebasestorage.FirebaseStorage.instance;
+
+       File audioFile = File(audioPath);
+
+      var reference = storage.ref().child(path);
+      var r = await reference.putData(
+          await audioFile.readAsBytes(), SettableMetadata(contentType: mimeType));
+
+      if (r.state == firebasestorage.TaskState.success) {
+        String audioUrl = await reference.getDownloadURL();
+
+        return audioUrl;
+      } else {
+        throw PlatformException(code: "404", message: "no download link found");
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
 // create new profile and editing existing profile
   static Future profileCreation(
       context,

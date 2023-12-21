@@ -70,14 +70,44 @@ class ChatProvider with ChangeNotifier {
       if (chatList!.isNotEmpty &&
           chatList!.first.senderID != FirebaseAuth.instance.currentUser!.uid &&
           !chatList!.first.isReaded) {
-        print("works?");
+        
         await markChatAsRead(chatID);
       }
-      print(chatList?.first.messageText);
       notifyListeners();
     });
   }
 
+//   //for audio message
+//   AudioPlayer audioPlayer = AudioPlayer();
+//  // bool isPlaying = false;
+//   double currentPosition = 0.0;
+//   double audioDuration = 0.0;
+
+//   Future<void> playPauseAudio(UrlSource audiolink,bool isPlaying) async {
+//     if (isPlaying) {
+//       await audioPlayer.pause();
+//     } else {
+      
+//       audioPlayer.onPositionChanged.listen((Duration duration) {
+//         currentPosition = duration.inMilliseconds.toDouble();
+        
+//         notifyListeners();
+//       });
+
+//       audioPlayer.onDurationChanged.listen((Duration duration) {
+//         audioDuration = duration.inMilliseconds.toDouble();
+//         notifyListeners();
+//       });
+//       await audioPlayer.play(audiolink);
+//     }
+//     //isPlaying = !isPlaying;
+//     notifyListeners();
+//   }
+
+//   void seekAudio(Duration duration) {
+//     audioPlayer.seek(duration);
+//   }
+  
   @override
   void dispose() {
     chatStream?.cancel();

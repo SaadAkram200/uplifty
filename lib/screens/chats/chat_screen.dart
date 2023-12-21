@@ -14,11 +14,52 @@ import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   String friendID;
   ChatScreen({super.key, required this.friendID});
 
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
+
+  // Widget voiceNoteContainer(ChatProvider value1, index){
+  //   bool isPlaying = false;
+  //   return Row(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             IconButton(
+  //               icon: Icon(
+  //                 isPlaying==true
+  //                 ? Icons.pause_circle_outline_rounded
+  //                 : Icons.play_circle_outline_rounded,
+  //                 color: CColors.primary,) ,
+  //               onPressed: () { 
+  //              // AudioPlayer audioPlayer = AudioPlayer();
+  //              setState(() {
+  //                     isPlaying = !isPlaying;
+  //                   });
+  //                   print(isPlaying);
+                    
+  //                 var audiolink =  UrlSource(value1.chatList![index].link);
+  //                   value1.playPauseAudio(audiolink, isPlaying);
+                    
+  //                 },),
+  //             Slider(                    
+  //               thumbColor: CColors.primary,
+  //               inactiveColor: CColors.background,
+  //               activeColor: CColors.primary,
+  //               value: value1.currentPosition,
+  //               min: 0,
+  //               max: value1.audioDuration,
+  //               onChanged: (v) {
+  //               value1.seekAudio(Duration(milliseconds: v.toInt()));
+  //               },)
+  //            ],
+  //            );
+  // }
 
   //bottomsheet for attachments- used in message textfield
   attachmentsBottomSheet(context, DataProvider value1) {
@@ -73,13 +114,13 @@ class ChatScreen extends StatelessWidget {
                     buttonName: "Share",
                     onPressed: (){
                       if (value.selectedImage != null) {
-                        Functions.sendImage(value1.uid, friendID, value.selectedImage)
+                        Functions.sendImage(value1.uid, widget.friendID, value.selectedImage)
                           .then((v) {
                             value.selectedImage=null;
                             Navigator.pop(context);
                           });
                       }else if(value.selectedFile!=null){
-                        Functions.sendFile(value1.uid, friendID, value.selectedFile)
+                        Functions.sendFile(value1.uid, widget.friendID, value.selectedFile)
                         .then((v){
                           value.selectedFile = null;
                           Navigator.pop(context);
@@ -99,7 +140,7 @@ class ChatScreen extends StatelessWidget {
                   }, buttonName: "Camera", icon: IconlyLight.camera),
             SettingsButton(
                 onTap: () {
-                  value.imagePicker(true);
+                  value.mediaPicker();
                 },
                 buttonName: "Photo/Video",
                 icon: IconlyLight.image),
@@ -122,12 +163,12 @@ class ChatScreen extends StatelessWidget {
 //builds chat for users
   chatBuilder(DataProvider value) {
     return ChangeNotifierProvider<ChatProvider>(
-      create: (context) => ChatProvider(value.uid, friendID),
+      create: (context) => ChatProvider(value.uid, widget.friendID),
       child: Consumer<ChatProvider>(
         builder: (context, value1, child) {
           return value1.chatList!.isEmpty
               ? Text(
-                  "Say Hi to ${value.getPosterData(friendID)!.username}",
+                  "Say Hi to ${value.getPosterData(widget.friendID)!.username}",
                   style: TextStyle(color: CColors.secondary, fontSize: 20),
                 )
               : ListView.builder(
@@ -146,7 +187,7 @@ class ChatScreen extends StatelessWidget {
                         margin: const EdgeInsets.all(5),
                         constraints: const BoxConstraints(
                           maxHeight: 400,
-                          maxWidth: 250,
+                          maxWidth: 300,
                           minWidth: 0
                           ),
                         decoration: BoxDecoration(
@@ -181,7 +222,38 @@ class ChatScreen extends StatelessWidget {
                               ),
                             ),
 
-                            //create a container here for video player
+
+                            if(value1.chatList![index].type == "voice note")
+                            AudioMessageBox( link: value1.chatList![index].link,),
+                            
+                            // Row(
+                            //   mainAxisSize: MainAxisSize.min,
+                            //   children: [
+                            //      IconButton(
+                            //       icon: Icon(
+                            //         value1.isPlaying
+                            //         ? Icons.pause_circle_outline_rounded
+                            //         : Icons.play_circle_outline_rounded,
+                            //         color: CColors.primary,) ,
+                            //       onPressed: () { 
+                            //        // AudioPlayer audioPlayer = AudioPlayer();
+                            //         var audiolink =  UrlSource(value1.chatList![index].link);
+                            //         value1.playPauseAudio(audiolink);
+                            //        },),
+                            //      Slider(
+                                  
+                            //       thumbColor: CColors.primary,
+                            //       inactiveColor: CColors.background,
+                            //       activeColor: CColors.primary,
+                            //       value: value1.currentPosition,
+                            //       min: 0,
+                            //       max: value1.audioDuration,
+                            //       onChanged: (v) {
+                            //        value1.seekAudio(Duration(milliseconds: v.toInt()));
+                            //      },)
+                            //   ],
+                            // ),
+                            
 
 
                             if(value1.chatList?[index].type == "document")
@@ -284,7 +356,7 @@ class ChatScreen extends StatelessWidget {
                         radius: 25,
                         backgroundColor: Colors.white,
                         backgroundImage: NetworkImage(
-                            value.getPosterData(friendID)!.image as String),
+                            value.getPosterData(widget.friendID)!.image as String),
                         child: null,
                       ),
                     ),
@@ -293,7 +365,7 @@ class ChatScreen extends StatelessWidget {
                     ),
                     Expanded(
                       child: Text(
-                        value.getPosterData(friendID)!.username,
+                        value.getPosterData(widget.friendID)!.username,
                         style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -331,62 +403,72 @@ class ChatScreen extends StatelessWidget {
                 Divider(
                   color: CColors.primary,
                 ),
-                SizedBox(
-                  height: 50,
-                  child: Row(
+                Consumer<FunctionsProvider>(builder: (context, value1, child) {
+                  return SizedBox(
+                  height: 58,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        child: UpliftyTextfields(
-                          controller: messageController,
-                          fieldName: "Write a message..",
-                          prefixIcon: Icons.add,
-                          prefixIconOnpressed: () {
-                            attachmentsBottomSheet(context, value);
-                          },
-                          suffixIcon: IconlyLight.send,
-                          suffixIconOnpressed: () {
-                            if (messageController.text.isNotEmpty) {
-                               Functions.startChatting(
-                                    value.uid, friendID, messageController)
-                                .then((value) {
-                              messageController.clear();
-                            });
-                            }
-                           
-                          },
-                        ),
+                      Row(
+                        children: [
+                           Expanded(
+                            child: value1.isRecording
+                              ? Text(
+                                "recording...",
+                                 style: TextStyle(
+                                  color: CColors.secondary,
+                                  fontSize: 18),
+                                textAlign: TextAlign.center ,) 
+                              : UpliftyTextfields(
+                              controller: messageController,
+                              fieldName: "Write a message..",
+                              prefixIcon: Icons.add,
+                              prefixIconOnpressed: () {
+                                attachmentsBottomSheet(context, value);
+                              },
+                              suffixIcon: IconlyLight.send,
+                              suffixIconOnpressed: () {
+                                if (messageController.text.isNotEmpty) {
+                                   Functions.startChatting(
+                                        value.uid, widget.friendID, messageController)
+                                    .then((value) {
+                                  messageController.clear();
+                                });
+                                }
+                              },
+                            ),
+                          ),
+
+                          //voice note button
+                             GestureDetector(
+                            onLongPressStart: (details) {                             
+                              value1.startRecording();
+                            },
+                            onLongPressEnd: (details) async {
+                              await value1.stopRecording();
+                              Functions.sendAudio(value.uid, widget.friendID, value1.audioPath!);
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.all(5),
+                              padding: const EdgeInsets.all(7),
+                              decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black45,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 4), // Shadow position
+                                  ),]),
+                              child: Icon(IconlyLight.voice, color: CColors.secondary,),),
+                          ),
+                        ],
                       ),
-                      //audio button
-                      Consumer<FunctionsProvider>(builder: (context, value1, child) {
-                        return GestureDetector(
-                        onLongPressStart: (details) {
-                          print("pressed started");
-                          value1.startRecording();
-                        },
-                        onLongPressEnd: (details) {
-                          value1.stopRecording();
-                          print("ends");
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.all(5),
-                          padding: const EdgeInsets.all(7),
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black45,
-                                blurRadius: 4,
-                                offset: Offset(0, 4), // Shadow position
-                              ),]),
-                          child: Icon(IconlyLight.voice, color: CColors.secondary,),),
-                      );
-                      },),
-                      
-                      
                     ],
                   ),
-                )
+                );
+                },)
+                
               ],
             ),
           )),

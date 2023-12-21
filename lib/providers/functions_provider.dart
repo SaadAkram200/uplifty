@@ -3,6 +3,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplifty/models/user_model.dart';
+import 'package:uplifty/utils/functions.dart';
 
 class FunctionsProvider with ChangeNotifier {
   //for bottom appbar
@@ -64,8 +65,27 @@ class FunctionsProvider with ChangeNotifier {
   imagePicker(bool fromGallery) async {
     ImagePicker imagePicker = ImagePicker();
     selectedImage = await imagePicker.pickImage(
-        source: fromGallery ? ImageSource.gallery : ImageSource.camera);
+      source: fromGallery ? ImageSource.gallery : ImageSource.camera,
+      
+    );
     notifyListeners();
+  }
+
+//for video/image- mdeia picker
+  XFile? _selectedMedia;
+
+  set selectedMedia(XFile? selectedMedia) {
+    _selectedMedia = selectedMedia;
+    notifyListeners();
+  }
+
+  XFile? get selectedMedia => _selectedMedia;
+  mediaPicker() async {
+    FilePickerResult? result =
+        await FilePicker.platform.pickFiles(type: FileType.media);
+    if (result != null) {
+      selectedMedia = XFile(result.files.single.path as String);
+    }
   }
 
 //for file picker
@@ -78,28 +98,47 @@ class FunctionsProvider with ChangeNotifier {
 
   XFile? get selectedFile => _selectedFile;
   filePicker() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: [
+      'pdf',
+      'doc',
+      'docx',
+      'xls',
+      'xlsx',
+      'ppt',
+      'pptx',
+      'txt',
+    ]);
 
     if (result != null) {
       selectedFile = XFile(result.files.single.path as String);
-      print(selectedFile?.path);
     }
   }
 
   //voice message work
   bool isRecording = false;
-  String? audioPath = "";
-  final record =  Record();
+  late String? audioPath;
+  final record = Record();
 
   Future<void> startRecording() async {
-   await record.start();
-   isRecording = true;
-  notifyListeners();
+    try {
+      if (await record.hasPermission()) {
+        await record.start();
+        isRecording = true;
+        notifyListeners();
+      }
+    } catch (e) {
+      Functions.showToast("error start recording : $e");
+    }
   }
+
   Future<void> stopRecording() async {
-    audioPath = await record.stop();
-    isRecording = false;
-    print(audioPath);
-    notifyListeners(); 
+    try {
+      audioPath = await record.stop();
+      isRecording = false;
+      notifyListeners();
+    } catch (e) {
+      Functions.showToast("error stop recording : $e");
+    }
   }
 }
