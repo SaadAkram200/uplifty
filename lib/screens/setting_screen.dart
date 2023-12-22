@@ -6,6 +6,7 @@ import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/screens/create_profile.dart';
 import 'package:uplifty/screens/friends/friend_request.dart';
 import 'package:uplifty/screens/friends/myfriends_screen.dart';
+import 'package:uplifty/screens/user_posts.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/utils/functions.dart';
@@ -77,21 +78,46 @@ class SettingScreen extends StatelessWidget {
                     ),
 
                     //edit profile button
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => CreateProfile(
-                                    userData: value.userData, isEditing: true),
-                              ),
-                              (route) => true);
-                        },
-                        child: Text(
-                          "Edit Profile",
-                          style:
-                              TextStyle(color: CColors.primary, fontSize: 18),
-                        )),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CreateProfile(
+                                        userData: value.userData,
+                                        isEditing: true),
+                                  ),
+                                  (route) => true);
+                            },
+                            child: Text(
+                              "Edit Profile",
+                              style: TextStyle(
+                                  color: CColors.primary, fontSize: 18),
+                            )),
+                        Text(
+                          "|",
+                          style: TextStyle(color: CColors.secondary),
+                        ),
+                        //view post button
+                        TextButton(
+                            onPressed: () {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>UserPosts(),
+                                  ),
+                                  (route) => true);
+                            },
+                            child: Text(
+                              "Your Posts",
+                              style: TextStyle(
+                                  color: CColors.primary, fontSize: 18),
+                            )),
+                      ],
+                    ),
                     const Spacer(),
 
                     //buttons

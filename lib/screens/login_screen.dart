@@ -58,6 +58,7 @@ class LoginScreen extends StatelessWidget {
                   fieldName: "password",
                   prefixIcon: IconlyLight.password,
                   obscureText: true,
+                  suffixIcon: IconlyLight.show,
                 ),
 
                 //forget password

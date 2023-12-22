@@ -1,3 +1,4 @@
+import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -120,17 +121,27 @@ class FunctionsProvider with ChangeNotifier {
   late String? audioPath;
   final record = Record();
 
-  Future<void> startRecording() async {
-    try {
-      if (await record.hasPermission()) {
-        await record.start();
-        isRecording = true;
-        notifyListeners();
+Future<void> startRecording() async {
+  try {
+    // Check if permission is granted
+    if (!(await Permission.microphone.isGranted)) {
+      // Request permission if not granted
+      var status = await Permission.microphone.request();
+      
+      if (status != PermissionStatus.granted) {
+        Functions.showToast("Microphone permission not granted");
+        return;
       }
-    } catch (e) {
-      Functions.showToast("error start recording : $e");
     }
+
+    // Start recording if permission is granted
+    await record.start();
+    isRecording = true;
+    notifyListeners();
+  } catch (e) {
+    Functions.showToast("Error starting recording: $e");
   }
+}
 
   Future<void> stopRecording() async {
     try {

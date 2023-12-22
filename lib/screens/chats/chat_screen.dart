@@ -140,7 +140,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   }, buttonName: "Camera", icon: IconlyLight.camera),
             SettingsButton(
                 onTap: () {
-                  value.mediaPicker();
+                  value.imagePicker(true);
                 },
                 buttonName: "Photo/Video",
                 icon: IconlyLight.image),

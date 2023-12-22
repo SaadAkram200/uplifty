@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
@@ -24,13 +24,16 @@ class CreateProfile extends StatefulWidget {
 }
 
 class _CreateProfileState extends State<CreateProfile> {
+  late Functions functions;
   //to check if user is coming from sign up screen or from edit profile
   @override
   void initState() {
     if (widget.userData != null) {
       displayData(widget.userData);
     } else {
-      widget.userData = null;
+      functions = Functions();
+
+      // widget.userData = null;
     }
     super.initState();
   }
@@ -170,9 +173,9 @@ class _CreateProfileState extends State<CreateProfile> {
                     child: SignButton(
                         buttonName:
                             widget.isEditing ? "Edit Profile" : "Get Started",
-                        onPressed: () {
+                        onPressed: () async {
                           // displayData(value.userData!);
-                          Functions.profileCreation(
+                        await  Functions.profileCreation(
                               context,
                               selectedImage,
                               widget.userData?.image!,
@@ -181,6 +184,16 @@ class _CreateProfileState extends State<CreateProfile> {
                               countryController,
                               addressController,
                               widget.isEditing);
+                              
+                          if (widget.isEditing) {
+                            Navigator.pop(context);
+                            // Navigator.pushAndRemoveUntil(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //       builder: (context) => const SettingScreen(),
+                            //     ),
+                            //     (route) => false);
+                          }
                         }),
                   ),
                 ],

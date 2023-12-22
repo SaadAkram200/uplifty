@@ -54,7 +54,7 @@ class SignButton extends StatelessWidget {
 }
 
 //textfield
-class UpliftyTextfields extends StatelessWidget {
+class UpliftyTextfields extends StatefulWidget {
   final TextEditingController controller;
   final String fieldName;
   final bool obscureText, readOnly;
@@ -84,6 +84,13 @@ class UpliftyTextfields extends StatelessWidget {
   });
 
   @override
+  State<UpliftyTextfields> createState() => _UpliftyTextfieldsState();
+}
+
+class _UpliftyTextfieldsState extends State<UpliftyTextfields> {
+  bool showPassword =false;
+
+  @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
@@ -98,14 +105,14 @@ class UpliftyTextfields extends StatelessWidget {
               ),
             ]),
         child: TextField(
-          onTap: onTap,
-          onChanged: onChanged,
-          maxLines: maxLines,
-          minLines: maxLines,
-          keyboardType: keyboardType,
-          readOnly: readOnly,
-          obscureText: obscureText,
-          controller: controller,
+          onTap: widget.onTap,
+          onChanged: widget.onChanged,
+          maxLines: widget.maxLines,
+          minLines: widget.maxLines,
+          keyboardType: widget.keyboardType,
+          readOnly: widget.readOnly,
+          obscureText: showPassword, //widget.obscureText,
+          controller: widget.controller,
           cursorColor: CColors.secondary,
           style: TextStyle(
             color: CColors.secondary,
@@ -116,24 +123,33 @@ class UpliftyTextfields extends StatelessWidget {
                 top: 20,
               ),
               prefixIcon: IconButton(
-                onPressed: prefixIconOnpressed,
+                onPressed: widget.prefixIconOnpressed,
                 icon: Icon(
-                  prefixIcon,
+                  widget.prefixIcon,
                   color: CColors.secondary,
                 ),
                 color: CColors.secondary,
               ),
-              suffixIcon: IconButton(
-                onPressed: suffixIconOnpressed,
+              suffixIcon: widget.suffixIcon == IconlyLight.show 
+              ? IconButton(onPressed: (){
+                setState(() {
+                  showPassword = !showPassword;
+                });
+              },
+               icon: Icon(
+                showPassword ? IconlyLight.show : IconlyLight.hide,
+                color: CColors.secondary,))
+              : IconButton(
+                onPressed: widget.suffixIconOnpressed,
                 icon: Icon(
-                  suffixIcon,
+                  widget.suffixIcon,
                   color: CColors.secondary,
                 ),
                 color: CColors.secondary,
               ),
               filled: true,
               fillColor: Colors.white,
-              hintText: fieldName,
+              hintText: widget.fieldName,
               hintStyle: TextStyle(color: CColors.secondary),
               enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),

@@ -28,6 +28,7 @@ dependencies:
   syncfusion_flutter_pdfviewer: 
   loading_animation_widget:
   video_player: ^2.7.2
+  permission_handler: ^10.4.0
 
 dev_dependencies:
   flutter_test:

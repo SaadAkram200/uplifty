@@ -52,7 +52,7 @@ class DataProvider with ChangeNotifier {
         userData = UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
 
         getPosts(); // to get user's friends posts
-        getUserChats();// to get user's chats
+        getUserChats(); // to get user's chats
       } else {
         userData = null;
       }
@@ -91,7 +91,9 @@ class DataProvider with ChangeNotifier {
 
 //to get all the posts of the user's friends only
   List<PostModel> allPosts = [];
+  List<PostModel> userPosts = [];
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? postsStream;
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? userpostsStream;
   getPosts() {
     postsStream?.cancel();
     postsStream = posts
@@ -104,7 +106,21 @@ class DataProvider with ChangeNotifier {
           PostModel post = PostModel.fromMap(element.data());
 
           allPosts.add(post);
-        } else {}
+        }
+      }
+      notifyListeners();
+    });
+
+// to get user's own posts
+    userpostsStream?.cancel();
+    userpostsStream =
+        posts.where('posterUid', isEqualTo: uid).snapshots().listen((snapshot) {
+      userPosts.clear();
+      for (var element in snapshot.docs) {
+        if (element.exists) {
+          PostModel userPost = PostModel.fromMap(element.data());
+          userPosts.add(userPost);
+        }
       }
       notifyListeners();
     });
@@ -126,7 +142,6 @@ class DataProvider with ChangeNotifier {
         if (element.exists) {
           allChats.add(ChatModel.fromMap(element.data()));
         }
-        
       }
       notifyListeners();
     });

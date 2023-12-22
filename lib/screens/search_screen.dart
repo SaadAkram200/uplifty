@@ -106,7 +106,10 @@ class SearchScreen extends StatelessWidget {
                                               style: TextStyle(
                                                   color:
                                                       CColors.secondarydark)),
-                                          trailing: IconButton(
+                                          trailing:
+                                          value.userData!.sentrequest!.contains(value2.foundUsers[index]?.id) 
+                                          ? Text("Pending", style: TextStyle(color: CColors.secondary),) 
+                                          : IconButton(
                                               onPressed: () {
                                                 //sends friend request
                                                 Functions.sendFriendRequest(

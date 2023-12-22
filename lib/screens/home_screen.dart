@@ -249,17 +249,25 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(
                       width: 10,
                     ),
-                    Expanded(
-                      child: Text(
-                        value
-                            .getPosterData(
-                              value.allPosts[index].posterUid,
-                            )!
-                            .username,
-                        style: TextStyle(
-                            color: CColors.secondarydark, fontSize: 16),
-                      ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          value
+                              .getPosterData(
+                                value.allPosts[index].posterUid,
+                              )!
+                              .username,
+                          style: TextStyle(
+                              color: CColors.secondarydark, fontSize: 18,fontWeight: FontWeight.w500),
+                        ),
+                        Text(DateFormat('hh:mm a').format(value.allPosts[index].timestamp),
+                         style: TextStyle(
+                              color: CColors.secondary, fontSize: 14), ),
+                      ],
                     ),
+                    const Spacer(),
                     IconButton(
                         onPressed: () {
                           
@@ -279,7 +287,7 @@ class HomeScreen extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 child: Text(
                   value.allPosts[index].caption,
-                  style: TextStyle(color: CColors.secondary),
+                  style: TextStyle(color: CColors.secondarydark),
                 ),
               ),
 

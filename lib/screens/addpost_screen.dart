@@ -1,10 +1,11 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
+import 'package:uplifty/screens/bottom_appbar.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
@@ -90,10 +91,17 @@ class AddPost extends StatelessWidget {
                 //post button
                 SignButton(
                   buttonName: "Post",
-                  onPressed: () async{
-                   await Functions.postCreation(context, value.selectedImage, captionController);
-                   value.selectedImage = null;
-                   captionController.clear();
+                  onPressed: () async {
+                    await Functions.postCreation(
+                        context, value.selectedImage, captionController);
+                    value.selectedImage = null;
+                    captionController.clear();
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const BottomAppBarClass(),
+                        ),
+                        (route) => false);
                   },
                 ),
                 const Spacer(),
