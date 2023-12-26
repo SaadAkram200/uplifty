@@ -19,7 +19,7 @@ class BottomAppBarClass extends StatefulWidget {
 
 class _BottomAppBarClassState extends State<BottomAppBarClass> {
   final pageOptions = [
-     HomeScreen(),
+    HomeScreen(),
     const ChatDashboard(),
     SearchScreen(),
     const SettingScreen(),
@@ -33,6 +33,70 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
     functions = Functions();
     super.initState();
   }
+//bottomsheet to select post type
+  selectPostType() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      showDragHandle: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+      builder: (context) {
+        return Container(
+          width: MediaQuery.of(context).size.width * 0.4,
+          decoration: BoxDecoration(
+              color: CColors.background,
+              borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                  leading: Icon(
+                    IconlyLight.image,
+                    color: CColors.secondary,
+                  ),
+                  title: Text(
+                    'Image',
+                    style: TextStyle(color: CColors.secondary),
+                  ),
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddPost(isImage: true),
+                        ),
+                        (route) => true).then(
+                      (value) => Navigator.pop(context),
+                    );
+                  }),
+              ListTile(
+                leading: Icon(
+                  IconlyLight.video,
+                  color: CColors.secondary,
+                ),
+                title: Text(
+                  'Video',
+                  style: TextStyle(color: CColors.secondary),
+                ),
+                onTap: () => Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddPost(isImage: false),
+                    ),
+                    (route) => true).then(
+                  (value) => Navigator.pop(context),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +107,7 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => AddPost(),
-                ),
-                (route) => true);
+            selectPostType();
           },
           tooltip: 'Increment',
           elevation: 5.0,

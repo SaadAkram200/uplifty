@@ -50,11 +50,14 @@ class DataProvider with ChangeNotifier {
     userStream = doc.snapshots().listen((snapshot) {
       if (snapshot.exists) {
         userData = UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
-
-        getPosts(); // to get user's friends posts
-        getUserChats(); // to get user's chats
       } else {
         userData = null;
+      }
+      if (userData!.myfriends!.isNotEmpty) {
+        getPosts(); // to get user's friends posts
+      }
+      if (userData!.userchats!.isNotEmpty) {
+         getUserChats(); // to get user's chats
       }
       notifyListeners();
     });

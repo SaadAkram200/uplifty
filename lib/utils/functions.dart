@@ -217,7 +217,7 @@ class Functions {
       FirebaseFirestore.instance.collection("posts");
   //create new post
   static Future<void> createNewPost(
-      String imageUrl, TextEditingController captionController) {
+      String imageUrl, TextEditingController captionController , String type) {
     var postdoc = posts.doc();
     String postid = postdoc.id;
     final newPost = PostModel(
@@ -225,27 +225,27 @@ class Functions {
       image: imageUrl,
       caption: captionController.text,
       postid: postid,
+      type: type,
       likedby: [],
     );
     return postdoc.set(newPost.toMap());
   }
 
   //to create post
-  static Future postCreation(context, XFile? selectedImage,
-      TextEditingController captionController) async {
-    if (selectedImage == null) {
-      showToast("Select image to post");
-    } else {
+  static Future postCreation(context, XFile? selectedMedia,
+      TextEditingController captionController, String type) async {
+     print(type);
       try {
         showLoading(context);
-        String imageUrl = await uploadImage(selectedImage);
-        await createNewPost(imageUrl, captionController);
+        String mediaUrl = await uploadImage(selectedMedia!);
+        await createNewPost(mediaUrl, captionController, type);
         showToast("Posted Sucessfully!");
         Navigator.pop(context);
       } catch (e) {
         showToast("An error ocours, please try again");
       }
-    }
+
+    
   }
 
 //for like button// adds current uid in  post's likedby

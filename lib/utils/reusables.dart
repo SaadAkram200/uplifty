@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplifty/utils/colors.dart';
@@ -88,7 +89,7 @@ class UpliftyTextfields extends StatefulWidget {
 }
 
 class _UpliftyTextfieldsState extends State<UpliftyTextfields> {
-  bool showPassword =false;
+  bool showPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +114,11 @@ class _UpliftyTextfieldsState extends State<UpliftyTextfields> {
           readOnly: widget.readOnly,
           obscureText: showPassword, //widget.obscureText,
           controller: widget.controller,
+          inputFormatters: widget.keyboardType == TextInputType.phone
+              ? [
+                  FilteringTextInputFormatter.digitsOnly,
+                ]
+              : [],
           cursorColor: CColors.secondary,
           style: TextStyle(
             color: CColors.secondary,
@@ -130,23 +136,25 @@ class _UpliftyTextfieldsState extends State<UpliftyTextfields> {
                 ),
                 color: CColors.secondary,
               ),
-              suffixIcon: widget.suffixIcon == IconlyLight.show 
-              ? IconButton(onPressed: (){
-                setState(() {
-                  showPassword = !showPassword;
-                });
-              },
-               icon: Icon(
-                showPassword ? IconlyLight.show : IconlyLight.hide,
-                color: CColors.secondary,))
-              : IconButton(
-                onPressed: widget.suffixIconOnpressed,
-                icon: Icon(
-                  widget.suffixIcon,
-                  color: CColors.secondary,
-                ),
-                color: CColors.secondary,
-              ),
+              suffixIcon: widget.suffixIcon == IconlyLight.show
+                  ? IconButton(
+                      onPressed: () {
+                        setState(() {
+                          showPassword = !showPassword;
+                        });
+                      },
+                      icon: Icon(
+                        showPassword ? IconlyLight.show : IconlyLight.hide,
+                        color: CColors.secondary,
+                      ))
+                  : IconButton(
+                      onPressed: widget.suffixIconOnpressed,
+                      icon: Icon(
+                        widget.suffixIcon,
+                        color: CColors.secondary,
+                      ),
+                      color: CColors.secondary,
+                    ),
               filled: true,
               fillColor: Colors.white,
               hintText: widget.fieldName,
@@ -253,9 +261,9 @@ class _AudioMessageBoxState extends State<AudioMessageBox> {
     audioPlayer.onPlayerComplete.listen((event) {
       setState(() {
         isPlaying = !isPlaying;
-        currentPosition = 0;  
+        currentPosition = 0;
       });
-     });
+    });
   }
 
   @override

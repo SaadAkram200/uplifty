@@ -67,25 +67,24 @@ class FunctionsProvider with ChangeNotifier {
     ImagePicker imagePicker = ImagePicker();
     selectedImage = await imagePicker.pickImage(
       source: fromGallery ? ImageSource.gallery : ImageSource.camera,
-      
     );
     notifyListeners();
   }
 
 //for video/image- mdeia picker
-  XFile? _selectedMedia;
+  XFile? _selectedVideo;
 
-  set selectedMedia(XFile? selectedMedia) {
-    _selectedMedia = selectedMedia;
+  set selectedVideo(XFile? selectedVideo) {
+    _selectedVideo = selectedVideo;
     notifyListeners();
   }
 
-  XFile? get selectedMedia => _selectedMedia;
-  mediaPicker() async {
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.media);
+  XFile? get selectedVideo => _selectedVideo;
+  videoPicker() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.custom, allowedExtensions: ['mp4']);
     if (result != null) {
-      selectedMedia = XFile(result.files.single.path as String);
+      selectedVideo = XFile(result.files.single.path as String);
     }
   }
 
@@ -121,27 +120,27 @@ class FunctionsProvider with ChangeNotifier {
   late String? audioPath;
   final record = Record();
 
-Future<void> startRecording() async {
-  try {
-    // Check if permission is granted
-    if (!(await Permission.microphone.isGranted)) {
-      // Request permission if not granted
-      var status = await Permission.microphone.request();
-      
-      if (status != PermissionStatus.granted) {
-        Functions.showToast("Microphone permission not granted");
-        return;
-      }
-    }
+  Future<void> startRecording() async {
+    try {
+      // Check if permission is granted
+      if (!(await Permission.microphone.isGranted)) {
+        // Request permission if not granted
+        var status = await Permission.microphone.request();
 
-    // Start recording if permission is granted
-    await record.start();
-    isRecording = true;
-    notifyListeners();
-  } catch (e) {
-    Functions.showToast("Error starting recording: $e");
+        if (status != PermissionStatus.granted) {
+          Functions.showToast("Microphone permission not granted");
+          return;
+        }
+      }
+
+      // Start recording if permission is granted
+      await record.start();
+      isRecording = true;
+      notifyListeners();
+    } catch (e) {
+      Functions.showToast("Error starting recording: $e");
+    }
   }
-}
 
   Future<void> stopRecording() async {
     try {
