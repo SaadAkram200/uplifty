@@ -234,7 +234,6 @@ class Functions {
   //to create post
   static Future postCreation(context, XFile? selectedMedia,
       TextEditingController captionController, String type) async {
-     print(type);
       try {
         showLoading(context);
         String mediaUrl = await uploadImage(selectedMedia!);

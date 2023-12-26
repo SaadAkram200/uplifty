@@ -303,9 +303,10 @@ class HomeScreen extends StatelessWidget {
                       minHeight: 400,
                       minWidth: 350,
                     ),
-                    child: Image.network(
-                      value.allPosts[index].image,
-                    ),
+                    child:value.allPosts[index].type == "image"
+                    ? Image.network(
+                      value.allPosts[index].image,)
+                    : Container(child: Text("video"),),
                   ),
                 ),
               ),
