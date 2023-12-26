@@ -48,7 +48,8 @@ class MyFriends extends StatelessWidget {
 
                 //to show all the friendrequets of current User
                 Expanded(
-                    child: ListView.builder(
+                    child: value.userData!.myfriends!.isNotEmpty
+                    ? ListView.builder(
                   itemCount: value.myFrinedsList.length,
                   itemBuilder: (context, index) {
                     return Padding(
@@ -105,8 +106,9 @@ class MyFriends extends StatelessWidget {
                         ),
                       ),
                     );
-                  },
-                ))
+                  },)
+                  : Text("No friends yet.",
+                  style: TextStyle(color: CColors.secondary, fontSize: 20),),)
               ],
             ),
           )),

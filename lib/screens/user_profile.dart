@@ -60,6 +60,7 @@ class UserProfile extends StatelessWidget {
                   style: TextStyle(color: CColors.secondary, fontSize: 16),
                 ),
                 //start a chat button
+                if(value.userData!.myfriends!.contains(friendID))
                 TextButton(
                     onPressed: () {
                       Functions.initiateChat(value.userData!.id, friendID);

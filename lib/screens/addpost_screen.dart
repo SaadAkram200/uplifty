@@ -24,15 +24,19 @@ class _AddPostState extends State<AddPost> {
   TextEditingController captionController = TextEditingController();
 
   void initializeVideoController(FunctionsProvider value) {
-    videoController =
+    if (value.selectedVideo != null) {
+      videoController =
         VideoPlayerController.file(File(value.selectedVideo!.path))
           ..initialize().then((_) {
+            videoController!.play();
             // Ensure the first frame is shown after the video is initialized
             setState(() {
               type = "video";
-              print("videoplayer");
+             
             });
           });
+    }
+    
   }
 
   imageContainer(FunctionsProvider value) {
@@ -41,6 +45,7 @@ class _AddPostState extends State<AddPost> {
         value.imagePicker(true);
       },
       child: Container(
+        margin:const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
             color: CColors.bottomAppBarcolor,
             borderRadius: BorderRadius.circular(15),
@@ -86,10 +91,9 @@ class _AddPostState extends State<AddPost> {
         await value.videoPicker();
         initializeVideoController(value);
       },
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15.0),
-        child: Container(
-          decoration: BoxDecoration(
+      child: Container(
+        margin:const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
               color: CColors.bottomAppBarcolor,
               borderRadius: BorderRadius.circular(15),
               boxShadow: const [
@@ -105,6 +109,8 @@ class _AddPostState extends State<AddPost> {
             minHeight: 400,
             minWidth: 350,
           ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15.0),
           child: value.selectedVideo == null
               ? Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -162,9 +168,10 @@ class _AddPostState extends State<AddPost> {
                   //page name and back button
                   PageName(
                       pageName: "Create new Post",
-                      onPressed: () {
-                         value.selectedImage == null;
-                        // value.selectedVideo == null;
+                      onPressed: () async {
+                         value.selectedImage = null;
+                         value.selectedVideo = null;
+                        // print(value.selectedVideo!.mimeType);
                         Navigator.pop(context);
                       }),
                   Divider(

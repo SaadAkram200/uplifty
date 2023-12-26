@@ -11,6 +11,7 @@ import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
+import 'package:video_player/video_player.dart';
 
 class UserPosts extends StatelessWidget {
    UserPosts({super.key});
@@ -302,9 +303,14 @@ class UserPosts extends StatelessWidget {
                       minHeight: 400,
                       minWidth: 350,
                     ),
-                    child: Image.network(
-                      value.userPosts[index].image,
-                    ),
+                    child:value.userPosts[index].type=="image"
+                    ? Image.network(
+                      value.userPosts[index].image,)
+                    : VideoPlayer(
+                       VideoPlayerController.networkUrl(
+                        Uri.parse(value.userPosts[index].image,))
+                        ..initialize().then((value){ } )),
+                    // Container(child: Text("video"),),
                   ),
                 ),
               ),
