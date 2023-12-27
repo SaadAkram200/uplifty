@@ -13,6 +13,7 @@ import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 
 class ChatScreen extends StatefulWidget {
   String friendID;
@@ -24,43 +25,90 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
+  
+  VideoPlayerController? videoController;
+  void initializeVideoController(FunctionsProvider value) {
+    if (value.selectedVideo != null) {
+      videoController =
+          VideoPlayerController.file(File(value.selectedVideo!.path))
+            ..initialize().then((_) {
+              videoController!.play();
+              // Ensure the first frame is shown after the video is initialized
+              setState(() {
+               print(videoController!.dataSourceType);
+              });
+            });
+    }
+  }
+selectedVideoBottomSheet(context, FunctionsProvider value){
+  showModalBottomSheet(
+    context: context,
+    isScrollControlled: true,
+    showDragHandle: true,
+    useSafeArea: true,
+    backgroundColor: CColors.background,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+         topLeft: Radius.circular(30), 
+         topRight: Radius.circular(30))),
+    builder: (context) {
+      return Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(onPressed: (){
+                  value.selectedVideo = null;
+                  }, 
+                icon: Icon(Icons.cancel_outlined, color: CColors.secondary,)),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: CColors.primary)
+                ),
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.width * 0.8,
+                  maxWidth: MediaQuery.of(context).size.width * 0.8,),
+                child: videoController != null && videoController!.value.isInitialized
+                  ? AspectRatio(
+                      aspectRatio: videoController!.value.aspectRatio,
+                      child: VideoPlayer(videoController!),
+                    )
+                  : Center(
+                      child: CircularProgressIndicator(
+                        color: CColors.secondary,
+                      ),
+                    ),
+                 // Image(image: FileImage(File(value.selectedImage!.path)))
+                ),
 
-  // Widget voiceNoteContainer(ChatProvider value1, index){
-  //   bool isPlaying = false;
-  //   return Row(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             IconButton(
-  //               icon: Icon(
-  //                 isPlaying==true
-  //                 ? Icons.pause_circle_outline_rounded
-  //                 : Icons.play_circle_outline_rounded,
-  //                 color: CColors.primary,) ,
-  //               onPressed: () { 
-  //              // AudioPlayer audioPlayer = AudioPlayer();
-  //              setState(() {
-  //                     isPlaying = !isPlaying;
-  //                   });
-  //                   print(isPlaying);
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 50,vertical: 20),
+                  child: SignButton(
+                    buttonName: "Share",
+                    onPressed: (){
+                      // if (value.selectedImage != null) {
+                      //   Functions.sendImage(value1.uid, widget.friendID, value.selectedImage)
+                      //     .then((v) {
+                      //       value.selectedImage=null;
+                      //       Navigator.pop(context);
+                      //     });
+                      // }else if(value.selectedFile!=null){
+                      //   Functions.sendFile(value1.uid, widget.friendID, value.selectedFile)
+                      //   .then((v){
+                      //     value.selectedFile = null;
+                      //     Navigator.pop(context);
+                      //   });
+                      // }
                     
-  //                 var audiolink =  UrlSource(value1.chatList![index].link);
-  //                   value1.playPauseAudio(audiolink, isPlaying);
-                    
-  //                 },),
-  //             Slider(                    
-  //               thumbColor: CColors.primary,
-  //               inactiveColor: CColors.background,
-  //               activeColor: CColors.primary,
-  //               value: value1.currentPosition,
-  //               min: 0,
-  //               max: value1.audioDuration,
-  //               onChanged: (v) {
-  //               value1.seekAudio(Duration(milliseconds: v.toInt()));
-  //               },)
-  //            ],
-  //            );
-  // }
-
+                  }),
+                ),
+            ],
+          );
+    },);
+}
   //bottomsheet for attachments- used in message textfield
   attachmentsBottomSheet(context, DataProvider value1) {
     showModalBottomSheet(
@@ -142,8 +190,19 @@ class _ChatScreenState extends State<ChatScreen> {
                 onTap: () {
                   value.imagePicker(true);
                 },
-                buttonName: "Photo/Video",
+                buttonName: "Photo",
                 icon: IconlyLight.image),
+            SettingsButton(
+                onTap: () async {
+                await  value.videoPicker();
+                  if (value.selectedVideo !=null) {
+                    Navigator.pop(context);
+                    selectedVideoBottomSheet(context, value);
+                    initializeVideoController(value);
+                  }
+                },
+                buttonName: "Video",
+                icon: IconlyLight.video),
             SettingsButton(
                 onTap: () {
                   value.filePicker();
@@ -226,35 +285,14 @@ class _ChatScreenState extends State<ChatScreen> {
                             if(value1.chatList![index].type == "voice note")
                             AudioMessageBox( link: value1.chatList![index].link,),
                             
-                            // Row(
-                            //   mainAxisSize: MainAxisSize.min,
-                            //   children: [
-                            //      IconButton(
-                            //       icon: Icon(
-                            //         value1.isPlaying
-                            //         ? Icons.pause_circle_outline_rounded
-                            //         : Icons.play_circle_outline_rounded,
-                            //         color: CColors.primary,) ,
-                            //       onPressed: () { 
-                            //        // AudioPlayer audioPlayer = AudioPlayer();
-                            //         var audiolink =  UrlSource(value1.chatList![index].link);
-                            //         value1.playPauseAudio(audiolink);
-                            //        },),
-                            //      Slider(
-                                  
-                            //       thumbColor: CColors.primary,
-                            //       inactiveColor: CColors.background,
-                            //       activeColor: CColors.primary,
-                            //       value: value1.currentPosition,
-                            //       min: 0,
-                            //       max: value1.audioDuration,
-                            //       onChanged: (v) {
-                            //        value1.seekAudio(Duration(milliseconds: v.toInt()));
-                            //      },)
-                            //   ],
-                            // ),
-                            
-
+                            if(value1.chatList![index].type == "video")
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Container(
+                                constraints: BoxConstraints(
+                                maxHeight: MediaQuery.of(context).size.width * 0.8,
+                                maxWidth: MediaQuery.of(context).size.width * 0.5,),
+                                child: VideoPlayerWidget(videoUrl: value1.chatList![index].link))),
 
                             if(value1.chatList?[index].type == "document")
                             InkWell(

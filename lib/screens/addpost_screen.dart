@@ -20,23 +20,22 @@ class AddPost extends StatefulWidget {
 }
 
 class _AddPostState extends State<AddPost> {
-  VideoPlayerController? videoController;
-  TextEditingController captionController = TextEditingController();
 
+  TextEditingController captionController = TextEditingController();
+  
+  VideoPlayerController? videoController;
   void initializeVideoController(FunctionsProvider value) {
     if (value.selectedVideo != null) {
       videoController =
-        VideoPlayerController.file(File(value.selectedVideo!.path))
-          ..initialize().then((_) {
-            videoController!.play();
-            // Ensure the first frame is shown after the video is initialized
-            setState(() {
-              type = "video";
-             
+          VideoPlayerController.file(File(value.selectedVideo!.path))
+            ..initialize().then((_) {
+              videoController!.play();
+              // Ensure the first frame is shown after the video is initialized
+              setState(() {
+                type = "video";
+              });
             });
-          });
     }
-    
   }
 
   imageContainer(FunctionsProvider value) {
@@ -45,7 +44,7 @@ class _AddPostState extends State<AddPost> {
         value.imagePicker(true);
       },
       child: Container(
-        margin:const EdgeInsets.symmetric(horizontal: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
             color: CColors.bottomAppBarcolor,
             borderRadius: BorderRadius.circular(15),
@@ -92,23 +91,23 @@ class _AddPostState extends State<AddPost> {
         initializeVideoController(value);
       },
       child: Container(
-        margin:const EdgeInsets.symmetric(horizontal: 10),
+        margin: const EdgeInsets.symmetric(horizontal: 10),
         decoration: BoxDecoration(
-              color: CColors.bottomAppBarcolor,
-              borderRadius: BorderRadius.circular(15),
-              boxShadow: const [
-                BoxShadow(
-                  color: Colors.black45,
-                  blurRadius: 4,
-                  offset: Offset(0, 4),
-                )
-              ]),
-          constraints: const BoxConstraints(
-            maxHeight: 400,
-            maxWidth: 350,
-            minHeight: 400,
-            minWidth: 350,
-          ),
+            color: CColors.bottomAppBarcolor,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black45,
+                blurRadius: 4,
+                offset: Offset(0, 4),
+              )
+            ]),
+        constraints: const BoxConstraints(
+          maxHeight: 400,
+          maxWidth: 350,
+          minHeight: 400,
+          minWidth: 350,
+        ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(15.0),
           child: value.selectedVideo == null
@@ -169,8 +168,8 @@ class _AddPostState extends State<AddPost> {
                   PageName(
                       pageName: "Create new Post",
                       onPressed: () async {
-                         value.selectedImage = null;
-                         value.selectedVideo = null;
+                        value.selectedImage = null;
+                        value.selectedVideo = null;
                         // print(value.selectedVideo!.mimeType);
                         Navigator.pop(context);
                       }),

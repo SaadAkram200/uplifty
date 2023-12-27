@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:video_player/video_player.dart';
 
 // sign button
 class SignButton extends StatelessWidget {
@@ -415,5 +416,47 @@ class PageName extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+//for video player
+class VideoPlayerWidget extends StatefulWidget {
+  final String videoUrl;
+
+  const VideoPlayerWidget({super.key, required this.videoUrl});
+
+  @override
+  State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
+}
+
+class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
+  late VideoPlayerController videoController;
+  @override
+  void initState() {
+    videoController =
+        VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
+          ..initialize().then((value) {
+            setState(() {
+              videoController.play();
+            });
+          });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    videoController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+        onTap: () {
+          if (videoController.value.isCompleted) {
+            videoController.play();
+          }
+        },
+        child: VideoPlayer(videoController));
   }
 }
