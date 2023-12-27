@@ -306,7 +306,7 @@ class HomeScreen extends StatelessWidget {
                     child:value.allPosts[index].type == "image"
                     ? Image.network(
                       value.allPosts[index].image,)
-                    : Container(child: Text("video"),),
+                    :VideoPlayerWidget(videoUrl: value.allPosts[index].image),
                   ),
                 ),
               ),

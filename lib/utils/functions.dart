@@ -135,6 +135,44 @@ class Functions {
     messageDoc.set(message.toMap());
   }
 
+  
+  //for sending video in chat
+  static Future<void> sendVideo(
+    String userID,
+    String friendID,
+    XFile? selectedVideo,
+  ) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    String imageUrl = await uploadImage(selectedVideo!);
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final messageforchatdoc = ChatModel(
+        messageText: "🎥Video",
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "video",
+        link: imageUrl);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+    final message = ChatModel(
+        messageText: "🎥Video",
+        messageID: messageID,
+        senderID: userID,
+        link: imageUrl,
+        type: "video");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
+  }
+
 
   
   //for sending documents in chat
