@@ -40,212 +40,6 @@ class Functions {
     });
   }
 
-  //firebase work for chats
-  static final CollectionReference<Map<String, dynamic>> chats =
-      FirebaseFirestore.instance.collection("uplifty_chats");
-
-  static Future<void> initiateChat(String userID, String friendID) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    chats.doc(chatID)
-      ..set({})
-      ..collection("messages").doc();
-  }
-
-  static Future<void> startChatting(String userID, String friendID,
-      TextEditingController messageController) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: messageController.text,
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "text",
-        link: "");
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: messageController.text,
-        messageID: messageID,
-        senderID: userID,
-        link: "",
-        type: "text");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
-
-    //adds friend id in user's myfriends
-    users.doc(uid).update({
-      "chatwith": FieldValue.arrayUnion([friendID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-
-    //adds userid in frined's myfriends
-    users.doc(friendID).update({
-      "chatwith": FieldValue.arrayUnion([userID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-  }
-
-  //for sending image in chat
-  static Future<void> sendImage(
-    String userID,
-    String friendID,
-    XFile? selectedImage,
-  ) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    String imageUrl = await uploadImage(selectedImage!);
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: "📷Photo",
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "image",
-        link: imageUrl);
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: "📷Photo",
-        messageID: messageID,
-        senderID: userID,
-        link: imageUrl,
-        type: "image");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
-  }
-
-  //for sending video in chat
-  static Future<void> sendVideo(
-    String userID,
-    String friendID,
-    XFile? selectedVideo,
-  ) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    String imageUrl = await uploadImage(selectedVideo!);
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: "🎥Video",
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "video",
-        link: imageUrl);
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: "🎥Video",
-        messageID: messageID,
-        senderID: userID,
-        link: imageUrl,
-        type: "video");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
-  }
-
-  //for sending documents in chat
-  static Future<void> sendFile(
-    String userID,
-    String friendID,
-    XFile? selectedFile,
-  ) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    String fileUrl = await uploadFile(selectedFile!);
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: "📄Document",
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "document",
-        link: fileUrl);
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: "📄Document",
-        messageID: messageID,
-        senderID: userID,
-        link: fileUrl,
-        type: "document");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
-  }
-
-  //for sending voice note in chat
-  static Future<void> sendAudio(
-    String userID,
-    String friendID,
-    String audioPath,
-  ) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    String fileUrl = await uploadAudio(audioPath);
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: "🎤Voice note",
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "voice note",
-        link: fileUrl);
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: "🎤Voice note",
-        messageID: messageID,
-        senderID: userID,
-        link: fileUrl,
-        type: "voice note");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap()).then((value) => showToast("audio sent"));
-  }
-
   //firebase work for posts
   static final CollectionReference<Map<String, dynamic>> posts =
       FirebaseFirestore.instance.collection("posts");
@@ -380,6 +174,256 @@ class Functions {
     //to remove ids from friendrequests and sent requests
     rejectFriendRequest(friendID);
     showToast("Say Hi to new friend");
+  }
+
+  //firebase work for chats
+  static final CollectionReference<Map<String, dynamic>> chats =
+      FirebaseFirestore.instance.collection("uplifty_chats");
+
+  static Future<void> initiateChat(String userID, String friendID) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    chats.doc(chatID)
+      ..set({})
+      ..collection("messages").doc();
+  }
+
+  static Future<void> startChatting(String userID, String friendID,
+      TextEditingController messageController) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final messageforchatdoc = ChatModel(
+        messageText: messageController.text,
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "text",
+        link: "");
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+    final message = ChatModel(
+        messageText: messageController.text,
+        messageID: messageID,
+        senderID: userID,
+        link: "",
+        type: "text");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
+
+    //adds friend id in user's myfriends
+    users.doc(uid).update({
+      "chatwith": FieldValue.arrayUnion([friendID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+
+    //adds userid in frined's myfriends
+    users.doc(friendID).update({
+      "chatwith": FieldValue.arrayUnion([userID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+  }
+
+  //for sending image in chat
+  static Future<void> sendImage(
+    String userID,
+    String friendID,
+    XFile? selectedImage,
+  ) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    String imageUrl = await uploadImage(selectedImage!);
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final messageforchatdoc = ChatModel(
+        messageText: "📷Photo",
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "image",
+        link: imageUrl);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+    final message = ChatModel(
+        messageText: "📷Photo",
+        messageID: messageID,
+        senderID: userID,
+        link: imageUrl,
+        type: "image");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
+    //adds friend id in user's myfriends
+    users.doc(uid).update({
+      "chatwith": FieldValue.arrayUnion([friendID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+
+    //adds userid in frined's myfriends
+    users.doc(friendID).update({
+      "chatwith": FieldValue.arrayUnion([userID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+  }
+
+  //for sending video in chat
+  static Future<void> sendVideo(
+    String userID,
+    String friendID,
+    XFile? selectedVideo,
+  ) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    String imageUrl = await uploadImage(selectedVideo!);
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final messageforchatdoc = ChatModel(
+        messageText: "🎥Video",
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "video",
+        link: imageUrl);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+    final message = ChatModel(
+        messageText: "🎥Video",
+        messageID: messageID,
+        senderID: userID,
+        link: imageUrl,
+        type: "video");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
+    //adds friend id in user's myfriends
+    users.doc(uid).update({
+      "chatwith": FieldValue.arrayUnion([friendID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+
+    //adds userid in frined's myfriends
+    users.doc(friendID).update({
+      "chatwith": FieldValue.arrayUnion([userID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+  }
+
+  //for sending documents in chat
+  static Future<void> sendFile(
+    String userID,
+    String friendID,
+    XFile? selectedFile,
+  ) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    String fileUrl = await uploadFile(selectedFile!);
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final messageforchatdoc = ChatModel(
+        messageText: "📄Document",
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "document",
+        link: fileUrl);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+    final message = ChatModel(
+        messageText: "📄Document",
+        messageID: messageID,
+        senderID: userID,
+        link: fileUrl,
+        type: "document");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
+    //adds friend id in user's myfriends
+    users.doc(uid).update({
+      "chatwith": FieldValue.arrayUnion([friendID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+
+    //adds userid in frined's myfriends
+    users.doc(friendID).update({
+      "chatwith": FieldValue.arrayUnion([userID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+  }
+
+  //for sending voice note in chat
+  static Future<void> sendAudio(
+    String userID,
+    String friendID,
+    String audioPath,
+  ) async {
+    List<String> list = [userID, friendID];
+    list.sort();
+    String chatID = list.join("_");
+
+    String fileUrl = await uploadAudio(audioPath);
+    //to get the message doc id
+    var messageDoc = chats.doc(chatID).collection("messages").doc();
+    String messageID = messageDoc.id;
+
+    final messageforchatdoc = ChatModel(
+        messageText: "🎤Voice note",
+        messageID: messageID,
+        senderID: userID,
+        chatID: chatID,
+        friendID: friendID,
+        userID: userID,
+        type: "voice note",
+        link: fileUrl);
+    // to set data in chat's collection
+    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
+
+    final message = ChatModel(
+        messageText: "🎤Voice note",
+        messageID: messageID,
+        senderID: userID,
+        link: fileUrl,
+        type: "voice note");
+    // to send message- setting data in subcollection
+    messageDoc.set(message.toMap());
+    //adds friend id in user's myfriends
+    users.doc(uid).update({
+      "chatwith": FieldValue.arrayUnion([friendID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
+
+    //adds userid in frined's myfriends
+    users.doc(friendID).update({
+      "chatwith": FieldValue.arrayUnion([userID]),
+      "userchats": FieldValue.arrayUnion([chatID])
+    });
   }
 
 //toast function
