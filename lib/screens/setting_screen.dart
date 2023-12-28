@@ -28,8 +28,8 @@ class SettingScreen extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               child: Consumer<DataProvider>(builder: (context, value, child) {
                 return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     //page name
                     Padding(
@@ -43,97 +43,105 @@ class SettingScreen extends StatelessWidget {
                       ),
                     ),
                     Divider(color: CColors.primary),
-                    const Spacer(),
-
+                    
                     //profile details
-                    InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialogs.profileViewer(
-                                value.userData!.image as String);
-                          },
-                        );
-                      },
-                      child: CircleAvatar(
-                        radius: 72,
-                        backgroundColor: CColors.secondary,
-                        child: CircleAvatar(
-                          radius: 70,
-                          backgroundColor: Colors.white,
-                          backgroundImage: value.userData != null
-                              ? NetworkImage(value.userData!.image!)
-                                  as ImageProvider
-                              : const AssetImage('assets/images/dummyuser.jpg'),
-                          child: null,
-                        ),
+                    Expanded(
+                      child: Column(
+                       // mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialogs.profileViewer(
+                                      value.userData!.image as String);
+                                },
+                              );
+                            },
+                            child: CircleAvatar(
+                              radius: 72,
+                              backgroundColor: CColors.secondary,
+                              child: CircleAvatar(
+                                radius: 70,
+                                backgroundColor: Colors.white,
+                                backgroundImage: value.userData != null
+                                    ? NetworkImage(value.userData!.image!)
+                                        as ImageProvider
+                                    : const AssetImage(
+                                        'assets/images/dummyuser.jpg'),
+                                child: null,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            value.userData != null
+                                ? value.userData!.username
+                                : 'loading',
+                            style: TextStyle(
+                                color: CColors.secondary,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            value.userData != null
+                                ? value.userData!.email
+                                : 'loading',
+                            style: TextStyle(
+                                color: CColors.secondary, fontSize: 16),
+                          ),
+                          Text(
+                            value.userData != null
+                                ? value.userData!.phone
+                                : 'loading',
+                            style: TextStyle(
+                                color: CColors.secondary, fontSize: 16),
+                          ),
+                          //edit profile button
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => CreateProfile(
+                                              userData: value.userData,
+                                              isEditing: true),
+                                        ),
+                                        (route) => true);
+                                  },
+                                  child: Text(
+                                    "Edit Profile",
+                                    style: TextStyle(
+                                        color: CColors.primary, fontSize: 18),
+                                  )),
+                              Text(
+                                "|",
+                                style: TextStyle(color: CColors.secondary),
+                              ),
+                              //view post button
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => UserPosts(),
+                                        ),
+                                        (route) => true);
+                                  },
+                                  child: Text(
+                                    "Your Posts",
+                                    style: TextStyle(
+                                        color: CColors.primary, fontSize: 18),
+                                  )),
+                            ],
+                          ),
+                        ],
                       ),
                     ),
-                    Text(
-                      value.userData != null
-                          ? value.userData!.username
-                          : 'loading',
-                      style: TextStyle(
-                          color: CColors.secondary,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      value.userData != null
-                          ? value.userData!.email
-                          : 'loading',
-                      style: TextStyle(color: CColors.secondary, fontSize: 16),
-                    ),
-                    Text(
-                      value.userData != null
-                          ? value.userData!.phone
-                          : 'loading',
-                      style: TextStyle(color: CColors.secondary, fontSize: 16),
-                    ),
-
-                    //edit profile button
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CreateProfile(
-                                        userData: value.userData,
-                                        isEditing: true),
-                                  ),
-                                  (route) => true);
-                            },
-                            child: Text(
-                              "Edit Profile",
-                              style: TextStyle(
-                                  color: CColors.primary, fontSize: 18),
-                            )),
-                        Text(
-                          "|",
-                          style: TextStyle(color: CColors.secondary),
-                        ),
-                        //view post button
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => UserPosts(),
-                                  ),
-                                  (route) => true);
-                            },
-                            child: Text(
-                              "Your Posts",
-                              style: TextStyle(
-                                  color: CColors.primary, fontSize: 18),
-                            )),
-                      ],
-                    ),
-                    const Spacer(),
 
                     //buttons
                     SettingsButton(
@@ -167,8 +175,10 @@ class SettingScreen extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (context) {
-                            return Dialogs.resetPasswordDialog(context,
-                                currentPassController, newPassController);
+                            return Dialogs.resetPasswordDialog(
+                                context,
+                                currentPassController,
+                                newPassController);
                           },
                         );
                       },
