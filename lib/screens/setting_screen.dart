@@ -13,7 +13,59 @@ import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
 class SettingScreen extends StatelessWidget {
-  const SettingScreen({super.key});
+  SettingScreen({super.key});
+
+  TextEditingController currentPassController = TextEditingController();
+  TextEditingController newPassController = TextEditingController();
+  //for reset password
+  resetPasswordDialog(context) {
+    return AlertDialog(
+      backgroundColor: CColors.background,
+      title: const Text("Reset Password"),
+      titleTextStyle: TextStyle(
+          color: CColors.secondary, fontWeight: FontWeight.bold, fontSize: 20),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          UpliftyTextfields(
+            controller: currentPassController,
+            fieldName: "Current Password",
+            prefixIcon: IconlyLight.password,
+            keyboardType: TextInputType.emailAddress,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          UpliftyTextfields(
+            controller: newPassController,
+            fieldName: "New Password",
+            prefixIcon: IconlyLight.password,
+            keyboardType: TextInputType.emailAddress,
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+            onPressed: () {
+              Functions.resetPassword(currentPassController, newPassController)
+                  .then((value) {
+                currentPassController.clear();
+                newPassController.clear();
+              });
+            },
+            child: Text(
+              "Reset",
+              style: TextStyle(color: CColors.secondary),
+            )),
+        TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "Cancel",
+              style: TextStyle(color: CColors.secondary),
+            )),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,17 +94,28 @@ class SettingScreen extends StatelessWidget {
                     const Spacer(),
 
                     //profile details
-                    CircleAvatar(
-                      radius: 72,
-                      backgroundColor: CColors.secondary,
+                    InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Functions.profileViewer(
+                                value.userData!.image as String);
+                          },
+                        );
+                      },
                       child: CircleAvatar(
-                        radius: 70,
-                        backgroundColor: Colors.white,
-                        backgroundImage: value.userData != null
-                            ? NetworkImage(value.userData!.image!)
-                                as ImageProvider
-                            : const AssetImage('assets/images/dummyuser.jpg'),
-                        child: null,
+                        radius: 72,
+                        backgroundColor: CColors.secondary,
+                        child: CircleAvatar(
+                          radius: 70,
+                          backgroundColor: Colors.white,
+                          backgroundImage: value.userData != null
+                              ? NetworkImage(value.userData!.image!)
+                                  as ImageProvider
+                              : const AssetImage('assets/images/dummyuser.jpg'),
+                          child: null,
+                        ),
                       ),
                     ),
                     Text(
@@ -107,7 +170,7 @@ class SettingScreen extends StatelessWidget {
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>UserPosts(),
+                                    builder: (context) => UserPosts(),
                                   ),
                                   (route) => true);
                             },
@@ -148,7 +211,14 @@ class SettingScreen extends StatelessWidget {
                     SettingsButton(
                       icon: IconlyLight.password,
                       buttonName: "Reset Password",
-                      onTap: () {},
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (context) {
+                            return resetPasswordDialog(context);
+                          },
+                        );
+                      },
                     ),
                     SettingsButton(
                       icon: IconlyLight.delete,

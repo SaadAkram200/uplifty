@@ -8,13 +8,13 @@ import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
+//to view the profile details of any user of the app
 class UserProfile extends StatelessWidget {
   String friendID;
   UserProfile({
     super.key,
     required this.friendID,
   });
-
   @override
   Widget build(BuildContext context) {
     return Consumer<DataProvider>(
@@ -36,15 +36,26 @@ class UserProfile extends StatelessWidget {
                 //profile details
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: CircleAvatar(
-                    radius: 72,
-                    backgroundColor: CColors.secondary,
+                  child: InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return Functions.profileViewer(
+                              value.getPosterData(friendID)!.image as String);
+                        },
+                      );
+                    },
                     child: CircleAvatar(
-                      radius: 70,
-                      backgroundColor: Colors.white,
-                      backgroundImage: NetworkImage(
-                          value.getPosterData(friendID)!.image as String),
-                      child: null,
+                      radius: 72,
+                      backgroundColor: CColors.secondary,
+                      child: CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.white,
+                        backgroundImage: NetworkImage(
+                            value.getPosterData(friendID)!.image as String),
+                        child: null,
+                      ),
                     ),
                   ),
                 ),
@@ -55,27 +66,35 @@ class UserProfile extends StatelessWidget {
                     style: TextStyle(color: CColors.secondary, fontSize: 16),
                   ),
                 ),
+
+                Text(
+                  value.getPosterData(friendID)!.country as String,
+                  style: TextStyle(color: CColors.secondary, fontSize: 16),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
                 Text(
                   'Contact: ${value.getPosterData(friendID)!.phone}',
                   style: TextStyle(color: CColors.secondary, fontSize: 16),
                 ),
                 //start a chat button
-                if(value.userData!.myfriends!.contains(friendID))
-                TextButton(
-                    onPressed: () {
-                      Functions.initiateChat(value.userData!.id, friendID);
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ChatScreen(friendID: friendID),
-                          ),
-                          (route) => true);
-                    },
-                    child: Text(
-                      "Start a Chat",
-                      style: TextStyle(color: CColors.primary, fontSize: 18),
-                    )),
+                if (value.userData!.myfriends!.contains(friendID))
+                  TextButton(
+                      onPressed: () {
+                        Functions.initiateChat(value.userData!.id, friendID);
+                        Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ChatScreen(friendID: friendID),
+                            ),
+                            (route) => true);
+                      },
+                      child: Text(
+                        "Start a Chat",
+                        style: TextStyle(color: CColors.primary, fontSize: 18),
+                      )),
                 Divider(color: CColors.primary),
               ],
             ),

@@ -1,4 +1,4 @@
-// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable, use_build_context_synchronously
 
 import 'dart:io';
 
@@ -35,12 +35,17 @@ class _ChatScreenState extends State<ChatScreen> {
               videoController!.play();
               // Ensure the first frame is shown after the video is initialized
               setState(() {
-               print(videoController!.dataSourceType);
+                // if (videoController !=null) {
+                //   print("WORKED");
+                // } else {
+                //   print("NOT WORKING");
+                // }
+              
               });
             });
     }
   }
-selectedVideoBottomSheet(context, FunctionsProvider value){
+selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -61,6 +66,7 @@ selectedVideoBottomSheet(context, FunctionsProvider value){
                 alignment: Alignment.centerLeft,
                 child: IconButton(onPressed: (){
                   value.selectedVideo = null;
+                  Navigator.pop(context);
                   }, 
                 icon: Icon(Icons.cancel_outlined, color: CColors.secondary,)),
               ),
@@ -69,9 +75,9 @@ selectedVideoBottomSheet(context, FunctionsProvider value){
                   border: Border.all(color: CColors.primary)
                 ),
                 constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.width * 0.8,
+                  maxHeight: MediaQuery.of(context).size.width * 0.9,
                   maxWidth: MediaQuery.of(context).size.width * 0.8,),
-                child: videoController != null && videoController!.value.isInitialized
+                child: videoController != null // && videoController!.value.isInitialized
                   ? AspectRatio(
                       aspectRatio: videoController!.value.aspectRatio,
                       child: VideoPlayer(videoController!),
@@ -89,20 +95,13 @@ selectedVideoBottomSheet(context, FunctionsProvider value){
                   child: SignButton(
                     buttonName: "Share",
                     onPressed: (){
-                      // if (value.selectedImage != null) {
-                      //   Functions.sendImage(value1.uid, widget.friendID, value.selectedImage)
-                      //     .then((v) {
-                      //       value.selectedImage=null;
-                      //       Navigator.pop(context);
-                      //     });
-                      // }else if(value.selectedFile!=null){
-                      //   Functions.sendFile(value1.uid, widget.friendID, value.selectedFile)
-                      //   .then((v){
-                      //     value.selectedFile = null;
-                      //     Navigator.pop(context);
-                      //   });
-                      // }
-                    
+                      if (value.selectedVideo != null) {
+                        Functions.sendVideo(value1.uid, widget.friendID, value.selectedVideo)
+                          .then((v) {
+                            value.selectedVideo=null;
+                            Navigator.pop(context);
+                          });
+                      }
                   }),
                 ),
             ],
@@ -196,9 +195,10 @@ selectedVideoBottomSheet(context, FunctionsProvider value){
                 onTap: () async {
                 await  value.videoPicker();
                   if (value.selectedVideo !=null) {
-                    Navigator.pop(context);
-                    selectedVideoBottomSheet(context, value);
+                  //  Navigator.pop(context);
                     initializeVideoController(value);
+                    selectedVideoBottomSheet(context, value, value1);
+                    
                   }
                 },
                 buttonName: "Video",
@@ -323,7 +323,14 @@ selectedVideoBottomSheet(context, FunctionsProvider value){
                               constraints: BoxConstraints(
                                 maxHeight: MediaQuery.of(context).size.width * 0.8,
                                 maxWidth: MediaQuery.of(context).size.width * 0.5,),
-                              child: Image.network(value1.chatList![index].link,fit: BoxFit.fill, ),),
+                              child: InkWell(
+                                onTap: () {
+                                  showDialog(context: context, builder: (context) {
+                                    return Functions.profileViewer(value1.chatList![index].link);
+                                  },);
+                                  
+                                },
+                                child: Image.network(value1.chatList![index].link,fit: BoxFit.fill, )),),
                             ),
 
                           //for message time and seen/unseen

@@ -16,6 +16,28 @@ class UserPosts extends StatelessWidget {
    UserPosts({super.key});
 
   TextEditingController commentController = TextEditingController();
+  deletePostDialog( context ,String postid){
+    return AlertDialog(
+      backgroundColor: CColors.background,
+      content: InkWell(
+        onTap: () {
+          Functions.deletePost(postid).then((value) => Navigator.pop(context));
+        },
+        child: Row(
+          children: [
+            Icon(IconlyLight.delete, color: CColors.secondary,),
+            const SizedBox(width: 20,),
+            Text(
+              "Delete Post",
+              style: TextStyle(
+                color: CColors.secondary),),
+          ],
+        ),
+      ) ,
+      
+      );
+  }
+
 //to show list of users who liked the post
   likedByDialog(index, DataProvider value) {
     return AlertDialog(
@@ -115,6 +137,7 @@ class UserPosts extends StatelessWidget {
                                           color: CColors.secondary, fontSize: 18),
                                     )
                                   : ListView.builder(
+                                      reverse: true,
                                       itemCount: value1.postCommentsList?.length,
                                       itemBuilder: (context, i) {
                                         return Padding(
@@ -157,7 +180,10 @@ class UserPosts extends StatelessWidget {
                                                 style: TextStyle(
                                                     color: CColors.secondarydark),
                                               ),
-                                              trailing: Text(DateFormat('hh:mm a').format(value1.postCommentsList![i].timestamp)),
+                                              trailing: Text(DateFormat('hh:mm a')
+                                              .format(
+                                                value1.postCommentsList![i].timestamp,),
+                                                style: TextStyle(color: CColors.secondary),),
                                             ),
                                           ),
                                         );
@@ -204,6 +230,7 @@ class UserPosts extends StatelessWidget {
       },
     );
   }
+
 // main container of post
   postContainer(context, DataProvider value, int index) {
     return Padding(
@@ -269,7 +296,9 @@ class UserPosts extends StatelessWidget {
                     const Spacer(),
                     IconButton(
                         onPressed: () {
-                          
+                          showDialog(context: context, builder: (context) {
+                            return deletePostDialog(context ,value.userPosts[index].postid);
+                          },);
                          
                         },
                         icon: Icon(

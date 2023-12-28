@@ -22,7 +22,7 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
     HomeScreen(),
     const ChatDashboard(),
     SearchScreen(),
-    const SettingScreen(),
+    SettingScreen(),
   ];
 
 // for initializing the Functions constructor

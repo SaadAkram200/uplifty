@@ -10,8 +10,9 @@ import 'package:uplifty/utils/reusables.dart';
 
 // ignore: must_be_immutable
 class MyFriends extends StatelessWidget {
+ 
   //if user is selecting friend from chat dashborad?
-  //will driect it to chat screen instead of friend's profile
+  //then directed to chat screen instead of friend's profile
   bool isComingfromChatD;
 
   MyFriends({

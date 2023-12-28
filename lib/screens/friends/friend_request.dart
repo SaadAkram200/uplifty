@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/providers/data_provider.dart';
+import 'package:uplifty/screens/user_profile.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
@@ -46,58 +47,71 @@ class FriendRequest extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 5),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: CColors.bottomAppBarcolor,
-                                    borderRadius: BorderRadius.circular(30),
-                                    boxShadow: const [
-                                      BoxShadow(
-                                        color: Colors.black45,
-                                        blurRadius: 4,
-                                        offset: Offset(0, 4),
-                                      )
-                                    ]),
-                                child: ListTile(
-                                    leading: CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                            listFriendRequests![index].image!)),
-                                    title: Text(
-                                      listFriendRequests![index].username,
-                                      style: TextStyle(
-                                          color: CColors.secondarydark,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    subtitle: Text(
-                                        listFriendRequests![index].country!,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => UserProfile(
+                                            friendID:
+                                                listFriendRequests![index].id),
+                                      ),
+                                      (route) => true);
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: CColors.bottomAppBarcolor,
+                                      borderRadius: BorderRadius.circular(30),
+                                      boxShadow: const [
+                                        BoxShadow(
+                                          color: Colors.black45,
+                                          blurRadius: 4,
+                                          offset: Offset(0, 4),
+                                        )
+                                      ]),
+                                  child: ListTile(
+                                      leading: CircleAvatar(
+                                          backgroundImage: NetworkImage(
+                                              listFriendRequests![index]
+                                                  .image!)),
+                                      title: Text(
+                                        listFriendRequests![index].username,
                                         style: TextStyle(
-                                            color: CColors.secondarydark)),
-                                    trailing: Wrap(
-                                      spacing: -10,
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              Functions.acceptFriendRequest(
-                                                  listFriendRequests![index]
-                                                      .id);
-                                            },
-                                            icon: Icon(
-                                              Icons.person_add_alt_1_outlined,
-                                              color: CColors.secondary,
-                                            )),
-                                        IconButton(
-                                            onPressed: () {
-                                              //reject request
-                                              Functions.rejectFriendRequest(
-                                                  listFriendRequests![index]
-                                                      .id);
-                                            },
-                                            icon: Icon(
-                                              Icons
-                                                  .person_remove_alt_1_outlined,
-                                              color: CColors.secondary,
-                                            )),
-                                      ],
-                                    )),
+                                            color: CColors.secondarydark,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      subtitle: Text(
+                                          listFriendRequests![index].country!,
+                                          style: TextStyle(
+                                              color: CColors.secondarydark)),
+                                      trailing: Wrap(
+                                        spacing: -10,
+                                        children: [
+                                          IconButton(
+                                              onPressed: () {
+                                                Functions.acceptFriendRequest(
+                                                    listFriendRequests![index]
+                                                        .id);
+                                              },
+                                              icon: Icon(
+                                                Icons.person_add_alt_1_outlined,
+                                                color: CColors.secondary,
+                                              )),
+                                          IconButton(
+                                              onPressed: () {
+                                                //reject request
+                                                Functions.rejectFriendRequest(
+                                                    listFriendRequests![index]
+                                                        .id);
+                                              },
+                                              icon: Icon(
+                                                Icons
+                                                    .person_remove_alt_1_outlined,
+                                                color: CColors.secondary,
+                                              )),
+                                        ],
+                                      )),
+                                ),
                               ),
                             );
                           },

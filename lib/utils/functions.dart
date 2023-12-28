@@ -135,7 +135,6 @@ class Functions {
     messageDoc.set(message.toMap());
   }
 
-  
   //for sending video in chat
   static Future<void> sendVideo(
     String userID,
@@ -173,8 +172,6 @@ class Functions {
     messageDoc.set(message.toMap());
   }
 
-
-  
   //for sending documents in chat
   static Future<void> sendFile(
     String userID,
@@ -211,7 +208,6 @@ class Functions {
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap());
   }
-
 
   //for sending voice note in chat
   static Future<void> sendAudio(
@@ -255,7 +251,7 @@ class Functions {
       FirebaseFirestore.instance.collection("posts");
   //create new post
   static Future<void> createNewPost(
-      String imageUrl, TextEditingController captionController , String type) {
+      String imageUrl, TextEditingController captionController, String type) {
     var postdoc = posts.doc();
     String postid = postdoc.id;
     final newPost = PostModel(
@@ -269,20 +265,23 @@ class Functions {
     return postdoc.set(newPost.toMap());
   }
 
+  //to delete the post
+  static Future<void> deletePost(String postId) {
+    return posts.doc(postId).delete();
+  }
+
   //to create post
   static Future postCreation(context, XFile? selectedMedia,
       TextEditingController captionController, String type) async {
-      try {
-        showLoading(context);
-        String mediaUrl = await uploadImage(selectedMedia!);
-        await createNewPost(mediaUrl, captionController, type);
-        showToast("Posted Sucessfully!");
-        Navigator.pop(context);
-      } catch (e) {
-        showToast("An error ocours, please try again");
-      }
-
-    
+    try {
+      showLoading(context);
+      String mediaUrl = await uploadImage(selectedMedia!);
+      await createNewPost(mediaUrl, captionController, type);
+      showToast("Posted Sucessfully!");
+      Navigator.pop(context);
+    } catch (e) {
+      showToast("An error ocours, please try again");
+    }
   }
 
 //for like button// adds current uid in  post's likedby
@@ -415,6 +414,15 @@ class Functions {
     );
   }
 
+  //To view Profile of users
+  static profileViewer(String image) {
+    return AlertDialog(
+      backgroundColor: CColors.secondarydark,
+      contentPadding: const EdgeInsets.all(2),
+      content: Image.network(image),
+    );
+  }
+
   // login function
   static Future logIn(context, TextEditingController emailController,
       TextEditingController passwordController) async {
@@ -447,6 +455,8 @@ class Functions {
       emailController.text == ""
           ? showToast("Required Email Address")
           : showToast("Required Password");
+    } else if (passwordController.text.length < 6) {
+      showToast("Password should be at least of 6 characters");
     } else if (confirmPassController.text != passwordController.text) {
       showToast("Confirm password doesn't match!");
     } else {
@@ -463,6 +473,68 @@ class Functions {
       } catch (error) {
         var e = error as FirebaseAuthException;
         showToast(e.message!);
+      }
+    }
+  }
+
+  //forget Password function
+  static Future<void> forgetPassword(
+      TextEditingController forgetPassController) async {
+    if (forgetPassController.text.isEmpty) {
+      showToast("Enter your email address");
+    } else {
+      try {
+        await FirebaseAuth.instance
+            .sendPasswordResetEmail(email: forgetPassController.text);
+        showToast('Password reset email sent.');
+      } catch (error) {
+        var e = error as FirebaseAuthException;
+        showToast(e.message!);
+      }
+    }
+  }
+
+  //reset password function
+  static Future<void> resetPassword(
+    TextEditingController currentPassController,
+    TextEditingController newPassController,
+  ) async {
+    if (currentPassController.text.isEmpty || newPassController.text.isEmpty) {
+      currentPassController.text.isEmpty
+          ? showToast("Enter Current Password")
+          : showToast("Enter New Password");
+    } else if (newPassController.text.length < 6) {
+      showToast("Password should be at least of 6 characters");
+    } else {
+      try {
+        User? user = FirebaseAuth.instance.currentUser;
+
+        if (user != null) {
+          AuthCredential credential = EmailAuthProvider.credential(
+            email: user.email!,
+            password: currentPassController.text,
+          );
+
+          await user.reauthenticateWithCredential(credential);
+
+          await user.updatePassword(newPassController.text);
+          showToast('Password updated successfully!');
+        } else {
+          showToast('User not found!');
+        }
+      } on FirebaseAuthException catch (e) {
+        showToast('Incorrect current password!');
+
+        if (e.code == 'wrong-password') {
+          showToast('Incorrect current password!');
+        }
+        //else {
+        //   showToast('Error updating password: $e');
+
+        // }
+      } catch (e) {
+        showToast('Error: $e');
+        // Handle other exceptions
       }
     }
   }
@@ -560,8 +632,7 @@ class Functions {
     }
   }
 
-
- //upload audio
+  //upload audio
   static Future<String> uploadAudio(String audioPath) async {
     try {
       final mimeType = lookupMimeType(audioPath);
@@ -569,11 +640,11 @@ class Functions {
       final firebasestorage.FirebaseStorage storage =
           firebasestorage.FirebaseStorage.instance;
 
-       File audioFile = File(audioPath);
+      File audioFile = File(audioPath);
 
       var reference = storage.ref().child(path);
-      var r = await reference.putData(
-          await audioFile.readAsBytes(), SettableMetadata(contentType: mimeType));
+      var r = await reference.putData(await audioFile.readAsBytes(),
+          SettableMetadata(contentType: mimeType));
 
       if (r.state == firebasestorage.TaskState.success) {
         String audioUrl = await reference.getDownloadURL();
@@ -586,6 +657,7 @@ class Functions {
       rethrow;
     }
   }
+
 // create new profile and editing existing profile
   static Future profileCreation(
       context,

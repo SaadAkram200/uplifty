@@ -14,6 +14,43 @@ class LoginScreen extends StatelessWidget {
   //textfield controllers
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController forgetPassController = TextEditingController();
+
+  //forget password dialog
+  forgetPasswordDialog(context) {
+    return AlertDialog(
+      backgroundColor: CColors.background,
+      title: const Text("Forget Password?"),
+      titleTextStyle: TextStyle(
+          color: CColors.secondary, fontWeight: FontWeight.bold, fontSize: 20),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: UpliftyTextfields(
+              controller: forgetPassController,
+              fieldName: "Email",
+              prefixIcon: IconlyLight.message,
+              keyboardType: TextInputType.emailAddress,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+            child: SignButton(
+                buttonName: "Send Reset Email",
+                onPressed: () {
+                  Functions.forgetPassword(forgetPassController)
+                      .then((value) {
+                        passwordController.clear();
+                        Navigator.pop(context);
+                      } );
+                }),
+          )
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +80,7 @@ class LoginScreen extends StatelessWidget {
                         color: CColors.primary),
                   ),
                 ),
-               
+
                 //email textfield
                 UpliftyTextfields(
                   controller: emailController,
@@ -65,7 +102,14 @@ class LoginScreen extends StatelessWidget {
                 Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return forgetPasswordDialog(context);
+                            },
+                          );
+                        },
                         child: Text(
                           "Forgot Password?",
                           style: TextStyle(color: CColors.primary),

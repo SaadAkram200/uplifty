@@ -12,11 +12,11 @@ class CommentProvider with ChangeNotifier {
   List<CommentModel>? postCommentsList = [];
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? commentsStream;
   getComments(postId) {
-    final CollectionReference<Map<String, dynamic>> postcomments =
+    final Query<Map<String, dynamic>> postcomments =
         FirebaseFirestore.instance
             .collection("posts")
             .doc(postId)
-            .collection("comments");
+            .collection("comments").orderBy("timestamp", descending: true);
     commentsStream = postcomments.snapshots().listen((comments) {
       postCommentsList?.clear();
       for (var element in comments.docs) {

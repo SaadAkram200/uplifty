@@ -115,6 +115,7 @@ class HomeScreen extends StatelessWidget {
                                           color: CColors.secondary, fontSize: 18),
                                     )
                                   : ListView.builder(
+                                      reverse: true,
                                       itemCount: value1.postCommentsList?.length,
                                       itemBuilder: (context, i) {
                                         return Padding(
@@ -157,7 +158,9 @@ class HomeScreen extends StatelessWidget {
                                                 style: TextStyle(
                                                     color: CColors.secondarydark),
                                               ),
-                                              trailing: Text(DateFormat('hh:mm a').format(value1.postCommentsList![i].timestamp)),
+                                              trailing: Text(DateFormat('hh:mm a')
+                                              .format(value1.postCommentsList![i].timestamp),
+                                              style: TextStyle(color: CColors.secondary),),
                                             ),
                                           ),
                                         );
