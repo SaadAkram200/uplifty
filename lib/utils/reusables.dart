@@ -573,13 +573,15 @@ class _PostContainerState extends State<PostContainer> {
                     const Spacer(),
                     IconButton(
                         onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return Dialogs.deletePostDialog(
-                                  context, post[widget.index].postid);
-                            },
-                          );
+                          if (widget.isUserPosts) {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Dialogs.deletePostDialog(
+                                    context, post[widget.index].postid);
+                              },
+                            );
+                          }
                         },
                         icon: Icon(
                           IconlyLight.more_square,
