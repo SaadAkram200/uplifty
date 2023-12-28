@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:uplifty/screens/signup_screen.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/dialogs.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
@@ -15,42 +16,6 @@ class LoginScreen extends StatelessWidget {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController forgetPassController = TextEditingController();
-
-  //forget password dialog
-  forgetPasswordDialog(context) {
-    return AlertDialog(
-      backgroundColor: CColors.background,
-      title: const Text("Forget Password?"),
-      titleTextStyle: TextStyle(
-          color: CColors.secondary, fontWeight: FontWeight.bold, fontSize: 20),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: UpliftyTextfields(
-              controller: forgetPassController,
-              fieldName: "Email",
-              prefixIcon: IconlyLight.message,
-              keyboardType: TextInputType.emailAddress,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
-            child: SignButton(
-                buttonName: "Send Reset Email",
-                onPressed: () {
-                  Functions.forgetPassword(forgetPassController)
-                      .then((value) {
-                        passwordController.clear();
-                        Navigator.pop(context);
-                      } );
-                }),
-          )
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +71,8 @@ class LoginScreen extends StatelessWidget {
                           showDialog(
                             context: context,
                             builder: (context) {
-                              return forgetPasswordDialog(context);
+                              return Dialogs.forgetPasswordDialog(
+                                  context, forgetPassController);
                             },
                           );
                         },

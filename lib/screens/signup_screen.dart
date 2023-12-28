@@ -79,7 +79,7 @@ class SignUpScreen extends StatelessWidget {
                       }),
                 ),
 
-                //sign up text button
+                //Login text button
                 RichText(
                     text: TextSpan(
                         text: "Already have an account?",

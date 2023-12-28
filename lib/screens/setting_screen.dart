@@ -9,6 +9,7 @@ import 'package:uplifty/screens/friends/myfriends_screen.dart';
 import 'package:uplifty/screens/user_posts.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:provider/provider.dart';
+import 'package:uplifty/utils/dialogs.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
@@ -17,55 +18,6 @@ class SettingScreen extends StatelessWidget {
 
   TextEditingController currentPassController = TextEditingController();
   TextEditingController newPassController = TextEditingController();
-  //for reset password
-  resetPasswordDialog(context) {
-    return AlertDialog(
-      backgroundColor: CColors.background,
-      title: const Text("Reset Password"),
-      titleTextStyle: TextStyle(
-          color: CColors.secondary, fontWeight: FontWeight.bold, fontSize: 20),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          UpliftyTextfields(
-            controller: currentPassController,
-            fieldName: "Current Password",
-            prefixIcon: IconlyLight.password,
-            keyboardType: TextInputType.emailAddress,
-          ),
-          const SizedBox(
-            height: 10,
-          ),
-          UpliftyTextfields(
-            controller: newPassController,
-            fieldName: "New Password",
-            prefixIcon: IconlyLight.password,
-            keyboardType: TextInputType.emailAddress,
-          ),
-        ],
-      ),
-      actions: [
-        TextButton(
-            onPressed: () {
-              Functions.resetPassword(currentPassController, newPassController)
-                  .then((value) {
-                currentPassController.clear();
-                newPassController.clear();
-              });
-            },
-            child: Text(
-              "Reset",
-              style: TextStyle(color: CColors.secondary),
-            )),
-        TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              "Cancel",
-              style: TextStyle(color: CColors.secondary),
-            )),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,7 +51,7 @@ class SettingScreen extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (context) {
-                            return Functions.profileViewer(
+                            return Dialogs.profileViewer(
                                 value.userData!.image as String);
                           },
                         );
@@ -215,7 +167,8 @@ class SettingScreen extends StatelessWidget {
                         showDialog(
                           context: context,
                           builder: (context) {
-                            return resetPasswordDialog(context);
+                            return Dialogs.resetPasswordDialog(context,
+                                currentPassController, newPassController);
                           },
                         );
                       },
@@ -223,7 +176,9 @@ class SettingScreen extends StatelessWidget {
                     SettingsButton(
                       icon: IconlyLight.delete,
                       buttonName: "Delete Account",
-                      onTap: () {},
+                      onTap: () {
+                        Functions.showToast("No functionality yet");
+                      },
                     ),
                     SettingsButton(
                       icon: IconlyLight.logout,

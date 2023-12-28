@@ -30,7 +30,6 @@ class _AddPostState extends State<AddPost> {
           VideoPlayerController.file(File(value.selectedVideo!.path))
             ..initialize().then((_) {
               videoController!.play();
-              // Ensure the first frame is shown after the video is initialized
               setState(() {
                 type = "video";
               });
@@ -162,7 +161,6 @@ class _AddPostState extends State<AddPost> {
             padding: const EdgeInsets.all(10),
             child: SingleChildScrollView(
               child: Column(
-                //mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   //page name and back button
                   PageName(

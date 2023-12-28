@@ -14,7 +14,6 @@ void main() async {
       providers: [
         ChangeNotifierProvider<DataProvider>(create: (_)=> DataProvider(),),
         ChangeNotifierProvider<FunctionsProvider>(create: (_)=> FunctionsProvider(),)
-        
         ],
       child: const MainApp()));
 }

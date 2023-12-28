@@ -10,6 +10,7 @@ import 'package:uplifty/providers/chat_provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/dialogs.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,6 +27,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   TextEditingController messageController = TextEditingController();
   
+
   VideoPlayerController? videoController;
   void initializeVideoController(FunctionsProvider value) {
     if (value.selectedVideo != null) {
@@ -33,18 +35,16 @@ class _ChatScreenState extends State<ChatScreen> {
           VideoPlayerController.file(File(value.selectedVideo!.path))
             ..initialize().then((_) {
               videoController!.play();
-              // Ensure the first frame is shown after the video is initialized
-              setState(() {
-                // if (videoController !=null) {
-                //   print("WORKED");
-                // } else {
-                //   print("NOT WORKING");
-                // }
-              
-              });
+              setState(() {});
             });
     }
   }
+  @override
+  void dispose() {
+    videoController?.dispose();
+    super.dispose();
+  }
+//to display the selected video in bottomsheet
 selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
   showModalBottomSheet(
     context: context,
@@ -87,7 +87,6 @@ selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
                         color: CColors.secondary,
                       ),
                     ),
-                 // Image(image: FileImage(File(value.selectedImage!.path)))
                 ),
 
                 Padding(
@@ -108,6 +107,7 @@ selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
           );
     },);
 }
+
   //bottomsheet for attachments- used in message textfield
   attachmentsBottomSheet(context, DataProvider value1) {
     showModalBottomSheet(
@@ -326,7 +326,7 @@ selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
                               child: InkWell(
                                 onTap: () {
                                   showDialog(context: context, builder: (context) {
-                                    return Functions.profileViewer(value1.chatList![index].link);
+                                    return Dialogs.profileViewer(value1.chatList![index].link);
                                   },);
                                   
                                 },

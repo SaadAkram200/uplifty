@@ -23,8 +23,6 @@ class ChatProvider with ChangeNotifier {
     //updates the chatdoc's isreaded
     await chatDoc.update({'isReaded': true});
 
-
-
     final CollectionReference<Map<String, dynamic>> messagesCollection =
         chatDoc.collection("messages");
 
@@ -45,12 +43,6 @@ class ChatProvider with ChangeNotifier {
   List<ChatModel>? chatList = [];
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? chatStream;
   getChat(String chatID) {
-    // final CollectionReference<Map<String, dynamic>> userChats =
-    //     FirebaseFirestore.instance
-    //         .collection("uplifty_chats")
-    //         .doc(chatID)
-    //         .collection("messages").orderBy("timestamp", descending: true);
-
     final CollectionReference<Map<String, dynamic>> userChats =
         FirebaseFirestore.instance.collection("uplifty_chats");
 
@@ -70,44 +62,12 @@ class ChatProvider with ChangeNotifier {
       if (chatList!.isNotEmpty &&
           chatList!.first.senderID != FirebaseAuth.instance.currentUser!.uid &&
           !chatList!.first.isReaded) {
-        
         await markChatAsRead(chatID);
       }
       notifyListeners();
     });
   }
 
-//   //for audio message
-//   AudioPlayer audioPlayer = AudioPlayer();
-//  // bool isPlaying = false;
-//   double currentPosition = 0.0;
-//   double audioDuration = 0.0;
-
-//   Future<void> playPauseAudio(UrlSource audiolink,bool isPlaying) async {
-//     if (isPlaying) {
-//       await audioPlayer.pause();
-//     } else {
-      
-//       audioPlayer.onPositionChanged.listen((Duration duration) {
-//         currentPosition = duration.inMilliseconds.toDouble();
-        
-//         notifyListeners();
-//       });
-
-//       audioPlayer.onDurationChanged.listen((Duration duration) {
-//         audioDuration = duration.inMilliseconds.toDouble();
-//         notifyListeners();
-//       });
-//       await audioPlayer.play(audiolink);
-//     }
-//     //isPlaying = !isPlaying;
-//     notifyListeners();
-//   }
-
-//   void seekAudio(Duration duration) {
-//     audioPlayer.seek(duration);
-//   }
-  
   @override
   void dispose() {
     chatStream?.cancel();

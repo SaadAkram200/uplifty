@@ -7,7 +7,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconly/iconly.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:uplifty/models/post_model.dart';
+import 'package:uplifty/providers/data_provider.dart';
+import 'package:uplifty/utils/bottomsheets.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/dialogs.dart';
+import 'package:uplifty/utils/functions.dart';
 import 'package:video_player/video_player.dart';
 
 // sign button
@@ -458,5 +464,224 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           }
         },
         child: VideoPlayer(videoController));
+  }
+}
+
+//container of post
+//used in home screen and user posts
+class PostContainer extends StatefulWidget {
+  DataProvider value;
+  int index;
+  bool isUserPosts;
+  TextEditingController commentController;
+  PostContainer({
+    super.key,
+    required this.value,
+    required this.index,
+    required this.commentController,
+    required this.isUserPosts,
+  });
+
+  @override
+  State<PostContainer> createState() => _PostContainerState();
+}
+
+class _PostContainerState extends State<PostContainer> {
+  late List<PostModel> post;
+  checkScreen() {
+    if (widget.isUserPosts) {
+      post = widget.value.userPosts;
+    } else {
+      post = widget.value.allPosts;
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    checkScreen();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+      child: Container(
+        //main container for post
+        decoration: BoxDecoration(
+            color: CColors.bottomAppBarcolor,
+            borderRadius: BorderRadius.circular(15),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black45,
+                blurRadius: 4,
+                offset: Offset(0, 4),
+              )
+            ]),
+        child: Column(
+            //main column of post container
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // for poster avatar, name and more button
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 22,
+                      backgroundColor: CColors.secondarydark,
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundColor: Colors.white,
+                        backgroundImage: widget.value.userData != null
+                            ? NetworkImage(widget.value
+                                .getPosterData(
+                                  post[widget.index].posterUid,
+                                )
+                                ?.image as String) as ImageProvider
+                            : const AssetImage('assets/images/dummyuser.jpg'),
+                        child: null,
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.value
+                              .getPosterData(
+                                post[widget.index].posterUid,
+                              )!
+                              .username,
+                          style: TextStyle(
+                              color: CColors.secondarydark,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        Text(
+                          DateFormat('hh:mm a')
+                              .format(post[widget.index].timestamp),
+                          style:
+                              TextStyle(color: CColors.secondary, fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialogs.deletePostDialog(
+                                  context, post[widget.index].postid);
+                            },
+                          );
+                        },
+                        icon: Icon(
+                          IconlyLight.more_square,
+                          color: CColors.secondary,
+                        )),
+                  ],
+                ),
+              ),
+
+              //for post caption
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                child: Text(
+                  post[widget.index].caption,
+                  style: TextStyle(color: CColors.secondarydark),
+                ),
+              ),
+
+              //for post image
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15.0),
+                  child: Container(
+                      constraints: const BoxConstraints(
+                        maxHeight: 400,
+                        maxWidth: 350,
+                        minHeight: 400,
+                        minWidth: 350,
+                      ),
+                      child: post[widget.index].type == "image"
+                          ? Image.network(
+                              post[widget.index].image,
+                            )
+                          : VideoPlayerWidget(
+                              videoUrl: post[widget.index].image)),
+                ),
+              ),
+              //like, comment and share buttons
+              Row(
+                children: [
+                  //like button
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: InkWell(
+                        onLongPress: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialogs.likedByDialog(widget.index,
+                                  widget.value, widget.isUserPosts);
+                            },
+                          );
+                        },
+                        onTap: () {
+                          if (post[widget.index]
+                              .likedby!
+                              .contains(widget.value.uid)) {
+                            Functions.removeLike(post[widget.index].postid,
+                                widget.value.userData!.id);
+                          } else {
+                            Functions.addLike(post[widget.index].postid,
+                                widget.value.userData!.id);
+                          }
+                        },
+                        child: Icon(
+                          post[widget.index].likedby!.contains(widget.value.uid)
+                              ? IconlyBold.heart
+                              : IconlyLight.heart,
+                          color: CColors.secondary,
+                        )),
+                  ),
+                  Text(
+                    post[widget.index].likedby!.length.toString(),
+                    style: TextStyle(color: CColors.secondary),
+                  ),
+                  //comment button
+                  IconButton(
+                      onPressed: () {
+                        BottomSheets.commentsBottomSheet(
+                            context,
+                            widget.index,
+                            widget.value,
+                            widget.commentController,
+                            widget.isUserPosts);
+                        //commentsBottomSheet(context, index, value);
+                      },
+                      icon: Icon(
+                        IconlyLight.chat,
+                        color: CColors.secondary,
+                      )),
+                  IconButton(
+                      onPressed: () {},
+                      icon: Icon(
+                        IconlyLight.send,
+                        color: CColors.secondary,
+                      )),
+                ],
+              )
+            ]),
+      ),
+    );
   }
 }

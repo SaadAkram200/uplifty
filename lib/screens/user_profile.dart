@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/screens/chats/chat_screen.dart';
 import 'package:uplifty/utils/colors.dart';
+import 'package:uplifty/utils/dialogs.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
 
@@ -41,7 +42,7 @@ class UserProfile extends StatelessWidget {
                       showDialog(
                         context: context,
                         builder: (context) {
-                          return Functions.profileViewer(
+                          return Dialogs.profileViewer(
                               value.getPosterData(friendID)!.image as String);
                         },
                       );

@@ -266,8 +266,8 @@ class Functions {
   }
 
   //to delete the post
-  static Future<void> deletePost(String postId) {
-    return posts.doc(postId).delete();
+  static Future<void> deletePost(String postId) async {
+    posts.doc(postId).delete();
   }
 
   //to create post
@@ -411,15 +411,6 @@ class Functions {
         );
       },
       barrierDismissible: false,
-    );
-  }
-
-  //To view Profile of users
-  static profileViewer(String image) {
-    return AlertDialog(
-      backgroundColor: CColors.secondarydark,
-      contentPadding: const EdgeInsets.all(2),
-      content: Image.network(image),
     );
   }
 

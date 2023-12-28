@@ -187,12 +187,6 @@ class _CreateProfileState extends State<CreateProfile> {
                               
                           if (widget.isEditing) {
                             Navigator.pop(context);
-                            // Navigator.pushAndRemoveUntil(
-                            //     context,
-                            //     MaterialPageRoute(
-                            //       builder: (context) => const SettingScreen(),
-                            //     ),
-                            //     (route) => false);
                           }
                         }),
                   ),
