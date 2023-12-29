@@ -50,6 +50,7 @@ class DataProvider with ChangeNotifier {
     userStream = doc.snapshots().listen((snapshot) {
       if (snapshot.exists) {
         userData = UserModel.fromMap(snapshot.data() as Map<String, dynamic>);
+        getUserPosts();
       } else {
         userData = null;
       }
@@ -57,7 +58,7 @@ class DataProvider with ChangeNotifier {
         getPosts(); // to get user's friends posts
       }
       if (userData!.userchats!.isNotEmpty) {
-         getUserChats(); // to get user's chats
+        getUserChats(); // to get user's chats
       }
       notifyListeners();
     });
@@ -94,9 +95,9 @@ class DataProvider with ChangeNotifier {
 
 //to get all the posts of the user's friends only
   List<PostModel> allPosts = [];
-  List<PostModel> userPosts = [];
+
   StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? postsStream;
-  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? userpostsStream;
+
   getPosts() {
     postsStream?.cancel();
     postsStream = posts
@@ -113,7 +114,11 @@ class DataProvider with ChangeNotifier {
       }
       notifyListeners();
     });
+  }
 
+  List<PostModel> userPosts = [];
+  StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? userpostsStream;
+  getUserPosts() {
 // to get user's own posts
     userpostsStream?.cancel();
     userpostsStream =
