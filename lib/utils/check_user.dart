@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:uplifty/screens/create_profile.dart';
+import 'package:uplifty/screens/auth_screens/create_profile.dart';
+import 'package:uplifty/screens/auth_screens/login_screen.dart';
 import 'package:uplifty/screens/bottom_appbar.dart';
-import 'package:uplifty/screens/login_screen.dart';
 import 'package:uplifty/utils/functions.dart';
 
 class CheckUser {

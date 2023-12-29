@@ -3,7 +3,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
-import 'package:uplifty/screens/signup_screen.dart';
+import 'package:uplifty/screens/auth_screens/signup_screen.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/dialogs.dart';
 import 'package:uplifty/utils/functions.dart';

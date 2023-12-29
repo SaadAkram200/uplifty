@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
-import 'package:uplifty/screens/user_profile.dart';
+import 'package:uplifty/screens/app_screens/user_profile.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';

@@ -3,10 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:uplifty/providers/data_provider.dart';
-import 'package:uplifty/screens/create_profile.dart';
+import 'package:uplifty/screens/auth_screens/create_profile.dart';
 import 'package:uplifty/screens/friends/friend_request.dart';
 import 'package:uplifty/screens/friends/myfriends_screen.dart';
-import 'package:uplifty/screens/user_posts.dart';
+import 'package:uplifty/screens/post_screens/user_posts.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/utils/dialogs.dart';

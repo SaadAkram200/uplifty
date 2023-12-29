@@ -20,9 +20,8 @@ class AddPost extends StatefulWidget {
 }
 
 class _AddPostState extends State<AddPost> {
-
   TextEditingController captionController = TextEditingController();
-  
+
   VideoPlayerController? videoController;
   void initializeVideoController(FunctionsProvider value) {
     if (value.selectedVideo != null) {
@@ -37,7 +36,7 @@ class _AddPostState extends State<AddPost> {
     }
   }
 
-  imageContainer(FunctionsProvider value) {
+  Widget imageContainer(FunctionsProvider value) {
     return InkWell(
       onTap: () {
         value.imagePicker(true);
@@ -83,7 +82,7 @@ class _AddPostState extends State<AddPost> {
     );
   }
 
-  videoContainer(FunctionsProvider value) {
+  Widget videoContainer(FunctionsProvider value) {
     return InkWell(
       onTap: () async {
         await value.videoPicker();
@@ -157,104 +156,105 @@ class _AddPostState extends State<AddPost> {
         return Scaffold(
           backgroundColor: CColors.background,
           body: SafeArea(
-              child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  //page name and back button
-                  PageName(
-                      pageName: "Create new Post",
-                      onPressed: () async {
-                        value.selectedImage = null;
-                        value.selectedVideo = null;
-                        // print(value.selectedVideo!.mimeType);
-                        Navigator.pop(context);
-                      }),
-                  Divider(
-                    color: CColors.primary,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 20),
-                    child: UpliftyTextfields(
-                      controller: captionController,
-                      fieldName: "Add caption",
-                      prefixIcon: Icons.chat_bubble_outline_rounded,
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    //page name and back button
+                    PageName(
+                        pageName: "Create new Post",
+                        onPressed: () async {
+                          value.selectedImage = null;
+                          value.selectedVideo = null;
+                          // print(value.selectedVideo!.mimeType);
+                          Navigator.pop(context);
+                        }),
+                    Divider(
+                      color: CColors.primary,
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 20),
+                      child: UpliftyTextfields(
+                        controller: captionController,
+                        fieldName: "Add caption",
+                        prefixIcon: Icons.chat_bubble_outline_rounded,
+                      ),
+                    ),
 
-                  const SizedBox(
-                    height: 30,
-                  ),
+                    const SizedBox(
+                      height: 30,
+                    ),
 
-                  //for image post
-                  if (widget.isImage) imageContainer(value),
+                    //for image post
+                    if (widget.isImage) imageContainer(value),
 
-                  //for video post
-                  if (!widget.isImage) videoContainer(value),
-                  if (value.selectedVideo != null)
-                    IconButton(
-                        onPressed: () {
-                          videoController!.value.isInitialized &&
-                                  videoController!.value.isPlaying
-                              ? videoController?.pause()
-                              : videoController?.play();
-                          setState(() {});
+                    //for video post
+                    if (!widget.isImage) videoContainer(value),
+                    if (value.selectedVideo != null)
+                      IconButton(
+                          onPressed: () {
+                            videoController!.value.isInitialized &&
+                                    videoController!.value.isPlaying
+                                ? videoController?.pause()
+                                : videoController?.play();
+                            setState(() {});
+                          },
+                          icon: Icon(
+                            videoController!.value.isInitialized &&
+                                    videoController!.value.isPlaying
+                                ? Icons.pause_circle_outline_rounded
+                                : IconlyLight.play,
+                            color: CColors.secondary,
+                            size: 50,
+                          )),
+                    //post button
+                    Padding(
+                      padding: const EdgeInsets.only(top: 70),
+                      child: SignButton(
+                        buttonName: "Post",
+                        onPressed: () async {
+                          if (widget.isImage) {
+                            if (value.selectedImage == null) {
+                              Functions.showToast("Select image to post");
+                            } else {
+                              await Functions.postCreation(context,
+                                  value.selectedImage, captionController, type);
+                              value.selectedImage = null;
+                              captionController.clear();
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const BottomAppBarClass(),
+                                  ),
+                                  (route) => false);
+                            }
+                          } else {
+                            if (value.selectedVideo == null) {
+                              Functions.showToast("Select video to post");
+                            } else {
+                              await Functions.postCreation(context,
+                                  value.selectedVideo, captionController, type);
+                              value.selectedVideo = null;
+                              captionController.clear();
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const BottomAppBarClass(),
+                                  ),
+                                  (route) => false);
+                            }
+                          }
                         },
-                        icon: Icon(
-                          videoController!.value.isInitialized &&
-                                  videoController!.value.isPlaying
-                              ? Icons.pause_circle_outline_rounded
-                              : IconlyLight.play,
-                          color: CColors.secondary,
-                          size: 50,
-                        )),
-                  //post button
-                  Padding(
-                    padding: const EdgeInsets.only(top: 70),
-                    child: SignButton(
-                      buttonName: "Post",
-                      onPressed: () async {
-                        if (widget.isImage) {
-                          if (value.selectedImage == null) {
-                            Functions.showToast("Select image to post");
-                          } else {
-                            await Functions.postCreation(context,
-                                value.selectedImage, captionController, type);
-                            value.selectedImage = null;
-                            captionController.clear();
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const BottomAppBarClass(),
-                                ),
-                                (route) => false);
-                          }
-                        } else {
-                          if (value.selectedVideo == null) {
-                            Functions.showToast("Select video to post");
-                          } else {
-                            await Functions.postCreation(context,
-                                value.selectedVideo, captionController, type);
-                            value.selectedVideo = null;
-                            captionController.clear();
-                            Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const BottomAppBarClass(),
-                                ),
-                                (route) => false);
-                          }
-                        }
-                      },
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),),
+          ),
         );
       },
     );

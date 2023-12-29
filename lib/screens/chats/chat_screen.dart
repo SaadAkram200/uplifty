@@ -217,7 +217,7 @@ selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
   }
 
 //builds chat for users
-  chatBuilder(DataProvider value) {
+Widget chatBuilder(DataProvider value) {
     return ChangeNotifierProvider<ChatProvider>(
       create: (context) => ChatProvider(value.uid, widget.friendID),
       child: Consumer<ChatProvider>(

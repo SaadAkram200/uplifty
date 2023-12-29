@@ -49,7 +49,7 @@ class _CreateProfileState extends State<CreateProfile> {
   TextEditingController countryController = TextEditingController();
 
   //display userdata in textfields
-  displayData(UserModel? userData) {
+   displayData(UserModel? userData) {
     usernameController.text = userData!.username;
     countryController.text = userData.country!;
     phoneController.text = userData.phone;
