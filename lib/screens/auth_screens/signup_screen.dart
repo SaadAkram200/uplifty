@@ -3,6 +3,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
+import 'package:uplifty/utils/app_images.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/functions.dart';
 import 'package:uplifty/utils/reusables.dart';
@@ -28,7 +29,7 @@ class SignUpScreen extends StatelessWidget {
               children: [
                 //logo
                 Image.asset(
-                  "assets/images/logo.png",
+                  AppImages.logo,
                   scale: 1.5,
                 ),
 

@@ -7,6 +7,7 @@ import 'package:uplifty/screens/auth_screens/create_profile.dart';
 import 'package:uplifty/screens/friends/friend_request.dart';
 import 'package:uplifty/screens/friends/myfriends_screen.dart';
 import 'package:uplifty/screens/post_screens/user_posts.dart';
+import 'package:uplifty/utils/app_images.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/utils/dialogs.dart';
@@ -70,8 +71,8 @@ class SettingScreen extends StatelessWidget {
                               backgroundImage: value.userData != null
                                   ? NetworkImage(value.userData!.image!)
                                       as ImageProvider
-                                  : const AssetImage(
-                                      'assets/images/dummyuser.jpg'),
+                                  : AssetImage(
+                                      AppImages.dummyuser),
                               child: null,
                             ),
                           ),

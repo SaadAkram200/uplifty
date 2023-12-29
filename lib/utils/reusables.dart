@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:uplifty/models/post_model.dart';
 import 'package:uplifty/providers/data_provider.dart';
+import 'package:uplifty/utils/app_images.dart';
 import 'package:uplifty/utils/bottomsheets.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/dialogs.dart';
@@ -203,7 +204,7 @@ class ProfileAvatar extends StatelessWidget {
         backgroundColor: Colors.white,
         backgroundImage: (imageUrl == null || selectedImage != null)
             ? (selectedImage == null
-                ? AssetImage("assets/images/dummyuser.jpg")
+                ? AssetImage(AppImages.dummyuser)
                 : FileImage(File(selectedImage!.path)) as ImageProvider)
             : NetworkImage(imageUrl!),
         child: Stack(children: [
@@ -540,7 +541,7 @@ class _PostContainerState extends State<PostContainer> {
                                   post[widget.index].posterUid,
                                 )
                                 ?.image as String) as ImageProvider
-                            : const AssetImage('assets/images/dummyuser.jpg'),
+                            : AssetImage(AppImages.dummyuser),
                         child: null,
                       ),
                     ),
