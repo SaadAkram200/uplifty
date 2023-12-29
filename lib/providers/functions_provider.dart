@@ -126,15 +126,16 @@ class FunctionsProvider with ChangeNotifier {
       if (!(await Permission.microphone.isGranted)) {
         // Request permission if not granted
         var status = await Permission.microphone.request();
-        // Start recording if permission is granted
-        await record.start();
-        isRecording = true;
-        notifyListeners();
 
         if (status != PermissionStatus.granted) {
           Functions.showToast("Microphone permission not granted");
           return;
         }
+      } else {
+        // Start recording if permission is granted
+        await record.start();
+        isRecording = true;
+        notifyListeners();
       }
     } catch (e) {
       Functions.showToast("Error starting recording: $e");

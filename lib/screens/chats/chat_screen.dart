@@ -161,17 +161,14 @@ selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
                     buttonName: "Share",
                     onPressed: (){
                       if (value.selectedImage != null) {
+                        Navigator.pop(context);
                         Functions.sendImage(value1.uid, widget.friendID, value.selectedImage)
-                          .then((v) {
-                            value.selectedImage=null;
-                            Navigator.pop(context);
-                          });
+                          .then((v) =>
+                            value.selectedImage=null);
                       }else if(value.selectedFile!=null){
+                        Navigator.pop(context);
                         Functions.sendFile(value1.uid, widget.friendID, value.selectedFile)
-                        .then((v){
-                          value.selectedFile = null;
-                          Navigator.pop(context);
-                        });
+                        .then((v) => value.selectedFile = null);
                       }
                     
                   }),
@@ -211,7 +208,7 @@ selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
                 icon: IconlyLight.document),
             const SizedBox(
               height: 20,
-            )
+            ),
           ]),
         );  
         },);

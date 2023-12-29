@@ -153,7 +153,7 @@ class ChatDashboard extends StatelessWidget {
                                       value.allChats[index].senderID != value.uid) 
                                       ? true : false,
                                     smallSize: 12,
-                                  )
+                                  ),
                                 ],
                               ),
                           ),

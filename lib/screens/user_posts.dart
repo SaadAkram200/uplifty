@@ -11,7 +11,7 @@ class UserPosts extends StatelessWidget {
   UserPosts({super.key});
 
   TextEditingController commentController = TextEditingController();
-  
+
   @override
   Widget build(BuildContext context) {
     return Consumer<DataProvider>(
@@ -21,31 +21,32 @@ class UserPosts extends StatelessWidget {
             return Scaffold(
               backgroundColor: CColors.background,
               body: SafeArea(
-                  child: Padding(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    PageName(
-                        pageName: "Your Posts",
-                        onPressed: () => Navigator.pop(context)),
-                    Divider(color: CColors.primary),
-                    //for posts
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: value.userPosts.length,
-                        itemBuilder: (context, index) {
-                          return PostContainer(
-                              value: value,
-                              index: index,
-                              commentController: commentController,
-                              isUserPosts: true);
-                          //postContainer(context, value, index);
-                        },
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    children: [
+                      PageName(
+                          pageName: "Your Posts",
+                          onPressed: () => Navigator.pop(context)),
+                      Divider(color: CColors.primary),
+                      //for posts
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: value.userPosts.length,
+                          itemBuilder: (context, index) {
+                            return PostContainer(
+                                value: value,
+                                index: index,
+                                commentController: commentController,
+                                isUserPosts: true);
+                            //postContainer(context, value, index);
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )),
+              ),
             );
           },
         );

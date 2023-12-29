@@ -94,24 +94,25 @@ class LoginScreen extends StatelessWidget {
 
                 //sign up text button
                 RichText(
-                    text: TextSpan(
-                        text: "New around here?",
-                        style: TextStyle(color: CColors.primary),
-                        children: [
-                      TextSpan(
-                          text: " Sign Up",
-                          style: TextStyle(
-                              color: CColors.secondarydark,
-                              fontWeight: FontWeight.bold),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SignUpScreen()),
-                                  (route) => true);
-                            })
-                    ]))
+                  text: TextSpan(
+                      text: "New around here?",
+                      style: TextStyle(color: CColors.primary),
+                      children: [
+                        TextSpan(
+                            text: " Sign Up",
+                            style: TextStyle(
+                                color: CColors.secondarydark,
+                                fontWeight: FontWeight.bold),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => SignUpScreen()),
+                                    (route) => true);
+                              }),
+                      ]),
+                ),
               ],
             ),
           ),

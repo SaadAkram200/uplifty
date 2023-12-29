@@ -112,7 +112,7 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
                       value.onTabTapped(3);
                     });
                   },
-                )
+                ),
               ],
             ),
           ),
