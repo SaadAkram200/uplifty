@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/screens/chats/chat_screen.dart';
 import 'package:uplifty/screens/friends/myfriends_screen.dart';
+import 'package:uplifty/utils/app_images.dart';
 import 'package:uplifty/utils/colors.dart';
 
 class ChatDashboard extends StatelessWidget {
@@ -121,8 +122,8 @@ class ChatDashboard extends StatelessWidget {
                                 Padding(
                                   padding: const EdgeInsets.only(top:2,right: 5),
                                   child: value.allChats[index].isReaded==false
-                                      ? Image.asset("assets/images/unseen5.png", scale: 3,)
-                                      : Image.asset("assets/images/seen5.png", scale: 3,),
+                                      ? Image.asset(AppImages.unseen, scale: 3,)
+                                      : Image.asset(AppImages.seen, scale: 3,),
                                 ),
                                if(value.allChats.isNotEmpty)
                                 Container(

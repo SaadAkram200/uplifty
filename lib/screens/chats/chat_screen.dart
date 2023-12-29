@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/providers/chat_provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
+import 'package:uplifty/utils/app_images.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/dialogs.dart';
 import 'package:uplifty/utils/functions.dart';
@@ -347,8 +348,8 @@ Widget chatBuilder(DataProvider value) {
                                  ),
                                  if(value1.chatList?[index].senderID ==value.uid)
                                    value1.chatList![index].isReaded
-                                 ? Image.asset("assets/images/seen5.png", scale: 3.2,)
-                                 : Image.asset("assets/images/unseen5.png", scale: 3.2,),
+                                 ? Image.asset(AppImages.seen, scale: 3.2,)
+                                 : Image.asset(AppImages.unseen, scale: 3.2,),
                                ],
                              ),
                           ],
