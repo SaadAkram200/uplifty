@@ -68,7 +68,6 @@ class HomeScreen extends StatelessWidget {
                                 index: index,
                                 commentController: commentController,
                                 isUserPosts: false);
-                            // postContainer(context, value, index);
                           },
                         ),
                       ),

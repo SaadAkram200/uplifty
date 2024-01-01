@@ -106,20 +106,26 @@ class SearchScreen extends StatelessWidget {
                                               style: TextStyle(
                                                   color:
                                                       CColors.secondarydark)),
-                                          trailing:
-                                          value.userData!.sentrequest!.contains(value2.foundUsers[index]?.id) 
-                                          ? Text("Pending", style: TextStyle(color: CColors.secondary),) 
-                                          : IconButton(
-                                              onPressed: () {
-                                                //sends friend request
-                                                Functions.sendFriendRequest(
-                                                    value2
-                                                        .foundUsers[index]!.id);
-                                              },
-                                              icon: Icon(
-                                                IconlyLight.add_user,
-                                                color: CColors.secondary,
-                                              )),
+                                          trailing: value.userData!.sentrequest!
+                                                  .contains(value2
+                                                      .foundUsers[index]?.id)
+                                              ? Text(
+                                                  "Pending",
+                                                  style: TextStyle(
+                                                      color: CColors.secondary),
+                                                )
+                                              : IconButton(
+                                                  onPressed: () {
+                                                    //sends friend request
+                                                    Functions.sendFriendRequest(
+                                                        value2
+                                                            .foundUsers[index]!
+                                                            .id);
+                                                  },
+                                                  icon: Icon(
+                                                    IconlyLight.add_user,
+                                                    color: CColors.secondary,
+                                                  )),
                                         ),
                                       ),
                                     ),

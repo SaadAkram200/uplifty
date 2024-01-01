@@ -32,8 +32,6 @@ class _CreateProfileState extends State<CreateProfile> {
       displayData(widget.userData);
     } else {
       functions = Functions();
-
-      // widget.userData = null;
     }
     super.initState();
   }
@@ -49,7 +47,7 @@ class _CreateProfileState extends State<CreateProfile> {
   TextEditingController countryController = TextEditingController();
 
   //display userdata in textfields
-   displayData(UserModel? userData) {
+  displayData(UserModel? userData) {
     usernameController.text = userData!.username;
     countryController.text = userData.country!;
     phoneController.text = userData.phone;
@@ -63,25 +61,47 @@ class _CreateProfileState extends State<CreateProfile> {
         return Scaffold(
           backgroundColor: CColors.background,
           body: SafeArea(
-              child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                children: [
-                  //pagename and back button
-                  Row(
-                    children: [
-                      //back button
-                      if (widget
-                          .isEditing) //runs only when user is coming to edit profile
-                        IconButton(
-                            onPressed: () => (Navigator.pop(context)),
-                            icon: Icon(
-                              IconlyLight.arrow_left_2,
-                              color: CColors.secondary,
-                              size: 30,
-                            )),
-                      if (!widget.isEditing)
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  children: [
+                    //pagename and back button
+                    Row(
+                      children: [
+                        //back button
+                        if (widget
+                            .isEditing) //runs only when user is coming to edit profile
+                          IconButton(
+                              onPressed: () => (Navigator.pop(context)),
+                              icon: Icon(
+                                IconlyLight.arrow_left_2,
+                                color: CColors.secondary,
+                                size: 30,
+                              )),
+                        if (!widget.isEditing)
+                          Opacity(
+                            opacity: 0,
+                            child: IconButton(
+                                onPressed: () {},
+                                icon: const Icon(
+                                  IconlyLight.arrow_left_2,
+                                  size: 30,
+                                )),
+                          ),
+                        //page name
+                        Expanded(
+                          child: Text(
+                            widget.isEditing
+                                ? "Edit Profile"
+                                : "Create Profile",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: CColors.primary),
+                          ),
+                        ),
                         Opacity(
                           opacity: 0,
                           child: IconButton(
@@ -91,91 +111,70 @@ class _CreateProfileState extends State<CreateProfile> {
                                 size: 30,
                               )),
                         ),
-                      //page name
-                      Expanded(
-                        child: Text(
-                          widget.isEditing ? "Edit Profile" : "Create Profile",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: CColors.primary),
-                        ),
-                      ),
-                      Opacity(
-                        opacity: 0,
-                        child: IconButton(
-                            onPressed: () {},
-                            icon: const Icon(
-                              IconlyLight.arrow_left_2,
-                              size: 30,
-                            )),
-                      ),
-                    ],
-                  ),
-                  Divider(color: CColors.primary),
-                  // Profile avatar
-                  ProfileAvatar(
-                    imageUrl: widget.userData?.image!,
-                    selectedImage: selectedImage,
-                    onTap: () async {
-                      selectedImage = await Functions.imagePicker();
-                      setState(() {});
-                    },
-                  ),
-
-                  //username textfield
-                  Padding(
-                    padding: const EdgeInsets.only(top: 80.0),
-                    child: UpliftyTextfields(
-                      controller: usernameController,
-                      fieldName: "User Name",
-                      prefixIcon: IconlyLight.profile,
-                      keyboardType: TextInputType.name,
+                      ],
                     ),
-                  ),
+                    Divider(color: CColors.primary),
+                    // Profile avatar
+                    ProfileAvatar(
+                      imageUrl: widget.userData?.image!,
+                      selectedImage: selectedImage,
+                      onTap: () async {
+                        selectedImage = await Functions.imagePicker();
+                        setState(() {});
+                      },
+                    ),
 
-                  //country textfield
-                  UpliftyTextfields(
-                    controller: countryController,
-                    fieldName: "Country",
-                    prefixIcon: IconlyLight.location,
-                    readOnly: true,
-                    onTap: () {
-                      Functions.countryPicker(context, (Country country) {
-                        countryController.text =
-                            country.displayNameNoCountryCode;
-                      });
-                    },
-                    suffixIcon: IconlyLight.arrow_down_2,
-                  ),
+                    //username textfield
+                    Padding(
+                      padding: const EdgeInsets.only(top: 80.0),
+                      child: UpliftyTextfields(
+                        controller: usernameController,
+                        fieldName: "User Name",
+                        prefixIcon: IconlyLight.profile,
+                        keyboardType: TextInputType.name,
+                      ),
+                    ),
 
-                  //phone textfield
-                  UpliftyTextfields(
-                    controller: phoneController,
-                    fieldName: "Phone Number",
-                    prefixIcon: IconlyLight.call,
-                    keyboardType: TextInputType.phone,
-                  ),
+                    //country textfield
+                    UpliftyTextfields(
+                      controller: countryController,
+                      fieldName: "Country",
+                      prefixIcon: IconlyLight.location,
+                      readOnly: true,
+                      onTap: () {
+                        Functions.countryPicker(context, (Country country) {
+                          countryController.text =
+                              country.displayNameNoCountryCode;
+                        });
+                      },
+                      suffixIcon: IconlyLight.arrow_down_2,
+                    ),
 
-                  //Address
-                  UpliftyTextfields(
-                    controller: addressController,
-                    fieldName: "Address",
-                    maxLines: 3,
-                    //prefixIcon: IconlyLight.home,
-                    keyboardType: TextInputType.streetAddress,
-                  ),
+                    //phone textfield
+                    UpliftyTextfields(
+                      controller: phoneController,
+                      fieldName: "Phone Number",
+                      prefixIcon: IconlyLight.call,
+                      keyboardType: TextInputType.phone,
+                    ),
 
-                  //get started
-                  Padding(
-                    padding: const EdgeInsets.only(top: 80),
-                    child: SignButton(
+                    //Address
+                    UpliftyTextfields(
+                      controller: addressController,
+                      fieldName: "Address",
+                      maxLines: 3,
+                      //prefixIcon: IconlyLight.home,
+                      keyboardType: TextInputType.streetAddress,
+                    ),
+
+                    //get started
+                    Padding(
+                      padding: const EdgeInsets.only(top: 80),
+                      child: SignButton(
                         buttonName:
                             widget.isEditing ? "Edit Profile" : "Get Started",
                         onPressed: () async {
-                          // displayData(value.userData!);
-                        await  Functions.profileCreation(
+                          await Functions.profileCreation(
                               context,
                               selectedImage,
                               widget.userData?.image!,
@@ -184,16 +183,18 @@ class _CreateProfileState extends State<CreateProfile> {
                               countryController,
                               addressController,
                               widget.isEditing);
-                              
+
                           if (widget.isEditing) {
                             Navigator.pop(context);
                           }
-                        }),
-                  ),
-                ],
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),),
+          ),
         );
       },
     );
