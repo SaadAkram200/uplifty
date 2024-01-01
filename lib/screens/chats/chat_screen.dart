@@ -504,14 +504,14 @@ Widget chatBuilder(DataProvider value) {
                                     offset: Offset(0, 4), // Shadow position
                                   ),]),
                               child: Icon(IconlyLight.voice, color: CColors.secondary,),),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                );
-                },)
-                
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                 },
+                ),
               ],
             ),
           )),

@@ -162,7 +162,8 @@ class ChatDashboard extends StatelessWidget {
                       ),
                     );
                   },
-                ))
+                ),
+               ),
               ],
             ),
           )),
