@@ -25,10 +25,11 @@ dependencies:
   url_launcher: ^6.1.11
   record: ^4.4.4
   audioplayers: ^5.2.1
-  syncfusion_flutter_pdfviewer: 
   loading_animation_widget:
+  permission_handler: 
   video_player: ^2.7.2
-  permission_handler: ^10.4.0
+  zego_uikit_prebuilt_call: ^3.19.0
+  
 
 dev_dependencies:
   flutter_test:
