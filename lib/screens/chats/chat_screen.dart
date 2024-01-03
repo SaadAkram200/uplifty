@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/providers/chat_provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
+import 'package:uplifty/screens/calls/audio_call.dart';
 import 'package:uplifty/utils/app_images.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/dialogs.dart';
@@ -423,7 +424,14 @@ Widget chatBuilder(DataProvider value) {
                           size: 28,
                         )),
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                         Navigator.pushAndRemoveUntil(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) => AudioCall(),), (route) => true);
+                         // AudioCall();
+                          print("object");
+                        },
                         icon: Icon(
                           IconlyLight.call,
                           color: CColors.secondary,
