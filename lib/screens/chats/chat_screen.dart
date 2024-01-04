@@ -9,7 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:uplifty/providers/chat_provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
-import 'package:uplifty/screens/calls/audio_call.dart';
+import 'package:uplifty/screens/calls/audio_video_call.dart';
 import 'package:uplifty/utils/app_images.dart';
 import 'package:uplifty/utils/colors.dart';
 import 'package:uplifty/utils/dialogs.dart';
@@ -416,21 +416,38 @@ Widget chatBuilder(DataProvider value) {
                             color: CColors.primary),
                       ),
                     ),
+                    // Video call button
                     IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushAndRemoveUntil(
+                          context, 
+                          MaterialPageRoute(
+                            builder: (context) =>
+                             AudioVideoCall(
+                              receiverID: widget.friendID,
+                              callerName: value.userData!.username, 
+                              callerID: value.userData!.id,
+                              isVideoCall: true),
+                              ), (route) => true);
+                        },
                         icon: Icon(
                           IconlyLight.video,
                           color: CColors.secondary,
                           size: 28,
                         )),
+                    //audio call button
                     IconButton(
                         onPressed: () {
                          Navigator.pushAndRemoveUntil(
                           context, 
                           MaterialPageRoute(
-                            builder: (context) => AudioCall(),), (route) => true);
-                         // AudioCall();
-                          print("object");
+                            builder: (context) =>
+                             AudioVideoCall(
+                              receiverID: widget.friendID,
+                              callerName: value.userData!.username, 
+                              callerID: value.userData!.id,
+                              isVideoCall: false),
+                              ), (route) => true);
                         },
                         icon: Icon(
                           IconlyLight.call,
