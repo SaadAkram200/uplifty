@@ -29,10 +29,10 @@ class Functions {
   Functions() {
     FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
-        // User is signed out
+        // User signed out
         uid = null;
       } else {
-        // User is signed in
+        // User signed in
         uid = user.uid;
         userEmail = user.email;
         doc = users.doc(uid);
@@ -730,6 +730,7 @@ class Functions {
           country: countryController.text,
           address: addressController.text,
           image: imageUrl,
+          fcmtoken: [],
           friendrequest: [],
           myfriends: [],
           sentrequest: [],

@@ -4,7 +4,7 @@ class UserModel {
 //late String id;
   late String username, email, id, phone;
   String? country, address, image;
-  List<dynamic>? sentrequest, friendrequest, myfriends, chatwith, userchats;
+  List<dynamic>? sentrequest, friendrequest, myfriends, chatwith, userchats, fcmtoken;
 
   UserModel({
     required this.username,
@@ -13,6 +13,7 @@ class UserModel {
     required this.country,
     required this.address,
     required this.image,
+    this.fcmtoken,
     this.sentrequest,
     this.friendrequest,
     this.myfriends,
@@ -28,6 +29,7 @@ class UserModel {
     country = data['country'];
     address = data['address'];
     image = data['image'];
+    fcmtoken = data['fcmtoken'];
     sentrequest = data['sentrequest'];
     friendrequest = data['friendrequest'];
     myfriends = data['myfriends'];
@@ -44,6 +46,7 @@ class UserModel {
       'country': country,
       'address': address,
       'image': image,
+      'fcmtoken': fcmtoken,
       'sentrequest': sentrequest,
       'friendrequest': friendrequest,
       'myfriends': myfriends,

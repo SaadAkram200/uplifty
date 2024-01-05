@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:uplifty/models/chat_model.dart';
 import 'package:uplifty/models/post_model.dart';
@@ -30,10 +31,12 @@ class DataProvider with ChangeNotifier {
   callFunctions() {
     getUserProfile();
     getUsersData();
+    updateFcmToken();
   }
 
   //to dispose all the streams
   cancelSubscriptions() {
+    removeFcmToken();
     userStream?.cancel();
     usersStream?.cancel();
     postsStream?.cancel();
@@ -61,6 +64,27 @@ class DataProvider with ChangeNotifier {
         getUserChats(); // to get user's chats
       }
       notifyListeners();
+    });
+  }
+
+  //to save the fcm token of the current device against the current user
+  late String fcmtoken;
+  final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  updateFcmToken() async {
+    await firebaseMessaging.getToken().then(
+      (token) {
+        fcmtoken = token!;
+        users.doc(uid).update({
+          "fcmtoken": FieldValue.arrayUnion([token])
+        });
+      },
+    );
+  }
+
+  //to remove the current device fcm token from firebase
+  removeFcmToken() async {
+    await users.doc(uid).update({
+      "fcmtoken": FieldValue.arrayRemove([fcmtoken])
     });
   }
 

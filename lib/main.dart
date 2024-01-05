@@ -13,9 +13,10 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  await firebaseMessaging.getToken().then((token) {
-    print("FCM Token: $token");
-  },);
+  await firebaseMessaging.requestPermission();
+  // await firebaseMessaging.getToken().then((token) {
+  //   print("FCM Token: $token");
+  // },);
 
   runApp(MultiProvider(
       providers: [

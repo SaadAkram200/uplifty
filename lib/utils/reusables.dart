@@ -690,6 +690,7 @@ class _PostContainerState extends State<PostContainer> {
   }
 }
 
+//used in chat dashboard screen
 class ChatDashboardTile extends StatelessWidget {
   DataProvider value;
   int index;
