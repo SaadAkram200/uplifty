@@ -97,7 +97,7 @@ selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
                     buttonName: "Share",
                     onPressed: (){
                       if (value.selectedVideo != null) {
-                        Functions.sendVideo(value1.uid, widget.friendID, value.selectedVideo)
+                        Functions.sendVideo(value1.uid, widget.friendID, value.selectedVideo,value1)
                           .then((v) {
                             value.selectedVideo=null;
                             Navigator.pop(context);
@@ -164,12 +164,12 @@ selectedVideoBottomSheet(context, FunctionsProvider value, DataProvider value1){
                     onPressed: (){
                       if (value.selectedImage != null) {
                         Navigator.pop(context);
-                        Functions.sendImage(value1.uid, widget.friendID, value.selectedImage)
+                        Functions.sendImage(value1.uid, widget.friendID, value.selectedImage,value1)
                           .then((v) =>
                             value.selectedImage=null);
                       }else if(value.selectedFile!=null){
                         Navigator.pop(context);
-                        Functions.sendFile(value1.uid, widget.friendID, value.selectedFile)
+                        Functions.sendFile(value1.uid, widget.friendID, value.selectedFile,value1)
                         .then((v) => value.selectedFile = null);
                       }
                     
@@ -291,8 +291,11 @@ Widget chatBuilder(DataProvider value) {
                                 constraints: BoxConstraints(
                                 maxHeight: MediaQuery.of(context).size.width * 0.8,
                                 maxWidth: MediaQuery.of(context).size.width * 0.5,),
-                                child: VideoPlayerWidget(videoUrl: value1.chatList![index].link))),
-
+                                child: VideoPlayerWidget(
+                                  videoUrl: value1.chatList![index].link),
+                                  ),
+                                ),
+                                
                             if(value1.chatList?[index].type == "document")
                             InkWell(
                               onTap: () async {
@@ -498,7 +501,7 @@ Widget chatBuilder(DataProvider value) {
                               suffixIconOnpressed: () {
                                 if (messageController.text.isNotEmpty) {
                                    Functions.startChatting(
-                                        value.uid, widget.friendID, messageController)
+                                        value.uid, widget.friendID, messageController, value)
                                     .then((value) {
                                   messageController.clear();
                                 });
@@ -514,7 +517,8 @@ Widget chatBuilder(DataProvider value) {
                             },
                             onLongPressEnd: (details) async {
                               await value1.stopRecording();
-                              Functions.sendAudio(value.uid, widget.friendID, value1.audioPath!);
+                              Functions.sendAudio(
+                                value.uid, widget.friendID, value1.audioPath!,value);
                             },
                             child: Container(
                               margin: const EdgeInsets.all(5),

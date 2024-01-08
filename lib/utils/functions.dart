@@ -17,12 +17,15 @@ import 'package:uplifty/models/comment_model.dart';
 import 'package:uplifty/models/post_model.dart';
 import 'package:uplifty/models/user_model.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebasestorage;
+import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/screens/auth_screens/create_profile.dart';
 import 'package:uplifty/screens/auth_screens/login_screen.dart';
 import 'package:uplifty/screens/bottom_appbar.dart';
 import 'package:uplifty/utils/check_user.dart';
 import 'package:uplifty/utils/loading_widget.dart';
 import 'colors.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class Functions {
   //constructor
@@ -190,11 +193,17 @@ class Functions {
       ..collection("messages").doc();
   }
 
-  static Future<void> startChatting(String userID, String friendID,
-      TextEditingController messageController) async {
+  static Future<void> startChatting(
+    String userID,
+    String friendID,
+    TextEditingController messageController,
+    DataProvider value,
+  ) async {
     List<String> list = [userID, friendID];
     list.sort();
     String chatID = list.join("_");
+
+    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
 
     //to get the message doc id
     var messageDoc = chats.doc(chatID).collection("messages").doc();
@@ -219,7 +228,8 @@ class Functions {
         link: "",
         type: "text");
     // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
+    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
+        fcmTokens!, value.userData!.username, message.messageText));
 
     //adds friend id in user's myfriends
     users.doc(uid).update({
@@ -239,10 +249,13 @@ class Functions {
     String userID,
     String friendID,
     XFile? selectedImage,
+    DataProvider value,
   ) async {
     List<String> list = [userID, friendID];
     list.sort();
     String chatID = list.join("_");
+
+    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
 
     String imageUrl = await uploadImage(selectedImage!);
     //to get the message doc id
@@ -268,7 +281,8 @@ class Functions {
         link: imageUrl,
         type: "image");
     // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
+    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
+        fcmTokens!, value.userData!.username, message.messageText));
     //adds friend id in user's myfriends
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
@@ -287,10 +301,13 @@ class Functions {
     String userID,
     String friendID,
     XFile? selectedVideo,
+    DataProvider value,
   ) async {
     List<String> list = [userID, friendID];
     list.sort();
     String chatID = list.join("_");
+
+    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
 
     String imageUrl = await uploadImage(selectedVideo!);
     //to get the message doc id
@@ -316,7 +333,8 @@ class Functions {
         link: imageUrl,
         type: "video");
     // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
+    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
+        fcmTokens!, value.userData!.username, message.messageText));
     //adds friend id in user's myfriends
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
@@ -335,10 +353,13 @@ class Functions {
     String userID,
     String friendID,
     XFile? selectedFile,
+    DataProvider value,
   ) async {
     List<String> list = [userID, friendID];
     list.sort();
     String chatID = list.join("_");
+
+    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
 
     String fileUrl = await uploadFile(selectedFile!);
     //to get the message doc id
@@ -364,7 +385,8 @@ class Functions {
         link: fileUrl,
         type: "document");
     // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
+    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
+        fcmTokens!, value.userData!.username, message.messageText));
     //adds friend id in user's myfriends
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
@@ -383,10 +405,13 @@ class Functions {
     String userID,
     String friendID,
     String audioPath,
+    DataProvider value,
   ) async {
     List<String> list = [userID, friendID];
     list.sort();
     String chatID = list.join("_");
+
+    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
 
     String fileUrl = await uploadAudio(audioPath);
     //to get the message doc id
@@ -412,7 +437,8 @@ class Functions {
         link: fileUrl,
         type: "voice note");
     // to send message- setting data in subcollection
-    messageDoc.set(message.toMap());
+    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
+        fcmTokens!, value.userData!.username, message.messageText));
     //adds friend id in user's myfriends
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
@@ -424,6 +450,46 @@ class Functions {
       "chatwith": FieldValue.arrayUnion([userID]),
       "userchats": FieldValue.arrayUnion([chatID])
     });
+  }
+
+  //for sending push notificationa
+  static Future<void> sendPushNotification(
+      List<dynamic> fcmTokens, String title, String message) async {
+    const String serverKey =
+        'AAAAO8fQJ1g:APA91bFdhr4YKc2FF1oQgl3YvT1dTMiWJebCsX1-faY5Z8tAM9Es68XLlco4SlFzss4klwIZsXBnIBcgVxpI8EvH_Q3lwClVevkFQe_JAX0fJ8ls21CUKWkSPQOMZHC0AvlwGAc973HX';
+    const String fcmEndpoint = 'https://fcm.googleapis.com/fcm/send';
+
+    try {
+      final Map<String, dynamic> notification = {
+        'title': title,
+        'body': message,
+        'sound': 'default',
+        'priority': 'high',
+      };
+
+      final Map<String, dynamic> data = {
+        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+        'id': '1',
+        'status': 'done',
+      };
+
+      final Map<String, dynamic> payload = {
+        'notification': notification,
+        'data': data,
+        'registration_ids': fcmTokens,
+      };
+      await http.post(
+        Uri.parse(fcmEndpoint),
+        headers: <String, String>{
+          'Content-Type': 'application/json',
+          'Authorization': 'key=$serverKey',
+        },
+        body: jsonEncode(payload),
+      );
+      print("Notification sent");
+    } catch (e) {
+      //print(e.toString());
+    }
   }
 
 //toast function

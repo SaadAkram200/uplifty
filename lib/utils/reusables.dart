@@ -722,7 +722,7 @@ class ChatDashboardTile extends StatelessWidget {
                 MaterialPageRoute(
                   builder: (context) => ChatScreen(
                       friendID: value
-                          .getPosterData(value.userData?.chatwith?[index])!
+                          .getPosterData(value.userData!.chatwith![index])!
                           .id),
                 ),
                 (route) => true);
@@ -730,10 +730,10 @@ class ChatDashboardTile extends StatelessWidget {
           child: ListTile(
             leading: CircleAvatar(
                 backgroundImage: NetworkImage(value
-                    .getPosterData(value.userData?.chatwith?[index])
+                    .getPosterData(value.userData!.chatwith![index])
                     ?.image as String)),
             title: Text(
-              value.getPosterData(value.userData?.chatwith?[index])!.username,
+              value.getPosterData(value.userData!.chatwith![index])!.username,
               style: TextStyle(
                   color: CColors.secondarydark,
                   fontSize: 18,

@@ -4,7 +4,12 @@ class UserModel {
 //late String id;
   late String username, email, id, phone;
   String? country, address, image;
-  List<dynamic>? sentrequest, friendrequest, myfriends, chatwith, userchats, fcmtoken;
+  List<dynamic>? sentrequest = [],
+      chatwith = [],
+      friendrequest = [],
+      myfriends = [],
+      userchats = [],
+      fcmtoken = [];
 
   UserModel({
     required this.username,
@@ -29,12 +34,12 @@ class UserModel {
     country = data['country'];
     address = data['address'];
     image = data['image'];
-    fcmtoken = data['fcmtoken'];
-    sentrequest = data['sentrequest'];
-    friendrequest = data['friendrequest'];
-    myfriends = data['myfriends'];
-    chatwith = data['chatwith'];
-    userchats = data['userchats'];
+    fcmtoken = data['fcmtoken'] ?? [];
+    sentrequest = data['sentrequest'] ?? [];
+    friendrequest = data['friendrequest'] ?? [];
+    myfriends = data['myfriends'] ?? [];
+    chatwith = data['chatwith'] ?? [];
+    userchats = data['userchats'] ?? [];
   }
 
   Map<String, dynamic> toMap() {
@@ -50,14 +55,14 @@ class UserModel {
       'sentrequest': sentrequest,
       'friendrequest': friendrequest,
       'myfriends': myfriends,
-      'chatwith':chatwith,
-      'userchats':userchats,
+      'chatwith': chatwith,
+      'userchats': userchats,
       'timestamp': Timestamp.now(),
     };
   }
 
   //for update userdata
-  Map<String, dynamic> updatetoMap(){
+  Map<String, dynamic> updatetoMap() {
     return {
       "id": id,
       'username': username,
