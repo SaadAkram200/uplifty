@@ -422,6 +422,16 @@ Widget chatBuilder(DataProvider value) {
                     // Video call button
                     IconButton(
                         onPressed: () {
+                          Functions.sendPushNotification(
+                            value.getPosterData(widget.friendID)!.fcmtoken!, 
+                            "Incomming Call", 
+                            value.userData!.username, 
+                            "call",
+                            callerID: value.userData!.id,
+                            callerName: value.userData!.username,
+                            receiverID:  value.getPosterData(widget.friendID)!.id,
+                            isVideoCall: true);
+                          
                           Navigator.pushAndRemoveUntil(
                           context, 
                           MaterialPageRoute(

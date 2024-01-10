@@ -229,7 +229,7 @@ class Functions {
         type: "text");
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText));
+        fcmTokens!, value.userData!.username, message.messageText, "message"));
 
     //adds friend id in user's myfriends
     users.doc(uid).update({
@@ -282,7 +282,7 @@ class Functions {
         type: "image");
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText));
+        fcmTokens!, value.userData!.username, message.messageText, "message"));
     //adds friend id in user's myfriends
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
@@ -334,7 +334,7 @@ class Functions {
         type: "video");
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText));
+        fcmTokens!, value.userData!.username, message.messageText, "message"));
     //adds friend id in user's myfriends
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
@@ -386,7 +386,7 @@ class Functions {
         type: "document");
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText));
+        fcmTokens!, value.userData!.username, message.messageText, "message"));
     //adds friend id in user's myfriends
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
@@ -438,7 +438,7 @@ class Functions {
         type: "voice note");
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText));
+        fcmTokens!, value.userData!.username, message.messageText, "message"));
     //adds friend id in user's myfriends
     users.doc(uid).update({
       "chatwith": FieldValue.arrayUnion([friendID]),
@@ -454,7 +454,12 @@ class Functions {
 
   //for sending push notificationa
   static Future<void> sendPushNotification(
-      List<dynamic> fcmTokens, String title, String message) async {
+      List<dynamic> fcmTokens, String title, String message, String type,
+      {String? receiverID,
+      String? callerID,
+      String? callerName,
+      bool? isVideoCall,
+      }) async {
     const String serverKey =
         'AAAAO8fQJ1g:APA91bFdhr4YKc2FF1oQgl3YvT1dTMiWJebCsX1-faY5Z8tAM9Es68XLlco4SlFzss4klwIZsXBnIBcgVxpI8EvH_Q3lwClVevkFQe_JAX0fJ8ls21CUKWkSPQOMZHC0AvlwGAc973HX';
     const String fcmEndpoint = 'https://fcm.googleapis.com/fcm/send';
@@ -468,8 +473,12 @@ class Functions {
       };
 
       final Map<String, dynamic> data = {
-        'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-        'id': '1',
+        'click_action': message,
+        'type': type,
+        'receiverID': receiverID,
+        'callerID': callerID,
+        'callerName': callerName,
+        'isVideoCall': isVideoCall,
         'status': 'done',
       };
 
