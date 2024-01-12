@@ -10,16 +10,14 @@ import 'package:provider/provider.dart';
 
 final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-
 Future<void> myBackgroundMessageHandler(RemoteMessage message) async {
-
   String type = message.data['type'];
-  
+
   if (type == 'call') {
     // String receiverID = message.data['receiverID'];
-  // String callerID = message.data['callerID'];
-  String callerName = message.data['callerName'];
-  // bool isVideoCall = message.data['isVideoCall'];
+    // String callerID = message.data['callerID'];
+    String callerName = message.data['callerName'];
+    // bool isVideoCall = message.data['isVideoCall'];
 
     AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -45,29 +43,34 @@ Future<void> myBackgroundMessageHandler(RemoteMessage message) async {
           autoDismissible: false,
           color: Colors.red,
           actionType: ActionType.Default,
-     
         ),
       ],
-    
     );
   } else if (type == 'message') {
-     AwesomeNotifications().createNotification(
-    content: NotificationContent(
-      id: 1,
-      channelKey: 'call_channel',
-      title: message.notification!.title,
-      body: message.data['body'],
-    ),
-  );
-
-  
+    AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 1,
+        channelKey: 'call_channel',
+        title: message.notification!.title,
+        body: message.notification!.body,
+      ),
+    );
   }
 
   // Add your custom logic here to handle the background message.
-
-
+  AwesomeNotifications().setListeners(
+    onActionReceivedMethod: (receivedAction) async {
+      if (receivedAction.buttonKeyPressed == 'accept') {
+       
+        print("call accepted");
+      } else if (receivedAction.buttonKeyPressed == 'reject') {
+        AwesomeNotifications().dismiss(receivedAction.id!);
+        print("call rejected");
+        
+      }
+    },
+  );
 }
-
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -89,10 +92,13 @@ void main() async {
 
   await firebaseMessaging.requestPermission();
 
-  //configureFCM();
+  //for handling notification when app is in background
   FirebaseMessaging.onBackgroundMessage(myBackgroundMessageHandler);
 
-  
+  //for handling noticiation when app is in foreground
+  FirebaseMessaging.onMessage.listen((message) {
+    myBackgroundMessageHandler(message);
+  });
 
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<DataProvider>(

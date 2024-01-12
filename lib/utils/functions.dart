@@ -474,8 +474,6 @@ class Functions {
 
       final Map<String, dynamic> data = {
         'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-        'title': title,
-        'body': message,
         'type': type,
         'receiverID': receiverID,
         'callerID': callerID,
