@@ -5,19 +5,24 @@ import 'package:flutter/material.dart';
 import 'package:uplifty/firebase_options.dart';
 import 'package:uplifty/providers/data_provider.dart';
 import 'package:uplifty/providers/functions_provider.dart';
+import 'package:uplifty/screens/calls/audio_video_call.dart';
 import 'package:uplifty/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
 
 final FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
+// Global key for accessing Navigator context
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 Future<void> myBackgroundMessageHandler(RemoteMessage message) async {
   String type = message.data['type'];
+  String? receiverID = message.data['receiverID'];
+  String? callerID = message.data['callerID'];
+  String? callerName = message.data['callerName'];
+  bool? isVideoCall = bool.fromEnvironment(message.data['isVideoCall']);
 
   if (type == 'call') {
-    // String receiverID = message.data['receiverID'];
-    // String callerID = message.data['callerID'];
     String callerName = message.data['callerName'];
-    // bool isVideoCall = message.data['isVideoCall'];
 
     AwesomeNotifications().createNotification(
       content: NotificationContent(
@@ -33,6 +38,7 @@ Future<void> myBackgroundMessageHandler(RemoteMessage message) async {
           color: Colors.green,
           autoDismissible: false,
           actionType: ActionType.Default,
+
           //   // Navigate to the call screen
           //   // Navigator.push(context, MaterialPageRoute(builder: (context) => AudioVideoCall(...)));
           // },
@@ -40,7 +46,6 @@ Future<void> myBackgroundMessageHandler(RemoteMessage message) async {
         NotificationActionButton(
           key: 'reject',
           label: 'Reject',
-          autoDismissible: false,
           color: Colors.red,
           actionType: ActionType.Default,
         ),
@@ -61,12 +66,22 @@ Future<void> myBackgroundMessageHandler(RemoteMessage message) async {
   AwesomeNotifications().setListeners(
     onActionReceivedMethod: (receivedAction) async {
       if (receivedAction.buttonKeyPressed == 'accept') {
-       
+        // print(receiverID);
+        Navigator.push(
+            navigatorKey.currentState!.context,
+            MaterialPageRoute(
+              builder: (context) => AudioVideoCall(
+                  receiverID: receiverID!,
+                  callerName: callerName!,
+                  callerID: callerID!,
+                  isVideoCall: isVideoCall),
+            ));
+
         print("call accepted");
       } else if (receivedAction.buttonKeyPressed == 'reject') {
         AwesomeNotifications().dismiss(receivedAction.id!);
+
         print("call rejected");
-        
       }
     },
   );
@@ -100,6 +115,11 @@ void main() async {
     myBackgroundMessageHandler(message);
   });
 
+  // FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+  //   print("From OnMessageOpenedApp");
+  //   myBackgroundMessageHandler(message);
+  // });
+
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider<DataProvider>(
       create: (_) => DataProvider(),
@@ -115,9 +135,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }
