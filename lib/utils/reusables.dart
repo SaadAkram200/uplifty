@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:iconly/iconly.dart';
@@ -538,9 +539,7 @@ class _PostContainerState extends State<PostContainer> {
                         backgroundColor: Colors.white,
                         backgroundImage: widget.value.userData != null
                             ? NetworkImage(widget.value
-                                .getPosterData(
-                                  post[widget.index].posterUid,
-                                )
+                                .getPosterData(post[widget.index].posterUid)
                                 ?.image as String) as ImageProvider
                             : AssetImage(AppImages.dummyuser),
                         child: null,
@@ -616,8 +615,8 @@ class _PostContainerState extends State<PostContainer> {
                         minWidth: 350,
                       ),
                       child: post[widget.index].type == "image"
-                          ? Image.network(
-                              post[widget.index].image,
+                          ? CachedNetworkImage(
+                              imageUrl: post[widget.index].image,
                             )
                           : VideoPlayerWidget(
                               videoUrl: post[widget.index].image)),

@@ -34,6 +34,7 @@ dependencies:
   zego_uikit_prebuilt_call: ^3.19.0
   http: ^1.1.0
   flutter_launcher_icons: ^0.13.1
+  cached_network_image: ^3.3.1
   
 
 dev_dependencies:
