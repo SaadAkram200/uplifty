@@ -27,37 +27,8 @@ class HomeScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       //logo with user profile avatar
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CircleAvatar(
-                            radius: 27,
-                            backgroundColor: CColors.secondary,
-                            child: CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Colors.white,
-                              backgroundImage: value.userData != null
-                                  ? NetworkImage(value.userData!.image!)
-                                      as ImageProvider
-                                  : AssetImage(AppImages.dummyuser),
-                              child: null,
-                            ),
-                          ),
-                          Image.asset(
-                            AppImages.logo2,
-                            width: 80,
-                          ),
-                          IconButton(
-                              onPressed: () {},
-                              icon: Icon(
-                                IconlyLight.notification,
-                                color: CColors.secondary,
-                              ))
-                        ],
-                      ),
-                      Divider(
-                        color: CColors.secondary,thickness: .5
-                      ),
+                      header(value),
+                      Divider(color: CColors.secondary, thickness: .5),
                       //for posts
                       Expanded(
                         child: ListView.builder(
@@ -79,6 +50,36 @@ class HomeScreen extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  Row header(DataProvider value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        CircleAvatar(
+          radius: 27,
+          backgroundColor: CColors.secondary,
+          child: CircleAvatar(
+            radius: 25,
+            backgroundColor: Colors.white,
+            backgroundImage: value.userData != null
+                ? NetworkImage(value.userData!.image!) as ImageProvider
+                : AssetImage(AppImages.dummyuser),
+            child: null,
+          ),
+        ),
+        Image.asset(
+          AppImages.logo2,
+          width: 80,
+        ),
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              IconlyLight.notification,
+              color: CColors.secondary,
+            ))
+      ],
     );
   }
 }

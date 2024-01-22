@@ -518,9 +518,9 @@ class Functions {
     showDialog(
       context: context,
       builder: (_) {
-        return WillPopScope(
-          onWillPop: () {
-            return Future.value(kDebugMode);
+        return PopScope(
+          onPopInvoked: (didPop) {
+             Future.value(kDebugMode);
           },
           child: const AlertDialog(
             backgroundColor: Colors.transparent,
