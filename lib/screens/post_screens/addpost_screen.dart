@@ -170,9 +170,7 @@ class _AddPostState extends State<AddPost> {
                           // print(value.selectedVideo!.mimeType);
                           Navigator.pop(context);
                         }),
-                    Divider(
-                      color: CColors.primary,
-                    ),
+                    Divider(color: CColors.secondary,thickness: .5),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: UpliftyTextfields(

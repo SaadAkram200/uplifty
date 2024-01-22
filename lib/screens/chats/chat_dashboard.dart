@@ -62,7 +62,7 @@ class ChatDashboard extends StatelessWidget {
                         )),
                   ],
                 ),
-                Divider(color: CColors.primary),
+                Divider(color: CColors.secondary,thickness: .5),
                 Expanded(
                     child: value.userData!.chatwith!.isEmpty
                      ? Text(

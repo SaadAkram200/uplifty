@@ -45,76 +45,74 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
           onPressed: () {
            BottomSheets. selectPostType(context);
           },
-          tooltip: 'Increment',
           elevation: 5.0,
           backgroundColor: CColors.secondary,
-          child: const Icon(Icons.add),
+          shape: const CircleBorder(),
+          splashColor: CColors.bottomAppBarcolor,
+          child: Icon(Icons.add,color: CColors.background,),
         ),
         bottomNavigationBar: BottomAppBar(
           shape: const CircularNotchedRectangle(),
           color: CColors.bottomAppBarcolor,
           notchMargin: 6,
-          child: SizedBox(
-            height: 50,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                //Homescreen
-                IconButton(
-                  iconSize: 30.0,
-                  padding: const EdgeInsets.only(left: 28.0),
-                  icon: Icon(IconlyLight.home,
-                      color: value.selectedPage == 0
-                          ? CColors.secondary
-                          : CColors.background),
-                  onPressed: () {
-                    value.onTabTapped(0);
-                  },
-                ),
-
-                //chat screen
-                IconButton(
-                  iconSize: 30.0,
-                  padding: const EdgeInsets.only(right: 28.0),
-                  icon: Icon(IconlyLight.chat,
-                      color: value.selectedPage == 1
-                          ? CColors.secondary
-                          : CColors.background),
-                  onPressed: () {
-                    value.onTabTapped(1);
-                  },
-                ),
-
-                //search screen
-                IconButton(
-                  iconSize: 30.0,
-                  padding: const EdgeInsets.only(left: 28.0),
-                  icon: Icon(IconlyLight.search,
-                      color: value.selectedPage == 2
-                          ? CColors.secondary
-                          : CColors.background),
-                  onPressed: () {
-                    value.onTabTapped(2);
-                  },
-                ),
-
-                //setting screen
-                IconButton(
-                  iconSize: 30.0,
-                  padding: const EdgeInsets.only(right: 28.0),
-                  icon: Icon(IconlyLight.setting,
-                      color: value.selectedPage == 3
-                          ? CColors.secondary
-                          : CColors.background),
-                  onPressed: () {
-                    setState(() {
-                      value.onTabTapped(3);
-                    });
-                  },
-                ),
-              ],
-            ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //Homescreen
+              IconButton(
+                iconSize: 35.0,
+               // padding: const EdgeInsets.only(left: 28.0),
+                icon: Icon(IconlyLight.home,
+                    color: value.selectedPage == 0
+                        ? CColors.secondary
+                        : CColors.background),
+                onPressed: () {
+                  value.onTabTapped(0);
+                },
+              ),
+          
+              //chat screen
+              IconButton(
+                iconSize: 35.0,
+                padding: const EdgeInsets.only(right: 28.0),
+                icon: Icon(IconlyLight.chat,
+                    color: value.selectedPage == 1
+                        ? CColors.secondary
+                        : CColors.background),
+                onPressed: () {
+                  value.onTabTapped(1);
+                },
+              ),
+          
+              //search screen
+              IconButton(
+                iconSize: 35.0,
+                padding: const EdgeInsets.only(left: 28.0),
+                icon: Icon(IconlyLight.search,
+                    color: value.selectedPage == 2
+                        ? CColors.secondary
+                        : CColors.background),
+                onPressed: () {
+                  value.onTabTapped(2);
+                },
+              ),
+          
+              //setting screen
+              IconButton(
+                iconSize: 35.0,
+              //  padding: const EdgeInsets.only(right: 28.0),
+                icon: Icon(IconlyLight.setting,
+                    color: value.selectedPage == 3
+                        ? CColors.secondary
+                        : CColors.background),
+                onPressed: () {
+                  setState(() {
+                    value.onTabTapped(3);
+                  });
+                },
+              ),
+            ],
           ),
         ),
         body: pageOptions[value.selectedPage],

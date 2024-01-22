@@ -113,7 +113,7 @@ class _CreateProfileState extends State<CreateProfile> {
                         ),
                       ],
                     ),
-                    Divider(color: CColors.primary),
+                    Divider(color: CColors.secondary,thickness: .5),
                     // Profile avatar
                     ProfileAvatar(
                       imageUrl: widget.userData?.image!,

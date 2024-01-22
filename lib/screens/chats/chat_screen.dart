@@ -473,7 +473,7 @@ Widget chatBuilder(DataProvider value) {
                   height: 5,
                 ),
                 Divider(
-                  color: CColors.primary,
+                  color: CColors.secondary,thickness: .5,
                   height: 1,
                 ),
 
@@ -482,7 +482,7 @@ Widget chatBuilder(DataProvider value) {
 
                 // messeage textfield
                 Divider(
-                  color: CColors.primary,
+                  color: CColors.secondary,thickness: .5
                 ),
                 Consumer<FunctionsProvider>(builder: (context, value1, child) {
                   return SizedBox(
