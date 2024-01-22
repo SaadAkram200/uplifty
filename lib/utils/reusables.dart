@@ -351,7 +351,7 @@ class SettingsButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Divider(color: CColors.primary),
+        Divider(color: CColors.secondary,thickness: 0.5),
         InkWell(
           onTap: onTap,
           child: Padding(

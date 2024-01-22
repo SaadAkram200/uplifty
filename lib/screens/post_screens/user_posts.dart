@@ -28,7 +28,7 @@ class UserPosts extends StatelessWidget {
                       PageName(
                           pageName: "Your Posts",
                           onPressed: () => Navigator.pop(context)),
-                      Divider(color: CColors.primary),
+                      Divider(color: CColors.secondary,thickness: 0.5,),
                       //for posts
                       Expanded(
                         child: ListView.builder(

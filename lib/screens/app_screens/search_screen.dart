@@ -38,7 +38,7 @@ class SearchScreen extends StatelessWidget {
                               color: CColors.primary),
                         ),
                       ),
-                      Divider(color: CColors.primary),
+                      Divider(color: CColors.secondary,thickness: .5),
 
                       //textfield for search users
                       Padding(

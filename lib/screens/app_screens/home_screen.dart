@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                       Divider(
-                        color: CColors.primary,
+                        color: CColors.secondary,thickness: .5
                       ),
                       //for posts
                       Expanded(

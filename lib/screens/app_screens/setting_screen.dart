@@ -44,7 +44,7 @@ class SettingScreen extends StatelessWidget {
                           color: CColors.primary),
                     ),
                   ),
-                  Divider(color: CColors.primary),
+                  Divider(color: CColors.secondary,thickness: .5),
 
                   //profile details
                   Expanded(

@@ -33,7 +33,7 @@ class UserProfile extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                  Divider(color: CColors.primary),
+                  Divider(color: CColors.secondary,thickness: .5),
                   //profile details
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -97,7 +97,7 @@ class UserProfile extends StatelessWidget {
                           style:
                               TextStyle(color: CColors.primary, fontSize: 18),
                         )),
-                  Divider(color: CColors.primary),
+                 Divider(color: CColors.secondary,thickness: .5),
                 ],
               ),
             ),

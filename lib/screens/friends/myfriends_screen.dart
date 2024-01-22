@@ -44,7 +44,7 @@ class MyFriends extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                  Divider(color: CColors.primary),
+                  Divider(color: CColors.secondary,thickness: .5),
 
                   //to show all the friendrequets of current User
                   Expanded(
