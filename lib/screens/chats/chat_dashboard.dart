@@ -21,65 +21,70 @@ class ChatDashboard extends StatelessWidget {
             child: Column(
               children: [
                 //page title
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                   // page title
-                    Opacity(
-                      opacity: 0,
-                      child: IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            IconlyLight.plus,
-                            color: CColors.secondary,
-                            size: 28,
-                          )),
-                    ),
-                    Text(
-                      "Chats",
-                      style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: CColors.primary),
-                    ),
-                    IconButton(
-                        onPressed: () {
-                          showModalBottomSheet(
-                            context: context,
-                            useSafeArea: true,
-                            isScrollControlled: true,
-                            builder: (context) {
-                              return MyFriends(
-                                isComingfromChatD: true,
-                              );
-                            },
-                          );
-                        },
-                        icon: Icon(
-                          IconlyLight.plus,
-                          color: CColors.secondary,
-                          size: 28,
-                        )),
-                  ],
-                ),
-                Divider(color: CColors.secondary,thickness: .5),
+                header(context),
+                Divider(color: CColors.secondary, thickness: .5),
                 Expanded(
-                    child: value.userData!.chatwith!.isEmpty
-                     ? Text(
-                        "No chats yet...", 
-                        style: TextStyle(color: CColors.secondary, fontSize: 20))
-                     : ListView.builder(
-                  itemCount: value.userData?.chatwith?.length,
-                  itemBuilder: (context, index) {
-                    return ChatDashboardTile(value: value, index: index);
-                  },
+                  child: value.userData!.chatwith!.isEmpty
+                      ? Text("No chats yet...",
+                          style:
+                              TextStyle(color: CColors.secondary, fontSize: 20))
+                      : ListView.builder(
+                          itemCount: value.userData?.chatwith?.length,
+                          itemBuilder: (context, index) {
+                            return ChatDashboardTile(
+                                value: value, index: index);
+                          },
+                        ),
                 ),
-               ),
               ],
             ),
           )),
         );
       },
+    );
+  }
+
+  Row header(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        // page title
+        Opacity(
+          opacity: 0,
+          child: IconButton(
+              onPressed: () {},
+              icon: Icon(
+                IconlyLight.plus,
+                color: CColors.secondary,
+                size: 28,
+              )),
+        ),
+        Text(
+          "Chats",
+          style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: CColors.primary),
+        ),
+        IconButton(
+            onPressed: () {
+              showModalBottomSheet(
+                context: context,
+                useSafeArea: true,
+                isScrollControlled: true,
+                builder: (context) {
+                  return MyFriends(
+                    isComingfromChatD: true,
+                  );
+                },
+              );
+            },
+            icon: Icon(
+              IconlyLight.plus,
+              color: CColors.secondary,
+              size: 28,
+            )),
+      ],
     );
   }
 }
