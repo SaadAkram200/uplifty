@@ -167,22 +167,18 @@ class _AddPostState extends State<AddPost> {
                         onPressed: () async {
                           value.selectedImage = null;
                           value.selectedVideo = null;
-                          // print(value.selectedVideo!.mimeType);
                           Navigator.pop(context);
                         }),
-                    Divider(color: CColors.secondary,thickness: .5),
+                    Divider(color: CColors.secondary, thickness: .5),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 20),
                       child: UpliftyTextfields(
-                        controller: captionController,
-                        fieldName: "Add caption",
-                        prefixIcon: Icons.chat_bubble_outline_rounded,
-                      ),
+                          controller: captionController,
+                          fieldName: "Add caption",
+                          prefixIcon: Icons.chat_bubble_outline_rounded),
                     ),
 
-                    const SizedBox(
-                      height: 30,
-                    ),
+                    const SizedBox(height: 30),
 
                     //for image post
                     if (widget.isImage) imageContainer(value),
@@ -207,47 +203,7 @@ class _AddPostState extends State<AddPost> {
                             size: 50,
                           )),
                     //post button
-                    Padding(
-                      padding: const EdgeInsets.only(top: 70),
-                      child: SignButton(
-                        buttonName: "Post",
-                        onPressed: () async {
-                          if (widget.isImage) {
-                            if (value.selectedImage == null) {
-                              Functions.showToast("Select image to post");
-                            } else {
-                              await Functions.postCreation(context,
-                                  value.selectedImage, captionController, type);
-                              value.selectedImage = null;
-                              captionController.clear();
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BottomAppBarClass(),
-                                  ),
-                                  (route) => false);
-                            }
-                          } else {
-                            if (value.selectedVideo == null) {
-                              Functions.showToast("Select video to post");
-                            } else {
-                              await Functions.postCreation(context,
-                                  value.selectedVideo, captionController, type);
-                              value.selectedVideo = null;
-                              captionController.clear();
-                              Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const BottomAppBarClass(),
-                                  ),
-                                  (route) => false);
-                            }
-                          }
-                        },
-                      ),
-                    ),
+                    postButton(value, context),
                   ],
                 ),
               ),
@@ -255,6 +211,48 @@ class _AddPostState extends State<AddPost> {
           ),
         );
       },
+    );
+  }
+
+  Padding postButton(FunctionsProvider value, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 70),
+      child: SignButton(
+        buttonName: "Post",
+        onPressed: () async {
+          if (widget.isImage) {
+            if (value.selectedImage == null) {
+              Functions.showToast("Select image to post");
+            } else {
+              await Functions.postCreation(
+                  context, value.selectedImage, captionController, type);
+              value.selectedImage = null;
+              captionController.clear();
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BottomAppBarClass(),
+                  ),
+                  (route) => false);
+            }
+          } else {
+            if (value.selectedVideo == null) {
+              Functions.showToast("Select video to post");
+            } else {
+              await Functions.postCreation(
+                  context, value.selectedVideo, captionController, type);
+              value.selectedVideo = null;
+              captionController.clear();
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const BottomAppBarClass(),
+                  ),
+                  (route) => false);
+            }
+          }
+        },
+      ),
     );
   }
 }

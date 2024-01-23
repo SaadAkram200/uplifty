@@ -10,6 +10,7 @@ class Dialogs {
   //To view Profile of users - opens image in alert dialog
   static profileViewer(String image) {
     return AlertDialog(
+      shape: Border.all(style: BorderStyle.solid,color: CColors.secondarydark),
       backgroundColor: CColors.secondarydark,
       contentPadding: const EdgeInsets.all(2),
       content: Image.network(image),
