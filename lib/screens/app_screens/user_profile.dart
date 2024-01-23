@@ -33,77 +33,74 @@ class UserProfile extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                  Divider(color: CColors.secondary,thickness: .5),
+                  Divider(color: CColors.secondary, thickness: .5),
                   //profile details
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialogs.profileViewer(
-                                value.getPosterData(friendID)!.image as String);
-                          },
-                        );
-                      },
-                      child: CircleAvatar(
-                        radius: 72,
-                        backgroundColor: CColors.secondary,
-                        child: CircleAvatar(
-                          radius: 70,
-                          backgroundColor: Colors.white,
-                          backgroundImage: NetworkImage(
-                              value.getPosterData(friendID)!.image as String),
-                          child: null,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Text(
-                      'Email: ${value.getPosterData(friendID)!.email}',
-                      style: TextStyle(color: CColors.secondary, fontSize: 16),
-                    ),
-                  ),
-
-                  Text(
-                    value.getPosterData(friendID)!.country as String,
-                    style: TextStyle(color: CColors.secondary, fontSize: 16),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Text(
-                    'Contact: ${value.getPosterData(friendID)!.phone}',
-                    style: TextStyle(color: CColors.secondary, fontSize: 16),
-                  ),
-                  //start a chat button
-                  if (value.userData!.myfriends!.contains(friendID))
-                    TextButton(
-                        onPressed: () {
-                          Functions.initiateChat(value.userData!.id, friendID);
-                          Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    ChatScreen(friendID: friendID),
-                              ),
-                              (route) => true);
-                        },
-                        child: Text(
-                          "Start a Chat",
-                          style:
-                              TextStyle(color: CColors.primary, fontSize: 18),
-                        )),
-                 Divider(color: CColors.secondary,thickness: .5),
+                  profileDetails(context, value),
+                  Divider(color: CColors.secondary, thickness: .5),
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Column profileDetails(BuildContext context, DataProvider value) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: InkWell(
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return Dialogs.profileViewer(
+                      value.getPosterData(friendID)!.image as String);
+                },
+              );
+            },
+            child: CircleAvatar(
+              radius: 72,
+              backgroundColor: CColors.secondary,
+              child: CircleAvatar(
+                  radius: 70,
+                  backgroundColor: Colors.white,
+                  backgroundImage: NetworkImage(
+                      value.getPosterData(friendID)!.image as String),
+                  child: null),
+            ),
+          ),
+        ),
+        Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text('Email: ${value.getPosterData(friendID)!.email}',
+                style: TextStyle(color: CColors.secondary, fontSize: 16))),
+
+        Text(value.getPosterData(friendID)!.country as String,
+            style: TextStyle(color: CColors.secondary, fontSize: 16)),
+
+        const SizedBox(height: 5),
+
+        Text('Contact: ${value.getPosterData(friendID)!.phone}',
+            style: TextStyle(color: CColors.secondary, fontSize: 16)),
+        
+        //start a chat button
+        if (value.userData!.myfriends!.contains(friendID))
+          TextButton(
+              onPressed: () {
+                Functions.initiateChat(value.userData!.id, friendID);
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(friendID: friendID),
+                    ),
+                    (route) => true);
+              },
+              child: Text("Start a Chat",
+                  style: TextStyle(color: CColors.primary, fontSize: 18))),
+      ],
     );
   }
 }
