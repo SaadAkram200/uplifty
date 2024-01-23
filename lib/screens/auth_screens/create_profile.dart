@@ -117,66 +117,80 @@ class _CreateProfileState extends State<CreateProfile> {
 
   Column fields(BuildContext context) {
     return Column(
-                    children: [
-                      //username textfield                        
-                      Padding(
-                        padding: const EdgeInsets.only(top: 80.0),
-                        child: UpliftyTextfields(
-                          controller: usernameController,
-                          fieldName: "User Name",
-                          prefixIcon: IconlyLight.profile,
-                          keyboardType: TextInputType.name,
-                        ),
-                      ),
+      children: [
+        //username textfield
+        Padding(
+          padding: const EdgeInsets.only(top: 80.0),
+          child: UpliftyTextfields(
+            controller: usernameController,
+            fieldName: "User Name",
+            prefixIcon: IconlyLight.profile,
+            keyboardType: TextInputType.name,
+          ),
+        ),
 
-                      //country textfield
-                      UpliftyTextfields(
-                        controller: countryController,
-                        fieldName: "Country",
-                        prefixIcon: IconlyLight.location,
-                        readOnly: true,
-                        onTap: () {
-                          Functions.countryPicker(context, (Country country) {
-                            countryController.text =
-                                country.displayNameNoCountryCode;
-                          });
-                        },
-                        suffixIcon: IconlyLight.arrow_down_2,
-                      ),
+        //country textfield
+        UpliftyTextfields(
+          controller: countryController,
+          fieldName: "Country",
+          prefixIcon: IconlyLight.location,
+          readOnly: true,
+          onTap: () {
+            Functions.countryPicker(context, (Country country) {
+              countryController.text = country.displayNameNoCountryCode;
+            });
+          },
+          suffixIcon: IconlyLight.arrow_down_2,
+        ),
 
-                      //phone textfield
-                      UpliftyTextfields(
-                        controller: phoneController,
-                        fieldName: "Phone Number",
-                        prefixIcon: IconlyLight.call,
-                        keyboardType: TextInputType.phone,
-                      ),
+        //phone textfield
+        UpliftyTextfields(
+          controller: phoneController,
+          fieldName: "Phone Number",
+          prefixIcon: IconlyLight.call,
+          keyboardType: TextInputType.phone,
+        ),
 
-                      //Address
-                      UpliftyTextfields(
-                        controller: addressController,
-                        fieldName: "Address",
-                        maxLines: 3,
-                        //prefixIcon: IconlyLight.home,
-                        keyboardType: TextInputType.streetAddress,
-                      ),
-                    ],
-                  );
+        //Address
+        UpliftyTextfields(
+          controller: addressController,
+          fieldName: "Address",
+          maxLines: 3,
+          prefixIcon: IconlyLight.home,
+          keyboardType: TextInputType.streetAddress,
+        ),
+      ],
+    );
   }
 
-  Row header(BuildContext context) {
-    return Row(
-      children: [
-        //back button
-        if (widget.isEditing) //runs only when user is coming to edit profile
-          IconButton(
-              onPressed: () => (Navigator.pop(context)),
-              icon: Icon(
-                IconlyLight.arrow_left_2,
-                color: CColors.secondary,
-                size: 30,
-              )),
-        if (!widget.isEditing)
+  Padding header(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          //back button
+          if (widget.isEditing) //runs only when user is coming to edit profile
+            IconButton(
+                onPressed: () => (Navigator.pop(context)),
+                icon: Icon(IconlyLight.arrow_left_2,
+                    color: CColors.secondary, size: 30)),
+          if (!widget.isEditing)
+            Opacity(
+              opacity: 0,
+              child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(IconlyLight.arrow_left_2, size: 30)),
+            ),
+          //page name
+          Text(
+            widget.isEditing ? "Edit Profile" : "Create Profile",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: CColors.primary),
+          ),
           Opacity(
             opacity: 0,
             child: IconButton(
@@ -186,27 +200,8 @@ class _CreateProfileState extends State<CreateProfile> {
                   size: 30,
                 )),
           ),
-        //page name
-        Expanded(
-          child: Text(
-            widget.isEditing ? "Edit Profile" : "Create Profile",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: CColors.primary),
-          ),
-        ),
-        Opacity(
-          opacity: 0,
-          child: IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                IconlyLight.arrow_left_2,
-                size: 30,
-              )),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
