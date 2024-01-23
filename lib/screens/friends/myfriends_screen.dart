@@ -27,15 +27,12 @@ class MyFriends extends StatelessWidget {
     return Consumer<DataProvider>(
       builder: (context, value, child) {
         listMyFriends = value.getMyFriends();
-
         return Scaffold(
           backgroundColor: CColors.background,
           body: SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   //page name and back button
                   PageName(
@@ -44,7 +41,7 @@ class MyFriends extends StatelessWidget {
                       Navigator.pop(context);
                     },
                   ),
-                  Divider(color: CColors.secondary,thickness: .5),
+                  Divider(color: CColors.secondary, thickness: .5),
 
                   //to show all the friendrequets of current User
                   Expanded(
@@ -52,78 +49,68 @@ class MyFriends extends StatelessWidget {
                         ? ListView.builder(
                             itemCount: value.myFrinedsList.length,
                             itemBuilder: (context, index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8, horizontal: 5),
-                                child: InkWell(
-                                  onTap: () {
-                                    //checking from where the user is coming?
-                                    if (!isComingfromChatD) {
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => UserProfile(
-                                              friendID:
-                                                  listMyFriends![index].id,
-                                            ),
-                                          ),
-                                          (route) => true);
-                                    } else {
-                                      Functions.initiateChat(value.userData!.id,
-                                          listMyFriends![index].id);
-                                      Navigator.pushAndRemoveUntil(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => ChatScreen(
-                                                friendID:
-                                                    listMyFriends![index].id),
-                                          ),
-                                          (route) => true);
-                                    }
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: CColors.bottomAppBarcolor,
-                                        borderRadius: BorderRadius.circular(30),
-                                        boxShadow: const [
-                                          BoxShadow(
-                                            color: Colors.black45,
-                                            blurRadius: 4,
-                                            offset: Offset(0, 4),
-                                          )
-                                        ]),
-                                    child: ListTile(
-                                      leading: CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              listMyFriends![index].image!)),
-                                      title: Text(
-                                        listMyFriends![index].username,
-                                        style: TextStyle(
-                                            color: CColors.secondarydark,
-                                            fontWeight: FontWeight.w500),
-                                      ),
-                                      subtitle: Text(
-                                          listMyFriends![index].country!,
-                                          style: TextStyle(
-                                              color: CColors.secondarydark)),
-                                    ),
-                                  ),
-                                ),
-                              );
+                              return friendsTile(context, index, value);
                             },
                           )
-                        : Text(
-                            "No friends yet.",
+                        : Text("No friends yet.",
                             style: TextStyle(
-                                color: CColors.secondary, fontSize: 20),
-                          ),
-                  )
+                                color: CColors.secondary, fontSize: 20)),
+                  ),
                 ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Padding friendsTile(BuildContext context, int index, DataProvider value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+      child: Container(
+        decoration: BoxDecoration(
+            color: CColors.bottomAppBarcolor,
+            borderRadius: BorderRadius.circular(30),
+            boxShadow: const [
+              BoxShadow(
+                  color: Colors.black45, blurRadius: 4, offset: Offset(0, 4))
+            ]),
+        child: ListTile(
+          onTap: () {
+            //checking from where the user is coming?
+            if (!isComingfromChatD) {
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => UserProfile(
+                      friendID: listMyFriends![index].id,
+                    ),
+                  ),
+                  (route) => true);
+            } else {
+              Functions.initiateChat(
+                  value.userData!.id, listMyFriends![index].id);
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        ChatScreen(friendID: listMyFriends![index].id),
+                  ),
+                  (route) => true);
+            }
+          },
+          leading: CircleAvatar(
+              backgroundImage: NetworkImage(listMyFriends![index].image!)),
+          title: Text(
+            listMyFriends![index].username,
+            style: TextStyle(
+                color: CColors.secondarydark, fontWeight: FontWeight.w500),
+          ),
+          subtitle: Text(listMyFriends![index].country!,
+              style: TextStyle(color: CColors.secondarydark)),
+        ),
+      ),
     );
   }
 }
