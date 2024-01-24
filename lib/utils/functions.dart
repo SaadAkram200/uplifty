@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
 import 'dart:async';
-import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_picker/country_picker.dart';
@@ -72,7 +71,8 @@ class Functions {
       TextEditingController captionController, String type) async {
     try {
       showLoading(context);
-      String mediaUrl = await uploadImage(selectedMedia!);
+      String mediaUrl = await uploadFile(selectedMedia!,
+          path: "images/${DateTime.now().millisecondsSinceEpoch}");
       await createNewPost(mediaUrl, captionController, type);
       showToast("Posted Sucessfully!");
       Navigator.pop(context);
@@ -83,17 +83,15 @@ class Functions {
 
 //for like button// adds current uid in  post's likedby
   static Future<void> addLike(String postid, String uid) async {
-    List<String> likedby = [uid];
     await posts.doc(postid).update({
-      'likedby': FieldValue.arrayUnion(likedby),
+      'likedby': FieldValue.arrayUnion([uid]),
     });
   }
 
   //for like button// removes current uid in  post's likedby
   static Future<void> removeLike(String postid, String uid) async {
-    List<String> unlikedby = [uid];
     await posts.doc(postid).update({
-      'likedby': FieldValue.arrayRemove(unlikedby),
+      'likedby': FieldValue.arrayRemove([uid]),
     });
   }
 
@@ -131,15 +129,13 @@ class Functions {
 //sends friend request
   static Future<void> sendFriendRequest(String friendID) async {
     //saves frindID in current user's sent request
-    List<String> sentRequest = [friendID];
     await users.doc(uid).update({
-      "sentrequest": FieldValue.arrayUnion(sentRequest),
+      "sentrequest": FieldValue.arrayUnion([friendID]),
     });
 
     //adds current UserID into friend's freind request
-    List<String> friendRequest = [uid];
     await users.doc(friendID).update({
-      "friendrequest": FieldValue.arrayUnion(friendRequest),
+      "friendrequest": FieldValue.arrayUnion([uid]),
     });
     Functions.showToast("Friend request sent!");
   }
@@ -147,15 +143,13 @@ class Functions {
   //to reomve ids from both users requests
   static Future<void> rejectFriendRequest(String friendID) async {
     //saves frindID in current user's sent request
-    List<String> sentRequest = [uid];
     await users.doc(friendID).update({
-      "sentrequest": FieldValue.arrayRemove(sentRequest),
+      "sentrequest": FieldValue.arrayRemove([uid]),
     });
 
     //adds current UserID into friend's freind request
-    List<String> friendRequest = [friendID];
     await users.doc(uid).update({
-      "friendrequest": FieldValue.arrayRemove(friendRequest),
+      "friendrequest": FieldValue.arrayRemove([friendID]),
     });
     // Functions.showToast("Frined request rejected!");
   }
@@ -163,16 +157,14 @@ class Functions {
   //accept friend request
   static Future<void> acceptFriendRequest(friendID) async {
     //adds friend id in user's myfriends
-    List<String> myFrineds = [friendID];
-    await users
-        .doc(uid)
-        .update({"myfriends": FieldValue.arrayUnion(myFrineds)});
+    await users.doc(uid).update({
+      "myfriends": FieldValue.arrayUnion([friendID])
+    });
 
     //adds userid in frined's myfriends
-    List<String> friendsMyFrineds = [uid];
-    await users
-        .doc(friendID)
-        .update({"myfriends": FieldValue.arrayUnion(friendsMyFrineds)});
+    await users.doc(friendID).update({
+      "myfriends": FieldValue.arrayUnion([uid])
+    });
 
     //to remove ids from friendrequests and sent requests
     rejectFriendRequest(friendID);
@@ -193,40 +185,55 @@ class Functions {
       ..collection("messages").doc();
   }
 
-  static Future<void> startChatting(
+  static Future<void> sendMessage(
     String userID,
     String friendID,
-    TextEditingController messageController,
+    String messageText,
     DataProvider value,
-  ) async {
+    String type, {
+    XFile? selectedItem,
+    String? audioPath,
+  }) async {
     List<String> list = [userID, friendID];
     list.sort();
     String chatID = list.join("_");
 
     List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
 
+    String url = "";
+    if (type == "image" || type == "video") {
+      url = await uploadFile(selectedItem!,
+          path: "images/${DateTime.now().millisecondsSinceEpoch}");
+    } else if (type == "audio") {
+      XFile audioFile = XFile(audioPath!);
+      url = await uploadFile(audioFile,
+          path: "audios/${DateTime.now().millisecondsSinceEpoch}");
+    } else if (type == "document") {
+      url = await uploadFile(selectedItem!,
+          path: "files/${DateTime.now().millisecondsSinceEpoch}");
+    }
     //to get the message doc id
     var messageDoc = chats.doc(chatID).collection("messages").doc();
     String messageID = messageDoc.id;
 
     final messageforchatdoc = ChatModel(
-        messageText: messageController.text,
+        messageText: messageText,
         messageID: messageID,
         senderID: userID,
         chatID: chatID,
         friendID: friendID,
         userID: userID,
-        type: "text",
-        link: "");
+        type: type,
+        link: url);
     // to set data in chat's collection
     await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
 
     final message = ChatModel(
-        messageText: messageController.text,
+        messageText: messageText,
         messageID: messageID,
         senderID: userID,
-        link: "",
-        type: "text");
+        link: url,
+        type: type);
     // to send message- setting data in subcollection
     messageDoc.set(message.toMap()).then((v) => sendPushNotification(
         fcmTokens!, value.userData!.username, message.messageText, "message"));
@@ -244,222 +251,18 @@ class Functions {
     });
   }
 
-  //for sending image in chat
-  static Future<void> sendImage(
-    String userID,
-    String friendID,
-    XFile? selectedImage,
-    DataProvider value,
-  ) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
-
-    String imageUrl = await uploadImage(selectedImage!);
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: "📷Photo",
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "image",
-        link: imageUrl);
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: "📷Photo",
-        messageID: messageID,
-        senderID: userID,
-        link: imageUrl,
-        type: "image");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText, "message"));
-    //adds friend id in user's myfriends
-    users.doc(uid).update({
-      "chatwith": FieldValue.arrayUnion([friendID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-
-    //adds userid in frined's myfriends
-    users.doc(friendID).update({
-      "chatwith": FieldValue.arrayUnion([userID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-  }
-
-  //for sending video in chat
-  static Future<void> sendVideo(
-    String userID,
-    String friendID,
-    XFile? selectedVideo,
-    DataProvider value,
-  ) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
-
-    String imageUrl = await uploadImage(selectedVideo!);
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: "🎥Video",
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "video",
-        link: imageUrl);
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: "🎥Video",
-        messageID: messageID,
-        senderID: userID,
-        link: imageUrl,
-        type: "video");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText, "message"));
-    //adds friend id in user's myfriends
-    users.doc(uid).update({
-      "chatwith": FieldValue.arrayUnion([friendID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-
-    //adds userid in frined's myfriends
-    users.doc(friendID).update({
-      "chatwith": FieldValue.arrayUnion([userID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-  }
-
-  //for sending documents in chat
-  static Future<void> sendFile(
-    String userID,
-    String friendID,
-    XFile? selectedFile,
-    DataProvider value,
-  ) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
-
-    String fileUrl = await uploadFile(selectedFile!);
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: "📄Document",
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "document",
-        link: fileUrl);
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: "📄Document",
-        messageID: messageID,
-        senderID: userID,
-        link: fileUrl,
-        type: "document");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText, "message"));
-    //adds friend id in user's myfriends
-    users.doc(uid).update({
-      "chatwith": FieldValue.arrayUnion([friendID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-
-    //adds userid in frined's myfriends
-    users.doc(friendID).update({
-      "chatwith": FieldValue.arrayUnion([userID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-  }
-
-  //for sending voice note in chat
-  static Future<void> sendAudio(
-    String userID,
-    String friendID,
-    String audioPath,
-    DataProvider value,
-  ) async {
-    List<String> list = [userID, friendID];
-    list.sort();
-    String chatID = list.join("_");
-
-    List<dynamic>? fcmTokens = value.getPosterData(friendID)!.fcmtoken;
-
-    String fileUrl = await uploadAudio(audioPath);
-    //to get the message doc id
-    var messageDoc = chats.doc(chatID).collection("messages").doc();
-    String messageID = messageDoc.id;
-
-    final messageforchatdoc = ChatModel(
-        messageText: "🎤Voice note",
-        messageID: messageID,
-        senderID: userID,
-        chatID: chatID,
-        friendID: friendID,
-        userID: userID,
-        type: "voice note",
-        link: fileUrl);
-    // to set data in chat's collection
-    await chats.doc(chatID).set(messageforchatdoc.chatdoctoMap());
-
-    final message = ChatModel(
-        messageText: "🎤Voice note",
-        messageID: messageID,
-        senderID: userID,
-        link: fileUrl,
-        type: "voice note");
-    // to send message- setting data in subcollection
-    messageDoc.set(message.toMap()).then((v) => sendPushNotification(
-        fcmTokens!, value.userData!.username, message.messageText, "message"));
-    //adds friend id in user's myfriends
-    users.doc(uid).update({
-      "chatwith": FieldValue.arrayUnion([friendID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-
-    //adds userid in frined's myfriends
-    users.doc(friendID).update({
-      "chatwith": FieldValue.arrayUnion([userID]),
-      "userchats": FieldValue.arrayUnion([chatID])
-    });
-  }
 
   //for sending push notificationa
   static Future<void> sendPushNotification(
-      List<dynamic> fcmTokens, String title, String message, String type,
-      {String? receiverID,
-      String? callerID,
-      String? callerName,
-      bool? isVideoCall,
-      }) async {
+    List<dynamic> fcmTokens,
+    String title,
+    String message,
+    String type, {
+    String? receiverID,
+    String? callerID,
+    String? callerName,
+    bool? isVideoCall,
+  }) async {
     const String serverKey =
         'AAAAO8fQJ1g:APA91bFdhr4YKc2FF1oQgl3YvT1dTMiWJebCsX1-faY5Z8tAM9Es68XLlco4SlFzss4klwIZsXBnIBcgVxpI8EvH_Q3lwClVevkFQe_JAX0fJ8ls21CUKWkSPQOMZHC0AvlwGAc973HX';
     const String fcmEndpoint = 'https://fcm.googleapis.com/fcm/send';
@@ -520,7 +323,7 @@ class Functions {
       builder: (_) {
         return PopScope(
           onPopInvoked: (didPop) {
-             Future.value(kDebugMode);
+            Future.value(kDebugMode);
           },
           child: const AlertDialog(
             backgroundColor: Colors.transparent,
@@ -697,10 +500,10 @@ class Functions {
   }
 
   //upload image
-  static Future<String> uploadImage(XFile file) async {
+  static Future<String> uploadFile(XFile file, {required path}) async {
     try {
       final mimeType = lookupMimeType(file.path);
-      String path = "images/${DateTime.now().millisecondsSinceEpoch}";
+      // String path = "images/${DateTime.now().millisecondsSinceEpoch}";
       final firebasestorage.FirebaseStorage storage =
           firebasestorage.FirebaseStorage.instance;
       var reference = storage.ref().child(path);
@@ -711,55 +514,6 @@ class Functions {
         String imageUrl = await reference.getDownloadURL();
 
         return imageUrl;
-      } else {
-        throw PlatformException(code: "404", message: "no download link found");
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  //upload file
-  static Future<String> uploadFile(XFile file) async {
-    try {
-      final mimeType = lookupMimeType(file.path);
-      String path = "files/${DateTime.now().millisecondsSinceEpoch}";
-      final firebasestorage.FirebaseStorage storage =
-          firebasestorage.FirebaseStorage.instance;
-      var reference = storage.ref().child(path);
-      var r = await reference.putData(
-          await file.readAsBytes(), SettableMetadata(contentType: mimeType));
-
-      if (r.state == firebasestorage.TaskState.success) {
-        String fileUrl = await reference.getDownloadURL();
-
-        return fileUrl;
-      } else {
-        throw PlatformException(code: "404", message: "no download link found");
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  //upload audio
-  static Future<String> uploadAudio(String audioPath) async {
-    try {
-      final mimeType = lookupMimeType(audioPath);
-      String path = "audios/${DateTime.now().millisecondsSinceEpoch}";
-      final firebasestorage.FirebaseStorage storage =
-          firebasestorage.FirebaseStorage.instance;
-
-      File audioFile = File(audioPath);
-
-      var reference = storage.ref().child(path);
-      var r = await reference.putData(await audioFile.readAsBytes(),
-          SettableMetadata(contentType: mimeType));
-
-      if (r.state == firebasestorage.TaskState.success) {
-        String audioUrl = await reference.getDownloadURL();
-
-        return audioUrl;
       } else {
         throw PlatformException(code: "404", message: "no download link found");
       }
@@ -779,10 +533,10 @@ class Functions {
       TextEditingController addressController,
       bool isEditing) async {
     String? imageUrl = "";
-    if (usernameController.text == "" ||
-        phoneController.text == "" ||
-        countryController.text == "" ||
-        addressController.text == "") {
+    if (usernameController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        countryController.text.isEmpty ||
+        addressController.text.isEmpty) {
       showToast("Please fill all the fields");
 
       //checking from where the user is coming? from sign up or from edit profile
@@ -792,7 +546,8 @@ class Functions {
       try {
         showLoading(context);
         if (uploadedimageUrl == null || selectedImage != null) {
-          imageUrl = await uploadImage(selectedImage!);
+          imageUrl = await uploadFile(selectedImage!,
+              path: "images/${DateTime.now().millisecondsSinceEpoch}");
         } else {
           imageUrl = uploadedimageUrl;
         }
