@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
@@ -64,7 +65,7 @@ class HomeScreen extends StatelessWidget {
             radius: 25,
             backgroundColor: Colors.white,
             backgroundImage: value.userData != null
-                ? NetworkImage(value.userData!.image!) as ImageProvider
+                ? CachedNetworkImageProvider(value.userData!.image!) as ImageProvider
                 : AssetImage(AppImages.dummyuser),
             child: null,
           ),

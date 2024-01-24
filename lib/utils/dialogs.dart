@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:uplifty/models/post_model.dart';
@@ -13,7 +14,7 @@ class Dialogs {
       shape: Border.all(style: BorderStyle.solid,color: CColors.secondarydark),
       backgroundColor: CColors.secondarydark,
       contentPadding: const EdgeInsets.all(2),
-      content: Image.network(image),
+      content: CachedNetworkImage(imageUrl: image)
     );
   }
 

@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:intl/intl.dart';
@@ -106,8 +107,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         suffixIcon: IconlyLight.send,
                         suffixIconOnpressed: () {
                           if (messageController.text.isNotEmpty) {
-                            Functions.startChatting(value.uid, widget.friendID,
-                                    messageController, value)
+                            Functions.sendMessage(value.uid, widget.friendID,
+                                    messageController.text, value, "text")
                                 .then((value) {
                               messageController.clear();
                             });
@@ -123,8 +124,11 @@ class _ChatScreenState extends State<ChatScreen> {
                   },
                   onLongPressEnd: (details) async {
                     await value1.stopRecording();
-                    Functions.sendAudio(
-                        value.uid, widget.friendID, value1.audioPath!, value);
+                    Functions.sendMessage(value.uid, widget.friendID,
+                        "🎤Voice note", value, "audio",
+                        audioPath: value1.audioPath);
+                    // Functions.sendAudio(
+                    //     value.uid, widget.friendID, value1.audioPath!, value);
                   },
                   child: Container(
                     margin: const EdgeInsets.all(5),
@@ -211,20 +215,36 @@ class _ChatScreenState extends State<ChatScreen> {
                               onPressed: () {
                                 if (value.selectedImage != null) {
                                   Navigator.pop(context);
-                                  Functions.sendImage(
+                                  Functions.sendMessage(
                                           value1.uid,
                                           widget.friendID,
-                                          value.selectedImage,
-                                          value1)
+                                          "📷Photo",
+                                          value1,
+                                          "image",
+                                          selectedItem: value.selectedImage)
                                       .then((v) => value.selectedImage = null);
+                                  // Functions.sendImage(
+                                  //         value1.uid,
+                                  //         widget.friendID,
+                                  //         value.selectedImage,
+                                  //         value1)
+                                  //     .then((v) => value.selectedImage = null);
                                 } else if (value.selectedFile != null) {
                                   Navigator.pop(context);
-                                  Functions.sendFile(
+                                  Functions.sendMessage(
                                           value1.uid,
                                           widget.friendID,
-                                          value.selectedFile,
-                                          value1)
+                                          "📄Document",
+                                          value1,
+                                          "document",
+                                          selectedItem: value.selectedFile)
                                       .then((v) => value.selectedFile = null);
+                                  // Functions.sendFile(
+                                  //         value1.uid,
+                                  //         widget.friendID,
+                                  //         value.selectedFile,
+                                  //         value1)
+                                  //     .then((v) => value.selectedFile = null);
                                 }
                               })),
                     ],
@@ -401,7 +421,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           ? Colors.white
                           : CColors.secondarydark)),
 
-            if (value1.chatList![index].type == "voice note")
+            if (value1.chatList![index].type == "audio")
               AudioMessageBox(link: value1.chatList![index].link),
 
             if (value1.chatList![index].type == "video")
@@ -453,7 +473,8 @@ class _ChatScreenState extends State<ChatScreen> {
                           },
                         );
                       },
-                      child: Image.network(value1.chatList![index].link,
+                      child: CachedNetworkImage(
+                          imageUrl: value1.chatList![index].link,
                           fit: BoxFit.fill)),
                 ),
               ),
@@ -531,12 +552,19 @@ class _ChatScreenState extends State<ChatScreen> {
                   buttonName: "Share",
                   onPressed: () {
                     if (value.selectedVideo != null) {
-                      Functions.sendVideo(value1.uid, widget.friendID,
-                              value.selectedVideo, value1)
+                      Functions.sendMessage(value1.uid, widget.friendID,
+                              "🎥Video", value1, "video",
+                              selectedItem: value.selectedVideo)
                           .then((v) {
                         value.selectedVideo = null;
                         Navigator.pop(context);
                       });
+                      // Functions.sendVideo(value1.uid, widget.friendID,
+                      //         value.selectedVideo, value1)
+                      //     .then((v) {
+                      //   value.selectedVideo = null;
+                      //   Navigator.pop(context);
+                      // });
                     }
                   }),
             ),
