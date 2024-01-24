@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uplifty/providers/data_provider.dart';
@@ -67,8 +68,8 @@ class UserProfile extends StatelessWidget {
               child: CircleAvatar(
                   radius: 70,
                   backgroundColor: Colors.white,
-                  backgroundImage: NetworkImage(
-                      value.getPosterData(friendID)!.image as String),
+                  backgroundImage: CachedNetworkImageProvider(
+                      value.getPosterData(friendID)!.image!),
                   child: null),
             ),
           ),

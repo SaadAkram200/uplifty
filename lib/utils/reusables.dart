@@ -538,7 +538,7 @@ class _PostContainerState extends State<PostContainer> {
                         radius: 20,
                         backgroundColor: Colors.white,
                         backgroundImage: widget.value.userData != null
-                            ? NetworkImage(widget.value
+                            ? CachedNetworkImageProvider(widget.value
                                 .getPosterData(post[widget.index].posterUid)
                                 ?.image as String) as ImageProvider
                             : AssetImage(AppImages.dummyuser),
@@ -728,7 +728,7 @@ class ChatDashboardTile extends StatelessWidget {
           },
           child: ListTile(
             leading: CircleAvatar(
-                backgroundImage: NetworkImage(value
+                backgroundImage: CachedNetworkImageProvider(value
                     .getPosterData(value.userData!.chatwith![index])
                     ?.image as String)),
             title: Text(

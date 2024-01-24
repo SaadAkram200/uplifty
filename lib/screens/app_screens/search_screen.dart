@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:iconly/iconly.dart';
 import 'package:provider/provider.dart';
@@ -110,7 +111,7 @@ class SearchScreen extends StatelessWidget {
                 (route) => true);
           },
           leading: CircleAvatar(
-              backgroundImage: NetworkImage(value2.foundUsers[index]!.image!)),
+              backgroundImage: CachedNetworkImageProvider(value2.foundUsers[index]!.image!)),
           title: Text(
             value2.foundUsers[index]!.username,
             style: TextStyle(
