@@ -441,10 +441,7 @@ class Functions {
         if (e.code == 'wrong-password') {
           showToast('Incorrect current password!');
         }
-        //else {
-        //   showToast('Error updating password: $e');
 
-        // }
       } catch (e) {
         showToast('Error: $e');
         // Handle other exceptions
