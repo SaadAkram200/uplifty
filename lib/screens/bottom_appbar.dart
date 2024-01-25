@@ -43,26 +43,30 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-           BottomSheets. selectPostType(context);
+            BottomSheets.selectPostType(context);
           },
           elevation: 5.0,
           backgroundColor: CColors.secondary,
           shape: const CircleBorder(),
           splashColor: CColors.bottomAppBarcolor,
-          child: Icon(Icons.add,color: CColors.background,),
+          child: Icon(
+            Icons.add,
+            color: CColors.background,
+          ),
         ),
         bottomNavigationBar: BottomAppBar(
+          height: 50,
+          padding: const EdgeInsets.only(bottom: 10),
           shape: const CircularNotchedRectangle(),
           color: CColors.bottomAppBarcolor,
           notchMargin: 6,
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               //Homescreen
               IconButton(
-                iconSize: 35.0,
-               // padding: const EdgeInsets.only(left: 28.0),
+                iconSize: 30,
                 icon: Icon(IconlyLight.home,
                     color: value.selectedPage == 0
                         ? CColors.secondary
@@ -71,11 +75,10 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
                   value.onTabTapped(0);
                 },
               ),
-          
+
               //chat screen
               IconButton(
-                iconSize: 35.0,
-                padding: const EdgeInsets.only(right: 28.0),
+                iconSize: 30,
                 icon: Icon(IconlyLight.chat,
                     color: value.selectedPage == 1
                         ? CColors.secondary
@@ -84,11 +87,10 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
                   value.onTabTapped(1);
                 },
               ),
-          
+              const SizedBox(width: 40),
               //search screen
               IconButton(
-                iconSize: 35.0,
-                padding: const EdgeInsets.only(left: 28.0),
+                iconSize: 30,
                 icon: Icon(IconlyLight.search,
                     color: value.selectedPage == 2
                         ? CColors.secondary
@@ -97,11 +99,10 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
                   value.onTabTapped(2);
                 },
               ),
-          
+
               //setting screen
               IconButton(
-                iconSize: 35.0,
-              //  padding: const EdgeInsets.only(right: 28.0),
+                iconSize: 30,
                 icon: Icon(IconlyLight.setting,
                     color: value.selectedPage == 3
                         ? CColors.secondary
@@ -120,3 +121,4 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
     });
   }
 }
+

@@ -311,8 +311,8 @@ class _ChatScreenState extends State<ChatScreen> {
             child: CircleAvatar(
                 radius: 25,
                 backgroundColor: Colors.white,
-                backgroundImage: NetworkImage(
-                    value.getPosterData(widget.friendID)!.image as String),
+                backgroundImage: CachedNetworkImageProvider(
+                    value.getPosterData(widget.friendID)!.image!),
                 child: null)),
         const SizedBox(width: 10),
         Expanded(
