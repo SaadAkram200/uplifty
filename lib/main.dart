@@ -77,11 +77,11 @@ Future<void> myBackgroundMessageHandler(RemoteMessage message) async {
                   isVideoCall: isVideoCall),
             ));
 
-        print("call accepted");
+       
       } else if (receivedAction.buttonKeyPressed == 'reject') {
         AwesomeNotifications().dismiss(receivedAction.id!);
 
-        print("call rejected");
+        
       }
     },
   );

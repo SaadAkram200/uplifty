@@ -251,7 +251,6 @@ class Functions {
     });
   }
 
-
   //for sending push notificationa
   static Future<void> sendPushNotification(
     List<dynamic> fcmTokens,
@@ -298,7 +297,6 @@ class Functions {
         },
         body: jsonEncode(payload),
       );
-      print("Notification sent");
     } catch (e) {
       //print(e.toString());
     }
@@ -441,7 +439,6 @@ class Functions {
         if (e.code == 'wrong-password') {
           showToast('Incorrect current password!');
         }
-
       } catch (e) {
         showToast('Error: $e');
         // Handle other exceptions

@@ -41,6 +41,7 @@ class _BottomAppBarClassState extends State<BottomAppBarClass> {
         backgroundColor: CColors.background,
         resizeToAvoidBottomInset: false,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        extendBody: true,
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             BottomSheets.selectPostType(context);
